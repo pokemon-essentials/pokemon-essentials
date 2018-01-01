@@ -16,10 +16,12 @@ SceneManager.preferableRendererType = function () {
 /**
  * load Pokémon database files and store in the given constants.
  */
-// DataManager.loadDataFile('$PE_ABILITIES', 'pe/abilities.json');
-// DataManager.loadDataFile('$PE_MOVES', 'pe/moves.json');
-// DataManager.loadDataFile('$PE_POKEDEX', 'pe/pokedex.json');
-
+var $PE_ABILITIES: any;
+var $PE_MOVES: any;
+var $PE_POKEDEX: any;
+DataManager.loadDataFile('$PE_ABILITIES', 'pe/abilities.json');
+DataManager.loadDataFile('$PE_MOVES', 'pe/moves.json');
+DataManager.loadDataFile('$PE_POKEDEX', 'pe/pokedex.json');
 
 
 
