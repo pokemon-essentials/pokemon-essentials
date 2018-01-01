@@ -1,0 +1,5 @@
+{
+    "compilerOptions": {
+        "outFile": "../js/pokemon_essentials.js"
+    }
+}
