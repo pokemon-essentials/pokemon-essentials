@@ -1,0 +1,3 @@
+[submodule "ts/rpgmakermv.d"]
+	path = ts/rpgmakermv.d
+	url = https://github.com/LazyKnightX/rmmv-typescript-start-kit
