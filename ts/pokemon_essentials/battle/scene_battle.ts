@@ -12,7 +12,7 @@ namespace PE.Battle {
       this.createLayers();
     }
 
-    prepare(party: PE.Pokemon.Pokemon, foe:PE.Pokemon.Pokemon) {
+    prepare(party: PE.Pokemon.Pokemon, foe: PE.Pokemon.Pokemon) {
       this.partyPokemon = party;
       this.foePokemon = foe;
     }
@@ -20,8 +20,8 @@ namespace PE.Battle {
     start() {
       super.start();
       PE.Battle.Manager.setup();
-      PE.Battle.Manager.showPausedMessage(`A wild ${this.foePokemon.name} has apeared!`);
-      PE.Battle.Manager.showMessage(`Go ${this.partyPokemon.name}!`);
+      PE.Battle.Manager.showPausedMessage(i18n._('A wild %1 has apeared!', this.foePokemon.name));
+      PE.Battle.Manager.showMessage(i18n._('Go %1!', this.partyPokemon.name));
       PE.Battle.Manager.changePhase(PE.Battle.Phase.ActionSelection);
     }
 

@@ -119,7 +119,6 @@ namespace PE.Pokemon {
       // this.ballused = false // Ball used
       // this.markings = null // Markings
       // this.obtainMode = 0 // Manner obtained: 0 - met, 1 - as egg, 2 - traded, 4 - fateful encounter
-
       // this.obtainMap = 0; // Map where obtained
       // this.obtainText = ''; // Replaces the obtain map's name if not nil
       // this.obtainLevel = level; // Level obtained
@@ -127,8 +126,6 @@ namespace PE.Pokemon {
       // this.language = ''; // Language
       // this.ot = ''; // Original Trainer's name
       // this.otgender = 0; // Original Trainer's gender:  0 - male, 1 - female, 2 - mixed, 3 - unknown For information only, not used to verify
-
-
     }
 
     generateStatsByLevel() {
