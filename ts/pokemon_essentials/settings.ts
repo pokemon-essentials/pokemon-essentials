@@ -6,5 +6,7 @@ enum SETTINGS {
   /** The odds of a newly generated Pokémon being shiny (out of 65536). */
   SHINY_CHANCE = 8,
   /** The odds of a wild Pokémon/bred egg having Pokérus (out of 65536). */
-  POKERUS_CHANCE = 3
+  POKERUS_CHANCE = 3,
+
+  DEFAULT_FONT_SIZE= 24
 }

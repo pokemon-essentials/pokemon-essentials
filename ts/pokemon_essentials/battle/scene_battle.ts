@@ -1,6 +1,7 @@
 namespace PE.Battle {
   export class Scene_Battle extends Scene_Base {
-
+    message: Window_Message;
+    foePokemon: Pokemon.Pokemon;
     partyPokemon: Pokemon.Pokemon;
 
     /** save all the objects display layers */
@@ -11,17 +12,22 @@ namespace PE.Battle {
       this.createLayers();
     }
 
-    prepare(party: PE.Pokemon.Pokemon) {
+    prepare(party: PE.Pokemon.Pokemon, foe:PE.Pokemon.Pokemon) {
       this.partyPokemon = party;
-      console.log(this.partyPokemon);
+      this.foePokemon = foe;
     }
 
     start() {
       super.start();
+      PE.Battle.Manager.setup();
+      PE.Battle.Manager.showPausedMessage(`A wild ${this.foePokemon.name} has apeared!`);
+      PE.Battle.Manager.showMessage(`Go ${this.partyPokemon.name}!`);
+      PE.Battle.Manager.changePhase(PE.Battle.Phase.ActionSelection);
     }
 
     update() {
       super.update();
+      PE.Battle.Manager.update();
       if (Input.isTriggered('cancel')) {
         SceneManager.goto(Scene_Title);
       }
@@ -37,6 +43,8 @@ namespace PE.Battle {
 
     createLayers() {
       this.createBackground();
+      this.createWindowLayer();
+      this.createMessageWindow();
     }
 
     createBackground() {
@@ -50,6 +58,14 @@ namespace PE.Battle {
 
       this.layers['bg2'] = new Sprite();
       this.addChild(this.layers['bg2']);
+    }
+
+    createMessageWindow() {
+      this.message = new Window_Message();
+      this.addWindow(this.message);
+      this.message.subWindows().forEach(function (window) {
+        this.addWindow(window);
+      }, this);
     }
   }
 }
