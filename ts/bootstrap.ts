@@ -25,9 +25,10 @@ DataManager.loadDataFile('$PE_POKEDEX', 'pe/pokedex.json');
 
 
 
-// Scene_Title.prototype.commandNewGame = function () {
-//   DataManager.setupNewGame();
-//   this._commandWindow.close();
-//   this.fadeOutAll();
-//   SceneManager.goto(PE_Battle_Scene);
-// };
+Scene_Title.prototype.commandNewGame = function () {
+  DataManager.setupNewGame();
+  this._commandWindow.close();
+  this.fadeOutAll();
+  console.log(PE.Pokemon.getRandomPokemon());
+  SceneManager.goto(Scene_Map);
+};
