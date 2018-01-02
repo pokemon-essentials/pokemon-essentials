@@ -29,6 +29,6 @@ Scene_Title.prototype.commandNewGame = function () {
   DataManager.setupNewGame();
   this._commandWindow.close();
   this.fadeOutAll();
-  console.log(PE.Pokemon.getRandomPokemon());
-  SceneManager.goto(Scene_Map);
+  SceneManager.goto(PE.Battle.Scene_Battle);
+  SceneManager.prepareNextScene(PE.Pokemon.getRandomPokemon());
 };
