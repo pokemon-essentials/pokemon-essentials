@@ -33,6 +33,8 @@ namespace PE.Pokemon {
   }
 
   export class Pokemon extends PokemonData {
+    statusCount: number;
+    status: PE.Statuses;
     ability: string;
     abilityInx: number;
     evs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
@@ -105,6 +107,8 @@ namespace PE.Pokemon {
       }
       this.moveset = this.getMoveset(moves);
 
+      this.status = PE.Statuses.Healthy;
+      this.statusCount = 0;
       // this.exp = 0;
       // this.happiness = 0;
       // this.item = item || null // Held item

@@ -19,6 +19,7 @@ SceneManager.preferableRendererType = function () {
 var $PE_ABILITIES: any;
 var $PE_MOVES: any;
 var $PE_POKEDEX: any;
+var $PE_ITEMS: any;
 DataManager.loadDataFile('$PE_ABILITIES', 'pe/abilities.json');
 DataManager.loadDataFile('$PE_MOVES', 'pe/moves.json');
 DataManager.loadDataFile('$PE_POKEDEX', 'pe/pokedex.json');

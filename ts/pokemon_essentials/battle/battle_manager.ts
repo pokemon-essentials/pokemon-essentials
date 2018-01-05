@@ -7,13 +7,29 @@ namespace PE.Battle {
 
   export abstract class Manager {
     private static _queue: any[];
+
+    static battlers: PE.Battle.Battler[] = [];
+    static field: ActiveField;
     static phase: Phase;
+    static turncount: number;
     static waitMode: string;
+
+    static weather = PE.Weather.None;
 
     static setup() {
       this._queue = [];
       this.phase = Phase.Init;
       this.waitMode = "";
+      this.turncount = 0;
+
+      // this.side = new PE.Battle.ActiveField();
+      this.field = new PE.Battle.ActiveField();
+      this.weather = PE.Weather.None;
+
+      // this.battlers = []; // TODO
+      for (const battler of this.battlers) {
+        battler.ownSide = new PE.Battle.ActiveSide();
+      }
     }
 
     static update() {
