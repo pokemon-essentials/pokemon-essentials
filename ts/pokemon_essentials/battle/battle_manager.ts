@@ -1,3 +1,5 @@
+/// <reference path="./weather.ts" />
+
 namespace PE.Battle {
   const CHARACTERS_PER_LINE = 35;
 
