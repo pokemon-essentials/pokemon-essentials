@@ -167,7 +167,7 @@ namespace PE.Battle {
       this.effects[PE.Effects.HyperBeam] = 0;
       this.effects[PE.Effects.Illusion] = null;
       /**
-       * Add here ilusion ability 
+       * Add here ilusion ability
        */
       this.effects[PE.Effects.Imprison] = false;
       this.effects[PE.Effects.KingsShield] = false;

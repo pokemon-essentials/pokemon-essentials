@@ -1,4 +1,5 @@
 namespace PE.Battle {
+
   export class Scene_Battle extends Scene_Base {
     message: Window_Message;
     foePokemon: Pokemon.Pokemon;
@@ -43,6 +44,7 @@ namespace PE.Battle {
 
     createLayers() {
       this.createBackground();
+      this.createBattlers();
       this.createWindowLayer();
       this.createMessageWindow();
     }
@@ -66,6 +68,30 @@ namespace PE.Battle {
       this.message.subWindows().forEach(function (window) {
         this.addWindow(window);
       }, this);
+    }
+
+    createBattlers() {
+      let px = 96;
+      let py = Graphics.height;
+      let a = new PE.Sprites.Battler(this.partyPokemon, PE.Sprites.BattlersFacing.Back);
+      a.x = px;
+      a.y = py;
+      a.scale.x = 3;
+      a.scale.y = 3;
+      a.anchor.x = 0.5;
+      a.anchor.y = 1;
+      this.addChild(a);
+
+      let fx = Graphics.width - 96;
+      let fy = 240
+      let f = new PE.Sprites.Battler(this.foePokemon, PE.Sprites.BattlersFacing.Front);
+      f.x = fx;
+      f.y = fy;
+      f.scale.x = 2;
+      f.scale.y = 2;
+      f.anchor.x = 0.5;
+      f.anchor.y = 1;
+      this.addChild(f);
     }
   }
 }
