@@ -79,5 +79,22 @@ namespace PE.Battle {
       this.push(() => this.phase = phase);
     }
 
+
+
+    static isOpposing(index: number) {
+      throw Error('undefined')
+    }
+
+    /** find the way this works */
+    static opponent() {
+      return true;
+    }
+
+    static ownedByPlayer(index: number) {
+      return true;
+    }
+
   }
 }
+
+let $Battle = PE.Battle.Manager;
