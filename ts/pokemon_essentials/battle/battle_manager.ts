@@ -18,11 +18,15 @@ namespace PE.Battle {
     static turncount = 0;
     static waitMode = WaitMode.None;
     static weather = PE.Weather.None;
+    static weatherduration = 0;
+
 
     static setup() {
       this.phase = Phase.Init;
       // this.side = new PE.Battle.ActiveField();
       this.field = new PE.Battle.ActiveField();
+
+      this.weatherduration = 0;
 
       // this.battlers = []; // TODO
       for (const battler of this.battlers) {

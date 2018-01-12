@@ -45,7 +45,7 @@ namespace PE.Battle {
     lastRoundMoved: number;
     level: number;
     movesUsed: {};
-    moves: string[];
+    moveset: any[];
     ownSide: PE.Battle.ActiveSide;
     participants: any[];
     species: string;
@@ -92,7 +92,7 @@ namespace PE.Battle {
       //   PokeBattle_Move.pbFromPBMove(this.battle, poke.moves[2]),;
       //   PokeBattle_Move.pbFromPBMove(this.battle, poke.moves[3]);
       // ]
-      this.moves = pokemon.moveset;
+      this.moveset = pokemon.moveset;
       this.ivs = pokemon.ivs;
     }
 
@@ -387,7 +387,7 @@ namespace PE.Battle {
 
     hasMove(id: string) {
       if (!id || id === "") return false;
-      for (const move of this.moves) {
+      for (const move of this.moveset) {
         if (id === move) return true;
       }
       return false;
@@ -413,6 +413,8 @@ namespace PE.Battle {
     isFainted() {
       return this.hp <= 0;
     }
+
+    isOpossing(pokemon) { }
 
     /** Check if the Pokémon touch the field. */
     isAirborne(ignoreability: boolean) {
@@ -782,17 +784,358 @@ namespace PE.Battle {
       // @battle.pbCommonAnimation("Burn",self,nil)
       if (msg && msg != "") $Battle.showMessage(msg);
       else $Battle.showMessage(i18n._("%1 was burned!", this.name))
-      console.log("[Status change] #{pbThis} was burned");
+      console.log("[Status change] #{this.name} was burned");
       if (attacker && this.index !== attacker.index && this.hasAbility('SYNCHRONIZE')) {
         if (attacker.canBurnSynchronize(this)) {
-          console.log("[Ability triggered] #{this.pbThis}'s Synchronize")
-          let m = i18n._("{1}'s {2} burned {3}!", this.name, PE.Abilities.name(this.ability), attacker.name);
+          console.log("[Ability triggered] #{this.this.name}'s Synchronize")
+          let m = i18n._("%1's %2 burned %3!", this.name, PE.Abilities.name(this.ability), attacker.name);
           attacker.burn(undefined, m);
         }
       }
     }
     //#endregion
     //------------------------------------------------------------------------------------------------------------------
+
+    //#endregion
+    //==================================================================================================================
+
+    //==================================================================================================================
+    //#region Increase stat stages
+    tooHigh(stat: PE.Stats) {
+      return this.stages[stat] >= 6;
+    }
+
+    canIncreaseStatStage(stat: PE.Stats, attacker: Battler = undefined, showMessages = false, move = undefined,
+      moldbreaker = false, ignoreContrary = false) {
+      if (this._fainted) return false;
+      if (!moldbreaker) {
+        if (!attacker || attacker.index === this.index || !attacker.hasMoldBreaker()) {
+          if (this.hasAbility('CONTRARY') && !ignoreContrary) {
+            return this.canReduceStatStage(stat, attacker, showMessages, moldbreaker, true)
+          }
+        }
+      }
+      if (this.tooHigh(stat)) {
+        if (showMessages) $Battle.showMessage(i18n._("%1's %2 won't go any higher!", this.name, PE.Stats.name(stat)));
+        return false;
+      }
+      return true;
+    }
+
+    increaseStatBasic(stat: PE.Stats, increment: number, attacker: Battler = undefined,
+      moldbreaker = false, ignoreContrary = false) {
+      if (!moldbreaker) {
+        if (!attacker || attacker.index == this.index || !attacker.hasMoldBreaker()) {
+          if (this.hasAbility('CONTRARY') && !ignoreContrary) {
+            return this.reduceStatBasic(stat, increment, attacker, moldbreaker, true)
+          }
+          if (this.hasAbility('SIMPLE')) increment *= 2;
+        }
+      }
+      increment = Math.min(increment, 6 - this.stages[stat]); // Why?
+      console.log(`[Stat change] ${this.name}'s ${PE.Stats.name(stat)} rose by ${increment} stage(s)`);
+      console.log(`${PE.Stats.name(stat)} stage: ${this.stages[stat]} --> ${this.stages[stat] + increment}`);
+      this.stages[stat] += increment;
+      return increment;
+    }
+
+    increaseStat(stat: PE.Stats, increment: number, attacker: Battler, showMessages: boolean,
+      move: any = undefined, animation: boolean = true, moldbreaker: boolean = false, ignoreContrary: boolean = false) {
+      if (!(stat in PE.Stats)) return false;
+      if (!moldbreaker) {
+        if (!attacker || attacker.index === this.index || !attacker.hasMoldBreaker()) {
+          if (this.hasAbility('CONTRARY') && !ignoreContrary) {
+            return this.reduceStat(stat, increment, attacker, showMessages, move, animation, moldbreaker, true);
+          }
+        }
+      }
+      if (this.canIncreaseStatStage(stat, attacker, showMessages, move, moldbreaker, ignoreContrary)) {
+        increment = this.increaseStatBasic(stat, increment, attacker, moldbreaker, ignoreContrary);
+        if (increment > 0) {
+          if (ignoreContrary) {
+            if (animation) $Battle.showMessage(i18n._("%1's %2 activated!", this.name, PE.Abilities.name(this.ability)));
+          }
+          // if (animation) $Battle.pbCommonAnimation("StatUp",self,nil);
+          let texts = [
+            i18n._("%1's %2 rose!", this.name, PE.Stats.name(stat)),
+            i18n._("%1's %2 rose sharply!", this.name, PE.Stats.name(stat)),
+            i18n._("%1's %2 rose drastically!", this.name, PE.Stats.name(stat))]
+          if (showMessages) $Battle.showMessage(texts[Math.min(increment - 1, 2)]);
+          return true
+        }
+      }
+      return false;
+    }
+
+    increaseStatWithCause(stat: PE.Stats, increment: number, attacker: Battler, cause: string, showanim = true,
+      showMessages = true, moldbreaker = false, ignoreContrary = false) {
+      if (!(stat in PE.Stats)) return false;
+      if (!moldbreaker) {
+        if (!attacker || attacker.index == this.index || !attacker.hasMoldBreaker()) {
+          if (this.hasAbility('CONTRARY') && !ignoreContrary) {
+            return this.reduceStatWithCause(stat, increment, attacker, cause, showanim, showMessages, moldbreaker, true);
+          }
+        }
+      }
+      if (this.canIncreaseStatStage(stat, attacker, false, undefined, moldbreaker, ignoreContrary)) {
+        increment = this.increaseStatBasic(stat, increment, attacker, moldbreaker, ignoreContrary);
+        if (increment > 0) {
+
+          if (ignoreContrary) {
+            if (showMessages) $Battle.showMessage(i18n._("%1's %2 activated!", this.name, PE.Abilities.name(this.ability)))
+          }
+          // if (showanim) @battle.pbCommonAnimation("StatUp",self,nil)
+          let texts = [];
+          if (attacker.index === this.index) {
+            texts = [
+              i18n._("%1's %2 raised its $3!", this.name, cause, PE.Stats.name(stat)),
+              i18n._("%1's %2 sharply raised its $3!", this.name, cause, PE.Stats.name(stat)),
+              i18n._("%1's %2 went way up!", this.name, PE.Stats.name(stat))
+            ]
+          }
+          else {
+            texts = [
+              i18n._("%1's %2 raised %3's %4!", attacker.name, cause, this.name, PE.Stats.name(stat)),
+              i18n._("%1's %2 sharply raised %3's %4!", attacker.name, cause, this.name, PE.Stats.name(stat)),
+              i18n._("%1's %2 drastically raised %3's %4!", attacker.name, cause, this.name, PE.Stats.name(stat))
+            ]
+          }
+          if (showMessages) $Battle.showMessage(texts[Math.min(increment - 1, 2)]);
+          return true;
+        }
+      }
+      return false;
+    }
+
+    //#endregion
+    //==================================================================================================================
+
+    //==================================================================================================================
+    //#region Decrease stat stages
+    tooLow(stat: PE.Stats) {
+      return this.stages[stat] <= -6;
+    }
+
+    /**
+     * Check if can decrease the stat stage
+     *
+     * Tickle (04A) and Noble Roar (13A) can't use this, but replicate it instead.
+     * (Reason is they lowers more than 1 stat independently, and therefore could
+     * show certain messages twice which is undesirable.)
+     * @param stat The stat to check
+     * @param attacker The Attacker pokémon
+     * @param showMessages Show Info messages
+     * @param move The move used
+     * @param moldbreaker
+     * @param ignoreContrary
+     */
+    canReduceStatStage(stat: PE.Stats, attacker: Battler = undefined, showMessages = false, move: any = undefined,
+      moldbreaker = false, ignoreContrary = false) {
+      if (this._fainted) return false;
+      if (!moldbreaker) {
+        if (!attacker || attacker.index === this.index || !attacker.hasMoldBreaker()) {
+          if (this.hasAbility('CONTRARY') && !ignoreContrary) {
+            return this.canIncreaseStatStage(stat, attacker, showMessages, move, moldbreaker, true)
+          }
+        }
+      }
+      let selfreduce = attacker && attacker.index === this.index;
+      if (!selfreduce) {
+        if (this.effects[PE.Effects.Substitute] > 0 && (!move || !move.ignoresSubstitute(attacker))) {
+          if (showMessages) $Battle.showMessage(i18n._("But it failed!"));
+          return false;
+        }
+        if (this.ownSide.effects[PE.Effects.Mist] > 0 && (!attacker || !attacker.hasAbility('INFILTRATOR'))) {
+          if (showMessages) $Battle.showMessage(i18n._("%1 is protected by Mist!", this.name));
+          return false;
+        }
+        if (!moldbreaker && (!attacker || !attacker.hasMoldBreaker())) {
+          if (this.hasAbilityIn(['CLEARBODY', 'WHITESMOKE'])) {
+            if (showMessages) {
+              let msg = "%1's %2 prevents stat loss!";
+              $Battle.showMessage(i18n._(msg, this.name, PE.Abilities.name(this.ability)));
+            }
+            return false;
+          }
+          if (this.hasType('GRASS')) {
+            if (this.hasAbility('FLOWERVEIL')) {
+              if (showMessages) {
+                let msg = "%1's %2 prevents stat loss!";
+                $Battle.showMessage(i18n._(msg, this.name, PE.Abilities.name(this.ability)));
+              }
+              return false;
+            }
+            else if (this.partner.hasAbility('FLOWERVEIL')) {
+              if (showMessages) {
+                let msg = "%1's %2 prevents %3's stat loss!";
+                $Battle.showMessage(i18n._(msg, this.partner.name, PE.Abilities.name(this.ability), this.name));
+              }
+              return false;
+            }
+          }
+          if (stat === PE.Stats.Attack && this.hasAbility('HYPERCUTTER')) {
+            if (showMessages) {
+              let msg = "%1's %2 prevents Attack loss!";
+              $Battle.showMessage(i18n._(msg, this.name, PE.Abilities.name(this.ability)));
+            }
+            return false;
+          }
+          if (stat === PE.Stats.Defense && this.hasAbility('BIGPECKS')) {
+            if (showMessages) {
+              let msg = "%1's %2 prevents Defence loss!";
+              $Battle.showMessage(i18n._(msg, this.name, PE.Abilities.name(this.ability)));
+            }
+            return false;
+          }
+          if (stat === PE.Stats.Accuracy && this.hasAbility('KEENEYE')) {
+            if (showMessages) {
+              let msg = "%1's %2 prevents Accuracy loss!";
+              $Battle.showMessage(i18n._(msg, this.name, PE.Abilities.name(this.ability)));
+            }
+          }
+          return false;
+        }
+      }
+      if (this.tooLow(stat)) {
+        if (showMessages) $Battle.showMessage(i18n._("%1's %2 won't go any lower!", this.name, PE.Stats.name(stat)));
+        return false;
+      }
+      return true;
+    }
+
+    reduceStatBasic(stat: PE.Stats, increment: number, attacker: Battler = undefined,
+      moldbreaker = false, ignoreContrary = false) {
+      // moldbreaker is true only when Roar forces out a Pokémon into Sticky Web
+      if (!moldbreaker) {
+        if (!attacker || attacker.index == this.index || !attacker.hasMoldBreaker()) {
+          if (this.hasAbility('CONTRARY') && !ignoreContrary) {
+            return this.increaseStatBasic(stat, increment, attacker, moldbreaker, true);
+          }
+          if (this.hasAbility('SIMPLE')) increment *= 2;
+        }
+      }
+      increment = Math.min(increment, 6 + this.stages[stat]);
+      console.log(`[Stat change] ${this.name}'s ${PE.Stats.name(stat)} fell by ${increment} stage(s)`);
+      console.log(`${PE.Stats.name(stat)} stage: ${this.stages[stat]} --> ${this.stages[stat] - increment}`)
+      this.stages[stat] -= increment;
+      return increment;
+    }
+
+    reduceStat(stat: PE.Stats, increment: number, attacker: Battler, showMessages: boolean,
+      move: any = undefined, downanim = true, moldbreaker = false, ignoreContrary = false) {
+      if (!(stat in PE.Stats)) return false;
+      if (!moldbreaker) {
+
+        if (!attacker || attacker.index === this.index || !attacker.hasMoldBreaker()) {
+          if (this.hasAbility('CONTRARY') && !ignoreContrary) {
+            return this.increaseStat(stat, increment, attacker, showMessages, move, downanim, moldbreaker, true)
+          }
+        }
+      }
+      if (this.canReduceStatStage(stat, attacker, showMessages, move, moldbreaker, ignoreContrary)) {
+        increment = this.reduceStatBasic(stat, increment, attacker, moldbreaker, ignoreContrary)
+        if (increment > 0) {
+          if (ignoreContrary) {
+            if (downanim) $Battle.showMessage(i18n._("%1's %2 activated!", this.name, PE.Abilities.name(this.ability)));
+          }
+          // $Battle.pbCommonAnimation("StatDown",self,nil) if downanim
+          let texts = [
+            i18n._("%1's %2 fell!", this.name, PE.Stats.name(stat)),
+            i18n._("%1's %2 harshly fell!", this.name, PE.Stats.name(stat)),
+            i18n._("%1's %2 severely fell!", this.name, PE.Stats.name(stat))]
+          if (showMessages) $Battle.showMessage(texts[Math.min(increment - 1, 2)])
+          // Defiant
+          if (this.hasAbility('DEFIANT') && (!attacker || attacker.isOpossing(this.index))) {
+            this.increaseStatWithCause(PE.Stats.Attack, 2, this, PE.Abilities.name(this.ability));
+          }
+          // Competitive
+          if (this.hasAbility('COMPETITIVE') && (!attacker || attacker.isOpossing(this.index))) {
+            this.increaseStatWithCause(PE.Stats.SpAtk, 2, this, PE.Abilities.name(this.ability))
+          }
+          return true;
+        }
+      }
+      return false;
+    }
+
+    reduceStatWithCause(stat: PE.Stats, increment: number, attacker: Battler, cause: string,
+      showanim = true, showMessages = true, moldbreaker = false, ignoreContrary = false) {
+      if (!(stat in PE.Stats)) return false;
+      if (!moldbreaker) {
+        if (!attacker || attacker.index === this.index || !attacker.hasMoldBreaker()) {
+          if (this.hasAbility('CONTRARY') && !ignoreContrary) {
+            return this.increaseStatWithCause(stat, increment, attacker, cause, showanim, showMessages, moldbreaker, true);
+          }
+        }
+      }
+      if (this.canReduceStatStage(stat, attacker, false, undefined, moldbreaker, ignoreContrary)) {
+        increment = this.reduceStatBasic(stat, increment, attacker, moldbreaker, ignoreContrary);
+        if (increment > 0) {
+          if (ignoreContrary) {
+
+            if (showMessages) $Battle.showMessage(i18n._("%1's %2 activated!", this.name, PE.Abilities.name(this.ability)));
+          }
+          // if (showanim) $Battle.pbCommonAnimation("StatDown",self,nil)
+          let texts = [];
+          if (attacker.index === this.index) {
+
+            texts = [
+              i18n._("%1's %2 lowered its %3!", this.name, cause, PE.Stats.name(stat)),
+              i18n._("%1's %2 harshly lowered its %3!", this.name, cause, PE.Stats.name(stat)),
+              i18n._("%1's %2 severely lowered its %3!", this.name, cause, PE.Stats.name(stat))
+            ]
+          }
+          else {
+            texts = [
+              i18n._("%1's %2 lowered %3's %4!", attacker.name, cause, this.name, PE.Stats.name(stat)),
+              i18n._("%1's %2 harshly lowered %3's %4!", attacker.name, cause, this.name, PE.Stats.name(stat)),
+              i18n._("%1's %2 severely lowered %3's %4!", attacker.name, cause, this.name, PE.Stats.name(stat))
+            ]
+          }
+          if (showMessages) $Battle.showMessage(texts[Math.min(increment - 1, 2)]);
+          // Defiant
+          if (this.hasAbility('DEFIANT') && (!attacker || attacker.isOpossing(this.index))) {
+            this.increaseStatWithCause(PE.Stats.Attack, 2, this, PE.Abilities.name(this.ability));
+          }
+          // Competitive
+          if (this.hasAbility('COMPETITIVE') && (!attacker || attacker.isOpossing(this.index))) {
+            this.increaseStatWithCause(PE.Stats.SpAtk, 2, this, PE.Abilities.name(this.ability))
+          }
+          return true
+        }
+      }
+      return false;
+    }
+
+    reduceAttackStatIntimidate(opponent: Battler) {
+      if (this._fainted) return false;
+      if (this.effects[PE.Effects.Substitute] > 0) {
+        let msg = "%1's substitute protected it from %2's %3!";
+        $Battle.showMessage(i18n._(msg, this.name, opponent.name, PE.Abilities.name(opponent.ability)))
+        return false;
+      }
+      if (!opponent.hasAbility('CONTRARY')) {
+        if (this.ownSide.effects[PE.Effects.Mist] > 0) {
+          let msg = "%1 is protected from %2's %3 by Mist!";
+          $Battle.showMessage(i18n._(msg, this.name, opponent.name, PE.Abilities.name(opponent.ability)))
+          return false;
+        }
+        if (this.hasAbilityIn(['CLEARBODY', 'WHITESMOKE', 'HYPERCUTTER']) || (this.hasAbility('FLOWERVEIL') && this.hasType('GRASS'))) {
+          let msg = "%1's %2 prevented %3's %4 from working!";
+          $Battle.showMessage(i18n._(msg, this.name, PE.Abilities.name(this.ability),
+            opponent.name, PE.Abilities.name(opponent.ability)))
+          return false;
+        }
+        if (this.partner.hasAbility('FLOWERVEIL') && this.hasType('GRASS')) {
+          let msg = "%1's %2 prevented %3's %4 from working!";
+          $Battle.showMessage(i18n._(msg, this.partner.name, PE.Abilities.name(this.partner.ability),
+            opponent.name, PE.Abilities.name(opponent.ability)))
+          return false
+        }
+      }
+      return this.reduceStatWithCause(PE.Stats.Attack, 1, opponent, PE.Abilities.name(opponent.ability))
+    }
+
 
     //#endregion
     //==================================================================================================================
