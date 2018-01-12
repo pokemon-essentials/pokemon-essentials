@@ -23,7 +23,7 @@ namespace PE.Abilities {
         // battler.battle.pbCommonAnimation("HeavyRain",null,null)
         let msg = "%1's %2 made a heavy rain begin to fall!";
         $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
-        console.log("[Ability triggered] ${this.name}'s Primordial Sea made it rain heavily");
+        console.log("[Ability triggered] ${pokemon.name}'s Primordial Sea made it rain heavily");
       }
       if (pokemon.hasAbility('DESOLATELAND') && $Battle.weather != PE.Weather.HarshSun) {
         $Battle.weather = PE.Weather.HarshSun;
@@ -31,7 +31,7 @@ namespace PE.Abilities {
         // battler.battle.pbCommonAnimation("HarshSun",null,null)
         let msg = "%!'s %2 turned the sunlight extremely harsh!"
         $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
-        console.log("[Ability triggered] ${this.name} Desolate Land made the sun shine harshly")
+        console.log("[Ability triggered] ${pokemon.name} Desolate Land made the sun shine harshly")
       }
       if (pokemon.hasAbility('DELTASTREAM') && $Battle.weather != PE.Weather.StrongWinds) {
         $Battle.weather = PE.Weather.StrongWinds;
@@ -39,7 +39,7 @@ namespace PE.Abilities {
         // battler.battle.pbCommonAnimation("StrongWinds",null,null)
         let msg = "%1's %2 caused a mysterious air current that protects Flying-type Pokémon!";
         $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
-        console.log("[Ability triggered] ${this.name} Delta Stream made an air current blow")
+        console.log("[Ability triggered] ${pokemon.name} Delta Stream made an air current blow")
       }
       if (!($Battle.weather in PE.PrimalWeather)) {
         if (pokemon.hasAbility('DRIZZLE') && ($Battle.weather !== PE.Weather.RainDance || $Battle.weatherduration !== -1)) {
@@ -49,7 +49,7 @@ namespace PE.Abilities {
           // battler.battle.pbCommonAnimation("Rain",null,null)
           let msg = "%1's %2 made it rain!";
           $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
-          console.log("[Ability triggered] ${this.name} Drizzle made it rain");
+          console.log("[Ability triggered] ${pokemon.name} Drizzle made it rain");
         }
         if (pokemon.hasAbility('DROUGHT') && ($Battle.weather !== PE.Weather.SunnyDay || $Battle.weatherduration !== -1)) {
           $Battle.weather = PE.Weather.SunnyDay;
@@ -58,7 +58,7 @@ namespace PE.Abilities {
           // battler.battle.pbCommonAnimation("Sunny",null,null)
           let msg = "%1's %2 intensified the sun's rays!";
           $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
-          console.log("[Ability triggered] ${this.name} Drought made it sunny")
+          console.log("[Ability triggered] ${pokemon.name} Drought made it sunny")
         }
         if (pokemon.hasAbility('SANDSTREAM') && ($Battle.weather !== PE.Weather.SandStorm || $Battle.weatherduration !== -1)) {
           $Battle.weather = PE.Weather.SandStorm;
@@ -67,7 +67,7 @@ namespace PE.Abilities {
           // battler.battle.pbCommonAnimation("Sandstorm",null,null)
           let msg = "%1's %2 whipped up a sandstorm!";
           $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
-          console.log("[Ability triggered] ${this.name} Sand Stream made it sandstorm")
+          console.log("[Ability triggered] ${pokemon.name} Sand Stream made it sandstorm")
         }
         if (pokemon.hasAbility('SNOWWARNING') && ($Battle.weather != PE.Weather.Hail || $Battle.weatherduration != -1)) {
           $Battle.weather = PE.Weather.Hail;
@@ -75,7 +75,7 @@ namespace PE.Abilities {
           if (pokemon.hasItem('ICYROCK')) $Battle.weatherduration = 8;
           // battler.battle.pbCommonAnimation("Hail",null,null)
           $Battle.showMessage(i18n._("%1's %2 made it hail!", pokemon.name, PE.Abilities.name(pokemon.ability)));
-          console.log("[Ability triggered] ${this.name} Snow Warning made it hail")
+          console.log("[Ability triggered] ${pokemon.name} Snow Warning made it hail")
         }
       }
       if (pokemon.hasAbility('AIRLOCK') || pokemon.hasAbility('CLOUDNINE')) {
@@ -86,12 +86,13 @@ namespace PE.Abilities {
     // #endregion
     //------------------------------------------------------------------------------------------------------------------
 
-    //------------------------------------------------------------------------------------------------------------------========
+    //------------------------------------------------------------------------------------------------------------------
     // Trace - When it enters a battle, the Pokémon copies an opposing Pokémon's Ability.
+    // Evaluate traced first will evaluate the abilities effect below when the swap is over
     if (pokemon.hasAbility('TRACE')) {
       let choices: PE.Battle.Battler[] = [];
-      for (const battler of $Battle.battlers) {
-        if (pokemon.isOpossing(battler)) {
+      for (const battler of $Battle.actives) {
+        if (pokemon.isOpposing(battler.index)) {
           if (!battler.hasAbilityIn(['TRACE', 'MULTITYPE', 'FLOWERGIFT', 'IMPOSTER', 'STANCECHANGE', 'RKSSYSTEMS',
             'ILLUSION', 'ZENMODE', 'STANGECHANGE', 'POWEROFALCHEMY', 'RECEIVER', 'SCHOOLING', 'COMATOSE', 'SHIELDDOWN',
             'DISGUISE', 'BATTLEBOND', 'POWERCONSTRUCT'])) {
@@ -103,7 +104,7 @@ namespace PE.Abilities {
         let choice = choices[Math.randomInt(choices.length)];
         pokemon.ability = choice.ability;
         $Battle.showMessage(i18n._("%1 traced %2's %3", pokemon.name, choice.name, PE.Abilities.name(choice.ability)));
-        console.log("[Ability triggered] ${this.name} Trace turned into #{abilityname} from #{battlername}");
+        console.log("[Ability triggered] ${pokemon.name} Trace turned into #{abilityname} from #{battlername}");
       }
     }
     //------------------------------------------------------------------------------------------------------------------
@@ -111,9 +112,9 @@ namespace PE.Abilities {
     //------------------------------------------------------------------------------------------------------------------
     // Intimidate - Intimidates opposing Pokémon upon entering battle, lowering their Attack stat.
     if (pokemon.hasAbility('INTIMIDATE') && onactive) {
-      console.log("[Ability triggered] ${this.name} Intimidate");
-      for (const battler of $Battle.battlers) {
-        if (pokemon.isOpossing(battler) && !battler.hasAbility('FULLMETALBODY')) {
+      console.log("[Ability triggered] ${pokemon.name} Intimidate");
+      for (const battler of $Battle.actives) {
+        if (pokemon.isOpposing(battler.index) && !battler.hasAbility('FULLMETALBODY')) {
           battler.reduceAttackStatIntimidate(pokemon);
         }
       }
@@ -125,19 +126,19 @@ namespace PE.Abilities {
     // whichever will be more effective.
     if (pokemon.hasAbility('DOWNLOAD') && onactive) {
       let odef = 0, ospd = 0;
-      for (const battler of $Battle.battlers) {
-        if (pokemon.isOpossing(battler)) {
+      for (const battler of $Battle.actives) {
+        if (pokemon.isOpposing(battler.index)) {
           odef += battler.defense;
           ospd += battler.spdef;
         }
       }
       if (ospd > odef) {
         if (pokemon.increaseStatWithCause(PE.Stats.Attack, 1, pokemon, PE.Abilities.name(pokemon.ability))) {
-          console.log(`[Ability triggered] ${this.name} Download (raising Attack)`);
+          console.log(`[Ability triggered] ${pokemon.name} Download (raising Attack)`);
         }
       } else {
         if (pokemon.increaseStatWithCause(PE.Stats.SpAtk, 1, pokemon, PE.Abilities.name(pokemon.ability))) {
-          console.log(`[Ability triggered] ${this.name} Download (raising SpAtk)`);
+          console.log(`[Ability triggered] ${pokemon.name} Download (raising SpAtk)`);
         }
       }
     }
@@ -146,9 +147,9 @@ namespace PE.Abilities {
     //------------------------------------------------------------------------------------------------------------------
     // Frisk - When it enters a battle, the Pokémon can check an opposing Pokémon's held item.
     if (pokemon.hasAbility('FRISK') && $Battle.ownedByPlayer(pokemon.index) && onactive) {
-      for (const battler of $Battle.battlers) {
-        if (pokemon.isOpossing(battler) && battler.item && !battler.isFainted()) {
-          console.log("[Ability triggered] ${this.name} Frisk")
+      for (const battler of $Battle.actives) {
+        if (pokemon.isOpposing(battler.index) && battler.item && !battler.isFainted()) {
+          console.log("[Ability triggered] ${pokemon.name} Frisk")
           $Battle.showMessage(i18n._(`%1 frisked the foe and found one %2!`, pokemon.name, PE.Items.name(battler.item)));
         }
       }
@@ -160,11 +161,11 @@ namespace PE.Abilities {
     if (pokemon.hasAbility('ANTICIPATION') && $Battle.ownedByPlayer(pokemon.index) && onactive) {
       console.log("[Ability triggered] #{pbThis} has Anticipation");
       let found = false;
-      for (const battler of $Battle.battlers) {
-        if (pokemon.isOpossing(battler) && !battler.isFainted()) {
+      for (const battler of $Battle.actives) {
+        if (pokemon.isOpposing(battler.index) && !battler.isFainted()) {
           for (const move of battler.moveset) {
             let effectiveness = PE.Types.effectiveness(move.type, pokemon.types, pokemon.effects[PE.Effects.Type3]);
-            if ((effectiveness => 2 && move.basePower > 0) || PE.Moves.isOHKOMove(move.id)) {
+            if ((effectiveness >= 2 && move.basePower > 0) || PE.Moves.isOHKOMove(move.id)) {
               found = true;
               break;
             }
@@ -173,7 +174,7 @@ namespace PE.Abilities {
         }
       }
       if (found) {
-        $Battle.showMessage(i18n._(`${pokemon.name} shuddered with anticipation!`));
+        $Battle.showMessage(i18n._("%1 shuddered with anticipation!", pokemon.name));
       }
     }
     //------------------------------------------------------------------------------------------------------------------
@@ -226,57 +227,57 @@ namespace PE.Abilities {
     //------------------------------------------------------------------------------------------------------------------
     // Pressure message
     if (pokemon.hasAbility('PRESSURE') && onactive) {
-      $Battle.showMessage(i18n._(`${pokemon.name} is exerting its pressure!`));
+      $Battle.showMessage(i18n._(`%1 is exerting its pressure!`, pokemon.name));
     }
     //------------------------------------------------------------------------------------------------------------------
 
     //------------------------------------------------------------------------------------------------------------------
     // Mold Breaker message
     if (pokemon.hasAbility('MOLDBREAKER') && onactive) {
-      $Battle.showMessage(i18n._(`${pokemon.name} breaks the mold!`));
+      $Battle.showMessage(i18n._(`%1 breaks the mold!`, pokemon.name));
     }
     //------------------------------------------------------------------------------------------------------------------
 
     //------------------------------------------------------------------------------------------------------------------
     // Turboblaze message
     if (pokemon.hasAbility('TURBOBLAZE') && onactive) {
-      $Battle.showMessage(i18n._(`${pokemon.name} is radiating a blazing aura!`));
+      $Battle.showMessage(i18n._(`%! is radiating a blazing aura!`, pokemon.name));
     }
     //------------------------------------------------------------------------------------------------------------------
 
     //------------------------------------------------------------------------------------------------------------------
     // Teravolt message
     if (pokemon.hasAbility('TERAVOLT') && onactive) {
-      $Battle.showMessage(i18n._(`${pokemon.name} is radiating a bursting aura!`));
+      $Battle.showMessage(i18n._(`%1 is radiating a bursting aura!`, pokemon.name));
     }
     //------------------------------------------------------------------------------------------------------------------
 
     //------------------------------------------------------------------------------------------------------------------
     // Dark Aura message
     if (pokemon.hasAbility('DARKAURA') && onactive) {
-      $Battle.showMessage(i18n._(`${pokemon.name} is radiating a dark aura!`));
+      $Battle.showMessage(i18n._(`%1 is radiating a dark aura!`, pokemon.name));
     }
     //------------------------------------------------------------------------------------------------------------------
 
     //------------------------------------------------------------------------------------------------------------------
     // Fairy Aura message
     if (pokemon.hasAbility('FAIRYAURA') && onactive) {
-      $Battle.showMessage(i18n._(`${pokemon.name} is radiating a fairy aura!`));
+      $Battle.showMessage(i18n._(`%1 is radiating a fairy aura!`, pokemon.name));
     }
     //------------------------------------------------------------------------------------------------------------------
 
     //------------------------------------------------------------------------------------------------------------------
     // Aura Break message
     if (pokemon.hasAbility('AURABREAK') && onactive) {
-      $Battle.showMessage(i18n._(`${pokemon.name} reversed all other Pokémon's auras!`))
+      $Battle.showMessage(i18n._(`%1 reversed all other Pokémon's auras!`, pokemon.name))
     }
     //------------------------------------------------------------------------------------------------------------------
 
     //------------------------------------------------------------------------------------------------------------------
     // Slow Start message
     if (pokemon.hasAbility('SLOWSTART') && onactive) {
-      let msg = `${pokemon.name} can't get it going because of its ${PE.Abilities.name(pokemon.ability)}!`;
-      $Battle.showMessage(i18n._(msg));
+      let msg = "%1 can't get it going because of its %2!";
+      $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
     }
     //------------------------------------------------------------------------------------------------------------------
 
@@ -298,9 +299,9 @@ namespace PE.Abilities {
     //      choice.effects[PBEffects::Substitute]>0 ||
     //      choice.effects[PBEffects::SkyDrop] ||
     //      blacklist.include?(PBMoveData.new(choice.effects[PBEffects::TwoTurnAttack]).function)
-    //     console.log("[Ability triggered] ${this.name} Imposter couldn't transform")
+    //     console.log("[Ability triggered] ${pokemon.name} Imposter couldn't transform")
     //   else
-    //     console.log("[Ability triggered] ${this.name} Imposter")
+    //     console.log("[Ability triggered] ${pokemon.name} Imposter")
     //     $Battle.pbAnimation(getConst(PBMoves,:TRANSFORM),self,choice)
     //     @effects[PBEffects::Transform]=true
     //     @type1=choice.type1
@@ -332,7 +333,7 @@ namespace PE.Abilities {
     //------------------------------------------------------------------------------------------------------------------
     // Air Balloon message
     if (pokemon.hasItem('AIRBALLOON') && onactive) {
-      $Battle.showMessage(i18n._(`${pokemon.name} floats in the air with its ${PE.Items.name(pokemon.item)}!`));
+      $Battle.showMessage(i18n._("%1 floats in the air with its %2!", pokemon.name, PE.Items.name(pokemon.item)));
     }
     //------------------------------------------------------------------------------------------------------------------
 

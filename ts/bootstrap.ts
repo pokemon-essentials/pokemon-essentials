@@ -31,5 +31,6 @@ Scene_Title.prototype.commandNewGame = function () {
   this._commandWindow.close();
   this.fadeOutAll();
   SceneManager.goto(PE.Battle.Scene_Battle);
-  SceneManager.prepareNextScene(PE.Pokemon.getRandomPokemon(), PE.Pokemon.getRandomPokemon());
+  SceneManager.prepareNextScene(new PE.Pokemon.Pokemon("PORYGON", 100), new PE.Pokemon.Pokemon("ARCANINE", 100));
+  // SceneManager.prepareNextScene(PE.Pokemon.getRandomPokemon(), PE.Pokemon.getRandomPokemon());
 };

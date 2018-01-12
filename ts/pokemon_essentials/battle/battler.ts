@@ -46,7 +46,8 @@ namespace PE.Battle {
     level: number;
     movesUsed: {};
     moveset: any[];
-    ownSide: PE.Battle.ActiveSide;
+    ownSide: PE.Battle.ActiveSide = undefined;
+    foeSide: PE.Battle.ActiveSide = undefined;
     participants: any[];
     species: string;
     statusCount: number;
@@ -56,7 +57,7 @@ namespace PE.Battle {
     turncount: number;
     types: string[];
 
-    partner: Battler;
+    // partner: Battler;
 
     constructor(pokemon: PE.Pokemon.Pokemon, public index: number) {
       this.battle = this.battle;
@@ -99,13 +100,13 @@ namespace PE.Battle {
     initEffects(batonpass: boolean) {
       if (!batonpass) {
         // These effects are retained if Baton Pass is used
-        this.stages['ATTACK'] = 0;
-        this.stages['DEFENSE'] = 0;
-        this.stages['SPEED'] = 0;
-        this.stages['SPATK'] = 0;
-        this.stages['SPDEF'] = 0;
-        this.stages['EVASION'] = 0;
-        this.stages['ACCURACY'] = 0;
+        this.stages[PE.Stats.Attack] = 0;
+        this.stages[PE.Stats.Defense] = 0;
+        this.stages[PE.Stats.Speed] = 0;
+        this.stages[PE.Stats.SpAtk] = 0;
+        this.stages[PE.Stats.SpDef] = 0;
+        this.stages[PE.Stats.Evasion] = 0;
+        this.stages[PE.Stats.Accuracy] = 0;
 
         this.lastMoveUsedSketch = -1;
         this.effects[PE.Effects.AquaRing] = false;
@@ -119,7 +120,7 @@ namespace PE.Battle {
         this.effects[PE.Effects.LeechSeed] = -1;
         this.effects[PE.Effects.LockOn] = 0;
         this.effects[PE.Effects.LockOnPos] = -1;
-        for (const battler of $Battle.battlers) {
+        for (const battler of $Battle.actives) {
           if (battler.effects[PE.Effects.LockOnPos] === this.index && battler.effects[PE.Effects.LockOn] > 0) {
             battler.effects[PE.Effects.LockOn] = 0;
             battler.effects[PE.Effects.LockOnPos] = -1;
@@ -154,7 +155,7 @@ namespace PE.Battle {
       this.movesUsed = {};
       this.turncount = 0;
       this.effects[PE.Effects.Attract] = -1;
-      for (const battler of $Battle.battlers) {
+      for (const battler of $Battle.actives) {
         if (battler.effects[PE.Effects.Attract] === this.index) {
           battler.effects[PE.Effects.Attract] = -1;
         }
@@ -194,7 +195,7 @@ namespace PE.Battle {
       this.effects[PE.Effects.LifeOrb] = false;
       this.effects[PE.Effects.MagicCoat] = false;
       this.effects[PE.Effects.MeanLook] = -1;
-      for (const battler of $Battle.battlers) {
+      for (const battler of $Battle.actives) {
         if (battler.effects[PE.Effects.MeanLook] === this.index) battler.effects[PE.Effects.MeanLook] = -1;
       }
       this.effects[PE.Effects.MeFirst] = false;
@@ -209,7 +210,7 @@ namespace PE.Battle {
       this.effects[PE.Effects.MultiTurn] = 0;
       this.effects[PE.Effects.MultiTurnAttack] = 0;
       this.effects[PE.Effects.MultiTurnUser] = -1;
-      for (const battler of $Battle.battlers) {
+      for (const battler of $Battle.actives) {
         if (battler.effects[PE.Effects.MultiTurnUser] === this.index) {
           battler.effects[PE.Effects.MultiTurn] = 0;
           battler.effects[PE.Effects.MultiTurnUser] = -1;
@@ -300,7 +301,7 @@ namespace PE.Battle {
 
     get speed() {
       let speed = this._speed;
-      speed = Math.floor(speed * STAGE_MULT[this.stages['SPEED']]);
+      speed = Math.floor(speed * STAGE_MULT[this.stages[PE.Stats.Speed]]);
       let speedmod = 1;
       if (($Battle.weather === PE.Weather.RainDance || $Battle.weather === PE.Weather.HeavyRain) && this.hasAbility('SWIFTSWIM')) {
         speedmod *= 2;
@@ -352,7 +353,7 @@ namespace PE.Battle {
         if ($Battle.opponent()) return i18n._("the opposing %1", this._name);
         return i18n._("the wild %1", this._name);
       } else {
-        if ($Battle.ownedByPlayer(this.index)) return this.name;
+        if ($Battle.ownedByPlayer(this.index)) return this._name;
         return i18n._("the ally %1", this._name);
       }
     }
@@ -414,7 +415,12 @@ namespace PE.Battle {
       return this.hp <= 0;
     }
 
-    isOpossing(pokemon) { }
+    isOpposing(index) {
+      for (const foeindex of this.foeSide.battlers) {
+        if (foeindex === index) return true;
+      }
+      return false;
+    }
 
     /** Check if the Pokémon touch the field. */
     isAirborne(ignoreability: boolean) {
@@ -470,7 +476,7 @@ namespace PE.Battle {
       }
       // uproar
       if ((attacker && attacker.hasMoldBreaker()) || !this.hasAbility('SOUNDPROOF')) {
-        for (const battler of $Battle.battlers) {
+        for (const battler of $Battle.actives) {
           if (battler.effects[PE.Effects.Uproar] > 0) {
             if (showMessages) $Battle.showMessage(i18n._(`But the uproar kept %1 awake!`, this.name));
             return false
@@ -499,7 +505,7 @@ namespace PE.Battle {
     canSleepYawn() {
       if (this.status !== PE.Statuses.Healthy) return false;
       if (!this.hasAbility('SOUNDPROOF')) {
-        for (const battler of $Battle.battlers) {
+        for (const battler of $Battle.actives) {
           if (battler.effects[PE.Effects.Uproar] > 0) return false;
         }
       }
@@ -888,8 +894,8 @@ namespace PE.Battle {
           let texts = [];
           if (attacker.index === this.index) {
             texts = [
-              i18n._("%1's %2 raised its $3!", this.name, cause, PE.Stats.name(stat)),
-              i18n._("%1's %2 sharply raised its $3!", this.name, cause, PE.Stats.name(stat)),
+              i18n._("%1's %2 raised its %3!", this.name, cause, PE.Stats.name(stat)),
+              i18n._("%1's %2 sharply raised its %3!", this.name, cause, PE.Stats.name(stat)),
               i18n._("%1's %2 went way up!", this.name, PE.Stats.name(stat))
             ]
           }
@@ -992,8 +998,8 @@ namespace PE.Battle {
               let msg = "%1's %2 prevents Accuracy loss!";
               $Battle.showMessage(i18n._(msg, this.name, PE.Abilities.name(this.ability)));
             }
+            return false;
           }
-          return false;
         }
       }
       if (this.tooLow(stat)) {
@@ -1045,11 +1051,11 @@ namespace PE.Battle {
             i18n._("%1's %2 severely fell!", this.name, PE.Stats.name(stat))]
           if (showMessages) $Battle.showMessage(texts[Math.min(increment - 1, 2)])
           // Defiant
-          if (this.hasAbility('DEFIANT') && (!attacker || attacker.isOpossing(this.index))) {
+          if (this.hasAbility('DEFIANT') && (!attacker || attacker.isOpposing(this.index))) {
             this.increaseStatWithCause(PE.Stats.Attack, 2, this, PE.Abilities.name(this.ability));
           }
           // Competitive
-          if (this.hasAbility('COMPETITIVE') && (!attacker || attacker.isOpossing(this.index))) {
+          if (this.hasAbility('COMPETITIVE') && (!attacker || attacker.isOpposing(this.index))) {
             this.increaseStatWithCause(PE.Stats.SpAtk, 2, this, PE.Abilities.name(this.ability))
           }
           return true;
@@ -1094,11 +1100,11 @@ namespace PE.Battle {
           }
           if (showMessages) $Battle.showMessage(texts[Math.min(increment - 1, 2)]);
           // Defiant
-          if (this.hasAbility('DEFIANT') && (!attacker || attacker.isOpossing(this.index))) {
+          if (this.hasAbility('DEFIANT') && (!attacker || attacker.isOpposing(this.index))) {
             this.increaseStatWithCause(PE.Stats.Attack, 2, this, PE.Abilities.name(this.ability));
           }
           // Competitive
-          if (this.hasAbility('COMPETITIVE') && (!attacker || attacker.isOpossing(this.index))) {
+          if (this.hasAbility('COMPETITIVE') && (!attacker || attacker.isOpposing(this.index))) {
             this.increaseStatWithCause(PE.Stats.SpAtk, 2, this, PE.Abilities.name(this.ability))
           }
           return true
@@ -1140,6 +1146,10 @@ namespace PE.Battle {
     //#endregion
     //==================================================================================================================
 
+
+    get partner() {
+      return this;
+    }
 
   }
 }

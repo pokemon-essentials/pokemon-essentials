@@ -1,7 +1,12 @@
 namespace PE.Battle {
   export class ActiveSide {
+    battlers: number[];
+    /** The indexes of active Pokémon in Battle of this side */
+    actives: number[];
     effects: {};
     constructor() {
+      this.actives = [];
+      this.battlers = [];
       this.effects = {};
       this.effects[PE.Effects.CraftyShield] = false;
       this.effects[PE.Effects.EchoedVoiceCounter] = 0;

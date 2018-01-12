@@ -14,6 +14,16 @@ namespace PE {
 
 namespace PE.Stats {
   export function name(stat: PE.Stats) {
-    return stat;
+    let names = [
+      i18n._('HP'),
+      i18n._('Attack'),
+      i18n._('Defense'),
+      i18n._('Speed'),
+      i18n._('SpAtk'),
+      i18n._('SpDef'),
+      i18n._('Accuracy'),
+      i18n._('Evasion'),
+    ]
+    return names[stat];
   }
 }

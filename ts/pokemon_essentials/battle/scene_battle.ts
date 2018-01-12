@@ -20,9 +20,10 @@ namespace PE.Battle {
 
     start() {
       super.start();
-      $Battle.setup();
+      $Battle.setup([new PE.Trainers.Trainer([this.partyPokemon])], [new PE.Trainers.Trainer([this.foePokemon])]);
       $Battle.showPausedMessage(i18n._('A wild %1 has apeared!', this.foePokemon.name));
       $Battle.showMessage(i18n._('Go %1!', this.partyPokemon.name));
+      $Battle.start();
       $Battle.changePhase(PE.Battle.Phase.ActionSelection);
     }
 
@@ -39,6 +40,7 @@ namespace PE.Battle {
     }
 
     terminate() {
+    $gameMessage.clear();
       super.terminate();
     }
 
