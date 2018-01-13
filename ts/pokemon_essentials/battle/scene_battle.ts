@@ -1,5 +1,25 @@
 namespace PE.Battle {
 
+  class AbilitySing extends Sprite {
+    ticks: number;
+    constructor(public ability: string) {
+      super(new Bitmap(224, 32));
+      this.bitmap.fontSize = 20;
+      this.bitmap.fillAll('rgba(0,0,0,0.7)');
+      this.bitmap.drawText(PE.Abilities.name(ability), 0, 0, 224, 32, 'center');
+      this.ticks = 0;
+    }
+
+    update() {
+      super.update();
+      this.ticks++;
+      if (this.ticks > 60) {
+        $Battle.waitMode = PE.Battle.WaitMode.None;
+        this.destroy();
+      }
+    }
+  }
+
   export class Scene_Battle extends Scene_Base {
     message: Window_Message;
     foePokemon: Pokemon.Pokemon;
@@ -21,6 +41,7 @@ namespace PE.Battle {
     start() {
       super.start();
       $Battle.setup([new PE.Trainers.Trainer([this.partyPokemon])], [new PE.Trainers.Trainer([this.foePokemon])]);
+      $Battle.scene = this;
       $Battle.showPausedMessage(i18n._('A wild %1 has apeared!', this.foePokemon.name));
       $Battle.showMessage(i18n._('Go %1!', this.partyPokemon.name));
       $Battle.start();
@@ -40,7 +61,7 @@ namespace PE.Battle {
     }
 
     terminate() {
-    $gameMessage.clear();
+      $Battle.terminate();
       super.terminate();
     }
 
@@ -94,6 +115,17 @@ namespace PE.Battle {
       f.anchor.x = 0.5;
       f.anchor.y = 1;
       this.addChild(f);
+    }
+
+
+    showAbilityIndicator(ability: string, foeSide: boolean) {
+      let x = 0;
+      let y = 192;
+      if (foeSide) { x = Graphics.width - 224; y = 96; }
+      let sing = new AbilitySing(ability);
+      sing.x = x;
+      sing.y = y;
+      this.addChild(sing);
     }
   }
 }

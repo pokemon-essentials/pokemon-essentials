@@ -247,7 +247,7 @@ namespace PE.Battle {
       this.effects[PE.Effects.Transform] = false;
       this.effects[PE.Effects.Truant] = false;
       this.effects[PE.Effects.TwoTurnAttack] = 0;
-      this.effects[PE.Effects.Type3] = -1;
+      this.effects[PE.Effects.Type3] = undefined;
       this.effects[PE.Effects.Unburden] = false;
       this.effects[PE.Effects.Uproar] = 0;
       this.effects[PE.Effects.Uturn] = false;

@@ -6,9 +6,10 @@ namespace PE.Battle {
   interface IBattleEvent { name: string, params: any[] };
 
   export const enum Phase { None, Init, ActionSelection, MoveSelection };
-  export const enum WaitMode { None, Animation };
+  export const enum WaitMode { None, Animation, AbilitySing };
 
   export abstract class Manager {
+    static scene: PE.Battle.Scene_Battle;
     /** All the Pokémon of all Trainers used deternime it's unique index */
     static battlers: any[];
     static choices: any[];
@@ -72,6 +73,7 @@ namespace PE.Battle {
     }
 
     static start() {
+      console.log("Battle Start");
       let priority = this.getPriority();
       for (const index of priority) {
         PE.Abilities.onSwitchInEffects(this.battlers[index], true);
@@ -95,6 +97,15 @@ namespace PE.Battle {
       if (this._queue.length <= 0) return;
       let method = this._queue.shift();
       method.apply(this);
+    }
+
+    static terminate() {
+      this.clear();
+      console.log("Battle End");
+    }
+
+    static clear() {
+      this._queue = [];
     }
 
     static showMessage(msg: string) {
@@ -191,6 +202,20 @@ namespace PE.Battle {
         }
       } while (swapped);
       return priorityQueue;
+    }
+
+
+    static showAbilityIndicator(pokemon: PE.Battle.Battler) {
+      let ability = pokemon.ability;
+      this.push(() => {
+        let foe = this.isOpposing(pokemon.index);
+        this.scene.showAbilityIndicator(ability, foe);
+        this.waitMode = WaitMode.AbilitySing;
+      });
+    }
+
+    static changeWaitMode(mode: WaitMode) {
+      this.waitMode = mode;
     }
 
 
