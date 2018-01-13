@@ -55,7 +55,7 @@ namespace PE.Sprites {
       let path = 'img/battlers/';
       if (this.facing === BattlersFacing.Front) path += 'front';
       if (this.facing === BattlersFacing.Back) path += 'back';
-      if (this.pokemon.shiny) path += 'shiny';
+      if (this.pokemon.shiny) path += '-shiny';
       path += '/';
       this.bitmap = ImageManager.loadBitmap(path, pokemon.species.toLowerCase(), undefined, undefined);
       this.bitmap.addLoadListener(this.grenerateFrames.bind(this));

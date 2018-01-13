@@ -1,6 +1,6 @@
 namespace PE.Battle {
 
-  class AbilitySing extends Sprite {
+  class AbilityIndicator extends Sprite {
     ticks: number;
     constructor(public ability: string) {
       super(new Bitmap(224, 32));
@@ -17,6 +17,92 @@ namespace PE.Battle {
         $Battle.waitMode = PE.Battle.WaitMode.None;
         this.destroy();
       }
+    }
+  }
+
+  class HPBar extends Sprite {
+    indicator: Sprite;
+    expbar: Sprite;
+    expbox: Sprite;
+    text: Sprite;
+    bar: Sprite;
+    box: Sprite;
+    constructor(public pokemon: PE.Pokemon.Pokemon, public _x: number, public _y: number, public foe: boolean) {
+      super();
+
+      // this.currentHP = this.pokemon.hp;
+      // this.__damage = 0;
+      // this.__heal = 0;
+
+      this.create();
+
+      // this.animate = false;
+      // this.completeCallbacks = [];
+    }
+
+    create() {
+      this.box = new Sprite();
+      this.box.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'hp_box', undefined, undefined);
+      this.box.x = this._x;
+      this.box.y = this._y;
+      this.addChild(this.box);
+
+      this.bar = new Sprite();
+      this.bar.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'hp_bar', undefined, undefined);
+      this.bar.x = this._x;
+      this.bar.y = this._y;
+      this.addChild(this.bar);
+
+      this.text = new Sprite(new Bitmap(Graphics.width, Graphics.height));
+      this.text.x = 0;
+      this.text.y = 0;
+
+      this.text.bitmap.fontSize = 24;
+      this.text.bitmap.outlineWidth = 4;
+      this.text.bitmap.textColor = "#fff";
+      this.text.bitmap.drawText(this.pokemon.name, this._x, this._y - 26, Graphics.width, 24, 'left');
+
+      this.text.bitmap.fontSize = 18;
+      this.text.bitmap.textColor = "#ff0";
+      let w1 = this.text.bitmap.measureTextWidth(`Lv. ${this.pokemon.level}`);
+      this.text.bitmap.drawText('Lv. ', this._x + (192 - w1), this._y - 24, Graphics.width, 24, 'left');
+      this.text.bitmap.textColor = "#fff";
+      let w2 = this.text.bitmap.measureTextWidth(`${this.pokemon.level}`);
+      this.text.bitmap.drawText(`${this.pokemon.level}`, this._x + (192 - w2), this._y - 24, Graphics.width, 24, 'left');
+      if (this.pokemon.gender !== "N") {
+        if (this.pokemon.gender === "M") {
+          let w3 = this.text.bitmap.measureTextWidth('♂ ');
+          this.text.bitmap.textColor = "#00bdf7";
+          this.text.bitmap.drawText('♂', this._x + (192 - w1 - w3), this._y - 24, Graphics.width, 24, 'left');
+        } else {
+          let w3 = this.text.bitmap.measureTextWidth('♀ ');
+          this.text.bitmap.textColor = "#ff3142";
+          this.text.bitmap.drawText('♀', this._x + (192 - w1 - w3), this._y - 24, Graphics.width, 24, 'left');
+        }
+      }
+
+      if (!this.foe) {
+        this.expbox = new Sprite();
+        this.expbox.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'exp_box', undefined, undefined);
+        this.expbox.x = this._x;
+        this.expbox.y = this.box.y + 26;
+        this.addChild(this.expbox);
+
+        this.expbar = new Sprite();
+        this.expbar.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'exp_bar', undefined, undefined);
+        this.expbar.x = this._x;
+        this.expbar.y = this.box.y + 26;
+        this.expbar.setFrame(0, 0, 62, 8);
+        this.addChild(this.expbar);
+
+        this.indicator = new Sprite(new Bitmap(Graphics.height, Graphics.width));
+        this.indicator.bitmap.textColor = "#fff";
+        this.indicator.bitmap.fontSize = 18;
+        this.indicator.bitmap.drawText(`${this.pokemon.hp}/${this.pokemon.hp}`, this._x + 32, this.box.y + 8, 200, 24, 'left');
+        this.addChild(this.indicator);
+      }
+
+      this.addChild(this.text);
     }
   }
 
@@ -94,6 +180,17 @@ namespace PE.Battle {
     }
 
     createBattlers() {
+      let fx = Graphics.width - 96;
+      let fy = 240
+      let f = new PE.Sprites.Battler(this.foePokemon, PE.Sprites.BattlersFacing.Front);
+      f.x = fx;
+      f.y = fy;
+      f.scale.x = 2;
+      f.scale.y = 2;
+      f.anchor.x = 0.5;
+      f.anchor.y = 1;
+      this.addChild(f);
+
       let px = 96;
       let py = Graphics.height;
       let a = new PE.Sprites.Battler(this.partyPokemon, PE.Sprites.BattlersFacing.Back);
@@ -105,16 +202,11 @@ namespace PE.Battle {
       a.anchor.y = 1;
       this.addChild(a);
 
-      let fx = Graphics.width - 96;
-      let fy = 240
-      let f = new PE.Sprites.Battler(this.foePokemon, PE.Sprites.BattlersFacing.Front);
-      f.x = fx;
-      f.y = fy;
-      f.scale.x = 2;
-      f.scale.y = 2;
-      f.anchor.x = 0.5;
-      f.anchor.y = 1;
-      this.addChild(f);
+      let h = new HPBar(this.partyPokemon, 16, Graphics.height - 64, false);
+      this.addChild(h);
+
+      let h2 = new HPBar(this.foePokemon, Graphics.width - 208, 48, true);
+      this.addChild(h2);
     }
 
 
@@ -122,7 +214,7 @@ namespace PE.Battle {
       let x = 0;
       let y = 192;
       if (foeSide) { x = Graphics.width - 224; y = 96; }
-      let sing = new AbilitySing(ability);
+      let sing = new AbilityIndicator(ability);
       sing.x = x;
       sing.y = y;
       this.addChild(sing);
