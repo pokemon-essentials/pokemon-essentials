@@ -17,8 +17,8 @@ namespace PE.Abilities {
     //------------------------------------------------------------------------------------------------------------------
     // #region Wheaters abilities
     if (onactive) {
-      if (pokemon.hasAbility('PRIMORDIALSEA') && $Battle.weather != PE.Weather.HeavyRain) {
-        $Battle.weather = PE.Weather.HeavyRain;
+      if (pokemon.hasAbility('PRIMORDIALSEA') && $Battle.weather != PE.Weathers.HeavyRain) {
+        $Battle.weather = PE.Weathers.HeavyRain;
         $Battle.weatherduration = -1;
         $Battle.showAbilityIndicator(pokemon);
         // battler.battle.pbCommonAnimation("HeavyRain",null,null)
@@ -26,8 +26,8 @@ namespace PE.Abilities {
         $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
         console.log(`[Ability triggered] ${pokemon.name}'s Primordial Sea made it rain heavily`);
       }
-      if (pokemon.hasAbility('DESOLATELAND') && $Battle.weather != PE.Weather.HarshSun) {
-        $Battle.weather = PE.Weather.HarshSun;
+      if (pokemon.hasAbility('DESOLATELAND') && $Battle.weather != PE.Weathers.HarshSun) {
+        $Battle.weather = PE.Weathers.HarshSun;
         $Battle.weatherduration = -1;
         $Battle.showAbilityIndicator(pokemon);
         // battler.battle.pbCommonAnimation("HarshSun",null,null)
@@ -35,8 +35,8 @@ namespace PE.Abilities {
         $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
         console.log(`[Ability triggered] ${pokemon.name} Desolate Land made the sun shine harshly`);
       }
-      if (pokemon.hasAbility('DELTASTREAM') && $Battle.weather != PE.Weather.StrongWinds) {
-        $Battle.weather = PE.Weather.StrongWinds;
+      if (pokemon.hasAbility('DELTASTREAM') && $Battle.weather != PE.Weathers.StrongWinds) {
+        $Battle.weather = PE.Weathers.StrongWinds;
         $Battle.weatherduration = -1;
         $Battle.showAbilityIndicator(pokemon);
         // battler.battle.pbCommonAnimation("StrongWinds",null,null)
@@ -45,8 +45,8 @@ namespace PE.Abilities {
         console.log(`[Ability triggered] ${pokemon.name} Delta Stream made an air current blow`);
       }
       if (!($Battle.weather in PE.PrimalWeather)) {
-        if (pokemon.hasAbility('DRIZZLE') && ($Battle.weather !== PE.Weather.RainDance || $Battle.weatherduration !== -1)) {
-          $Battle.weather = PE.Weather.RainDance;
+        if (pokemon.hasAbility('DRIZZLE') && ($Battle.weather !== PE.Weathers.RainDance || $Battle.weatherduration !== -1)) {
+          $Battle.weather = PE.Weathers.RainDance;
           $Battle.weatherduration = 5;
           if (pokemon.hasItem('DAMPROCK')) $Battle.weatherduration = 8;
           $Battle.showAbilityIndicator(pokemon);
@@ -55,8 +55,8 @@ namespace PE.Abilities {
           $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
           console.log(`[Ability triggered] ${pokemon.name} Drizzle made it rain`);
         }
-        if (pokemon.hasAbility('DROUGHT') && ($Battle.weather !== PE.Weather.SunnyDay || $Battle.weatherduration !== -1)) {
-          $Battle.weather = PE.Weather.SunnyDay;
+        if (pokemon.hasAbility('DROUGHT') && ($Battle.weather !== PE.Weathers.SunnyDay || $Battle.weatherduration !== -1)) {
+          $Battle.weather = PE.Weathers.SunnyDay;
           $Battle.weatherduration = 5;
           if (pokemon.hasItem('HEATROCK')) $Battle.weatherduration = 8;
           $Battle.showAbilityIndicator(pokemon);
@@ -65,8 +65,8 @@ namespace PE.Abilities {
           $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
           console.log(`[Ability triggered] ${pokemon.name} Drought made it sunny`);
         }
-        if (pokemon.hasAbility('SANDSTREAM') && ($Battle.weather !== PE.Weather.SandStorm || $Battle.weatherduration !== -1)) {
-          $Battle.weather = PE.Weather.SandStorm;
+        if (pokemon.hasAbility('SANDSTREAM') && ($Battle.weather !== PE.Weathers.SandStorm || $Battle.weatherduration !== -1)) {
+          $Battle.weather = PE.Weathers.SandStorm;
           $Battle.weatherduration = 5;
           if (pokemon.hasItem('SMOOTHROCK')) $Battle.weatherduration = 8;
           $Battle.showAbilityIndicator(pokemon);
@@ -75,8 +75,8 @@ namespace PE.Abilities {
           $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
           console.log(`[Ability triggered] ${pokemon.name} Sand Stream made it sandstorm`);
         }
-        if (pokemon.hasAbility('SNOWWARNING') && ($Battle.weather != PE.Weather.Hail || $Battle.weatherduration != -1)) {
-          $Battle.weather = PE.Weather.Hail;
+        if (pokemon.hasAbility('SNOWWARNING') && ($Battle.weather != PE.Weathers.Hail || $Battle.weatherduration != -1)) {
+          $Battle.weather = PE.Weathers.Hail;
           $Battle.weatherduration = 5;
           if (pokemon.hasItem('ICYROCK')) $Battle.weatherduration = 8;
           $Battle.showAbilityIndicator(pokemon);

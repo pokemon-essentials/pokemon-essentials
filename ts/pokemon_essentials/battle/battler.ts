@@ -303,13 +303,13 @@ namespace PE.Battle {
       let speed = this._speed;
       speed = Math.floor(speed * STAGE_MULT[this.stages[PE.Stats.Speed]]);
       let speedmod = 1;
-      if (($Battle.weather === PE.Weather.RainDance || $Battle.weather === PE.Weather.HeavyRain) && this.hasAbility('SWIFTSWIM')) {
+      if (($Battle.weather === PE.Weathers.RainDance || $Battle.weather === PE.Weathers.HeavyRain) && this.hasAbility('SWIFTSWIM')) {
         speedmod *= 2;
       }
-      if (($Battle.weather === PE.Weather.SunnyDay || $Battle.weather === PE.Weather.HarshSun) && this.hasAbility('CHLOROPHYLL')) {
+      if (($Battle.weather === PE.Weathers.SunnyDay || $Battle.weather === PE.Weathers.HarshSun) && this.hasAbility('CHLOROPHYLL')) {
         speedmod *= 2;
       }
-      if ($Battle.weather === PE.Weather.SandStorm && this.hasAbility('SANDRUSH')) {
+      if ($Battle.weather === PE.Weathers.SandStorm && this.hasAbility('SANDRUSH')) {
         speedmod *= 2;
       }
       if (this.hasAbility('QUICKFEET') && this.status !== PE.Statuses.Healthy) {
@@ -487,7 +487,7 @@ namespace PE.Battle {
       if (!attacker || selfSleep || !attacker.hasMoldBreaker()) {
         if (this.hasAbilityIn(['VITALSPIRIT', 'INSOMIA', 'SWEETVEIL']) ||
           (this.hasAbility('FLOWERVEIL') && this.hasType('GRASS')) ||
-          [PE.Weather.SunnyDay, PE.Weather.HarshSun].contains($Battle.weather)) {
+          [PE.Weathers.SunnyDay, PE.Weathers.HarshSun].contains($Battle.weather)) {
           let msg = `%1 stayed awake using its %2!`;
           if (showMessages) $Battle.showMessage(i18n._(msg, this.name, PE.Abilities.name(this.ability)));
           return false;
@@ -514,8 +514,8 @@ namespace PE.Battle {
           || $Battle.field.effects[PE.Effects.MistyTerrain] > 0) return false;
       }
       if (this.hasAbilityIn(['VITALSPIRIT', 'INSOMNIA', 'SWEETVEIL']) ||
-        (this.hasAbility('LEAFGUARD') && ($Battle.weather == PE.Weather.SunnyDay ||
-          $Battle.weather == PE.Weather.HarshSun)))
+        (this.hasAbility('LEAFGUARD') && ($Battle.weather == PE.Weathers.SunnyDay ||
+          $Battle.weather == PE.Weathers.HarshSun)))
         return false;
       // return false if this.partner.this.hasAbility(:SWEETVEIL)
       return true;
@@ -605,8 +605,8 @@ namespace PE.Battle {
       }
       if (!attacker || !attacker.hasMoldBreaker()) {
         if (this.hasAbility('IMMUNITY') || (this.hasAbility('FLOWERVEIL') && this.hasType('GRASS')) ||
-          (this.hasAbility('LEAFGUARD') && ($Battle.weather === PE.Weather.SunnyDay ||
-            $Battle.weather === PE.Weather.HarshSun))) {
+          (this.hasAbility('LEAFGUARD') && ($Battle.weather === PE.Weathers.SunnyDay ||
+            $Battle.weather === PE.Weathers.HarshSun))) {
           let m = "%1's %2 prevents poisoning!";
           if (showMessages) $Battle.showMessage(i18n._(m, this.name, PE.Abilities.name(this.ability)));
           return false;
@@ -636,8 +636,8 @@ namespace PE.Battle {
       }
       if (this.status !== PE.Statuses.Healthy) return false;
       if (this.hasAbility('IMMUNITY') || (this.hasAbility('FLOWERVEIL') && this.hasType('GRASS')) ||
-        (this.hasAbility('LEAFGUARD') && ($Battle.weather === PE.Weather.SunnyDay ||
-          $Battle.weather === PE.Weather.HarshSun))) {
+        (this.hasAbility('LEAFGUARD') && ($Battle.weather === PE.Weathers.SunnyDay ||
+          $Battle.weather === PE.Weathers.HarshSun))) {
         $Battle.showMessage(i18n._("%1's %2 prevents %3's %4 from working!",
           this.name, PE.Abilities.name(this.ability),
           opponent.name, PE.Abilities.name(opponent.ability)))
@@ -660,8 +660,8 @@ namespace PE.Battle {
       if (!moldbreaker) {
         if (this.hasAbility('IMMUNITY') || (this.hasAbility('FLOWERVEIL') && this.hasType('GRASS')) ||
           (this.partner.hasAbility('FLOWERVEIL') && this.hasType('GRASS'))) return false;
-        if (this.hasAbility('LEAFGUARD') && ($Battle.weather === PE.Weather.SunnyDay ||
-          $Battle.weather == PE.Weather.HarshSun)) return false;
+        if (this.hasAbility('LEAFGUARD') && ($Battle.weather === PE.Weathers.SunnyDay ||
+          $Battle.weather == PE.Weathers.HarshSun)) return false;
       }
       if (this.ownSide.effects[PE.Effects.Safeguard] > 0) return false
       return true;
@@ -729,7 +729,7 @@ namespace PE.Battle {
       }
       if (!attacker || !attacker.hasMoldBreaker()) {
         if (this.hasAbility('WATERVEIL') || (this.hasAbility('FLOWERVEIL') && this.hasType('GRASS')) ||
-          (this.hasAbility('LEAFGUARD') && ($Battle.weather === PE.Weather.SunnyDay || $Battle.weather === PE.Weather.HarshSun))) {
+          (this.hasAbility('LEAFGUARD') && ($Battle.weather === PE.Weathers.SunnyDay || $Battle.weather === PE.Weathers.HarshSun))) {
           if (showMessages) {
             let msg = i18n._("%1's %2 prevents burns!", this.name, PE.Abilities.name(this.ability));
             $Battle.showMessage(msg);
@@ -767,7 +767,7 @@ namespace PE.Battle {
       let msg = i18n._(text, this.name, PE.Abilities.name(this.ability), opponent.name, PE.Abilities.name(opponent.ability));
       if (this.hasAbility('WATERVEIL') ||
         (this.hasAbility('FLOWERVEIL') && this.hasType('GRASS')) ||
-        (this.hasAbility('LEAFGUARD') && ($Battle.weather === PE.Weather.SunnyDay || $Battle.weather == PE.Weather.HarshSun))) {
+        (this.hasAbility('LEAFGUARD') && ($Battle.weather === PE.Weathers.SunnyDay || $Battle.weather == PE.Weathers.HarshSun))) {
         $Battle.showMessage(msg);
         return false;
       }

@@ -27,7 +27,7 @@ namespace PE.Battle {
     static phase = PE.Battle.Phase.None;
     static turncount = 0;
     static waitMode = WaitMode.None;
-    static weather = PE.Weather.None;
+    static weather = PE.Weathers.None;
     static weatherduration = 0;
 
 
@@ -153,7 +153,10 @@ namespace PE.Battle {
     }
 
     static ownedByPlayer(index: number) {
-      return true;
+      for (const partyindex of this.userSide.battlers) {
+        if (partyindex === index) return true;
+      }
+      return false;
     }
 
     static getPriority() {

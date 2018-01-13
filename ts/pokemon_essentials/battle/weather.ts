@@ -1,5 +1,5 @@
 namespace PE {
-  export enum Weather {
+  export enum Weathers {
     None = 0,
     SunnyDay = 1,
     RainDance = 2,
