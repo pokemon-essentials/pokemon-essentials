@@ -63,4 +63,14 @@ namespace PE.Sprites {
     }
 
   }
+
+  export class Button extends Sprite_Button {
+    constructor(public _width: number, public _height: number) {
+      super();
+    }
+
+    changeFrame(col: number, row: number) {
+      super.setFrame(this._width * col, this._height * row, this._width, this._height);
+    }
+  }
 }

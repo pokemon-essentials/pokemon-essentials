@@ -106,7 +106,153 @@ namespace PE.Battle {
     }
   }
 
+  class CommandButton extends PE.Sprites.Button {
+    private _active: boolean;
+    private _text: Sprite;
+    constructor(public name: string, public frame: number, public x: number, public y: number) {
+      super(80, 40);
+      this._active = false;
+      this.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'battle_buttons', undefined, undefined);
+      this.changeFrame(1, this.frame);
+
+      this._text = new Sprite(new Bitmap(80, 40));
+      this._text.bitmap.fontSize = 24;
+      this._text.bitmap.outlineWidth = 4;
+      this._text.bitmap.outlineColor = "rgba(0,0,0, 0.3)";
+      this._text.bitmap.drawText(this.name, 0, 8, 80, 24, 'center');
+      this._text.x = 0;
+      this._text.y = 0;
+      this._text.visible = false;
+      this._text.opacity = 200;
+      this.addChild(this._text);
+    }
+
+    set active(_active) {
+      this._active = _active;
+      if (_active) {
+        this.changeFrame(0, this.frame);
+      } else {
+        this.changeFrame(1, this.frame);
+      }
+      this._text.visible = this._active;
+    }
+  }
+
+  class BattleCommands extends Sprite {
+    _bg: Sprite;
+    _inx: number;
+    options: { name: string; frame: number; x: number; y: number; sprite?: CommandButton }[];
+    constructor(public x: number, public y: number) {
+      super();
+      let startX = 0;
+      let startY = 0;
+      this.options = [
+        { name: 'FIGTH', frame: 0, x: startX, y: startY },
+        { name: 'PARTY', frame: 1, x: startX + 84, y: startY },
+        { name: 'BAG', frame: 2, x: startX, y: startY + 32 },
+        { name: 'RUN', frame: 3, x: startX + 84, y: startY + 32 }
+      ];
+      this._inx = 0;
+      this.createBackground();
+      this.createButtons();
+      // this.initialX = x;
+      // this.initialY = y;
+
+      // this.destX = x;
+      // this.destY = y;
+      // this.speed = 3;
+    }
+
+    createBackground() {
+      this._bg = new Sprite();
+      this._bg.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'command_overlay', undefined, undefined);
+      this._bg.x = 40;
+      this._bg.y = 20;
+      // this._bg.anchor.x = 1;
+      // this._bg.anchor.y = 1;
+      this.addChild(this._bg);
+    }
+
+    createButtons() {
+      for (let option of this.options) {
+        option.sprite = new CommandButton(option.name, option.frame, option.x, option.y);
+        this.addChild(option.sprite);
+      }
+      this.options[this._inx].sprite.active = true;
+    }
+
+    toggle() {
+      // this.speed *= -1;
+      // if (this.speed < 0) this.destX = this.initialX;
+      // else this.destX = Graphics.width;
+    }
+
+    update() {
+      super.update();
+      // if (this.x !== this.destX) {
+      //   this.x += this.speed;
+      // }
+      // if (this.y !== this.destY) {
+      //   this.y += this.speed;
+      // }
+    }
+
+    // isBusy() {
+    //   return this.x !== this.destX || this.y !== this.destY;
+    // }
+
+    updateInput() {
+      if (!this.visible) this.visible = true;
+      // if (this.isBusy()) return;
+
+      if (Input.isTriggered('cancel')) {
+        SceneManager.goto(Scene_Map);
+      }
+
+      if (Input.isTriggered('right')) {
+        this.options[this._inx].sprite.active = false;
+        this._inx++;
+        if (this._inx >= this.options.length) this._inx = 0;
+        this.options[this._inx].sprite.active = true;
+        SoundManager.playCursor();
+        return;
+      }
+
+      if (Input.isTriggered('left')) {
+        this.options[this._inx].sprite.active = false;
+        this._inx--;
+        if (this._inx < 0) this._inx = this.options.length - 1;
+        this.options[this._inx].sprite.active = true;
+        SoundManager.playCursor();
+        return;
+      }
+      if (Input.isTriggered('down')) {
+        this.options[this._inx].sprite.active = false;
+        this._inx += 2;
+        if (this._inx >= this.options.length) this._inx -= 4;
+        this.options[this._inx].sprite.active = true;
+        SoundManager.playCursor();
+        return;
+      }
+      if (Input.isTriggered('up')) {
+        this.options[this._inx].sprite.active = false;
+        this._inx -= 2;
+        if (this._inx < 0) this._inx += 4;
+        this.options[this._inx].sprite.active = true;
+        SoundManager.playCursor();
+        return;
+      }
+
+      if (Input.isTriggered('ok')) {
+        $Battle.changePhase(PE.Battle.Phase.MoveSelection);
+        this.visible = false;
+      }
+    }
+  }
+
+
   export class Scene_Battle extends Scene_Base {
+    battleCommands: BattleCommands;
     message: Window_Message;
     foePokemon: Pokemon.Pokemon;
     partyPokemon: Pokemon.Pokemon;
@@ -137,6 +283,11 @@ namespace PE.Battle {
     update() {
       super.update();
       $Battle.update();
+      switch ($Battle.phase) {
+        case PE.Battle.Phase.ActionSelection:
+          this.battleCommands.updateInput();
+          break;
+      }
       if (Input.isTriggered('cancel')) {
         SceneManager.goto(Scene_Title);
       }
@@ -207,6 +358,12 @@ namespace PE.Battle {
 
       let h2 = new HPBar(this.foePokemon, Graphics.width - 208, 48, true);
       this.addChild(h2);
+
+      let x = Graphics.width - 168;
+      let y = Graphics.height - 108;
+      this.battleCommands = new BattleCommands(x, y);
+      this.battleCommands.visible = false;
+      this.addChild(this.battleCommands);
     }
 
 
