@@ -106,6 +106,7 @@ namespace PE.Battle {
 
     static clear() {
       this._queue = [];
+      this.clearWeather();
     }
 
     static showMessage(msg: string) {
@@ -219,6 +220,24 @@ namespace PE.Battle {
 
     static changeWaitMode(mode: WaitMode) {
       this.waitMode = mode;
+    }
+
+    /**
+     * Set the battle weather and start it's animation
+     * @param weather the new weather
+     * @param duration the duration. -1 for unlimited weather time.
+     */
+    static setWeather(weather: PE.Weathers, duration: number) {
+      this.weather = weather;
+      this.weatherduration = duration;
+      this.push(() => {
+        this.scene.setWeather(weather);
+      });
+    }
+
+    static clearWeather() {
+      this.weather = Weathers.None;
+      this.weatherduration = 0;
     }
 
 

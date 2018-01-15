@@ -18,67 +18,54 @@ namespace PE.Abilities {
     // #region Wheaters abilities
     if (onactive) {
       if (pokemon.hasAbility('PRIMORDIALSEA') && $Battle.weather != PE.Weathers.HeavyRain) {
-        $Battle.weather = PE.Weathers.HeavyRain;
-        $Battle.weatherduration = -1;
+        $Battle.setWeather(PE.Weathers.HeavyRain, -1);
         $Battle.showAbilityIndicator(pokemon);
-        // battler.battle.pbCommonAnimation("HeavyRain",null,null)
         let msg = "%1's %2 made a heavy rain begin to fall!";
         $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
         console.log(`[Ability triggered] ${pokemon.name}'s Primordial Sea made it rain heavily`);
       }
       if (pokemon.hasAbility('DESOLATELAND') && $Battle.weather != PE.Weathers.HarshSun) {
-        $Battle.weather = PE.Weathers.HarshSun;
-        $Battle.weatherduration = -1;
+        $Battle.setWeather(PE.Weathers.HarshSun, -1);
         $Battle.showAbilityIndicator(pokemon);
-        // battler.battle.pbCommonAnimation("HarshSun",null,null)
         let msg = "%1's %2 turned the sunlight extremely harsh!"
         $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
         console.log(`[Ability triggered] ${pokemon.name} Desolate Land made the sun shine harshly`);
       }
       if (pokemon.hasAbility('DELTASTREAM') && $Battle.weather != PE.Weathers.StrongWinds) {
-        $Battle.weather = PE.Weathers.StrongWinds;
-        $Battle.weatherduration = -1;
+        $Battle.setWeather(PE.Weathers.StrongWinds, -1);
         $Battle.showAbilityIndicator(pokemon);
-        // battler.battle.pbCommonAnimation("StrongWinds",null,null)
         let msg = "%1's %2 caused a mysterious air current that protects Flying-type Pokémon!";
         $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
         console.log(`[Ability triggered] ${pokemon.name} Delta Stream made an air current blow`);
       }
-      if (!($Battle.weather in PE.PrimalWeather)) {
+      if (!($Battle.weather in PE.PrimalWeathers)) {
         if (pokemon.hasAbility('DRIZZLE') && ($Battle.weather !== PE.Weathers.RainDance || $Battle.weatherduration !== -1)) {
-          $Battle.weather = PE.Weathers.RainDance;
-          $Battle.weatherduration = 5;
-          if (pokemon.hasItem('DAMPROCK')) $Battle.weatherduration = 8;
+          let weatherduration = pokemon.hasItem('DAMPROCK') ? 8 : 5;
+          $Battle.setWeather(PE.Weathers.RainDance, weatherduration);
           $Battle.showAbilityIndicator(pokemon);
-          // battler.battle.pbCommonAnimation("Rain",null,null)
           let msg = "%1's %2 made it rain!";
           $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
           console.log(`[Ability triggered] ${pokemon.name} Drizzle made it rain`);
         }
         if (pokemon.hasAbility('DROUGHT') && ($Battle.weather !== PE.Weathers.SunnyDay || $Battle.weatherduration !== -1)) {
-          $Battle.weather = PE.Weathers.SunnyDay;
-          $Battle.weatherduration = 5;
-          if (pokemon.hasItem('HEATROCK')) $Battle.weatherduration = 8;
+          let weatherduration = pokemon.hasItem('HEATROCK') ? 8 : 5;
+          $Battle.setWeather(PE.Weathers.SunnyDay, weatherduration);
           $Battle.showAbilityIndicator(pokemon);
-          // battler.battle.pbCommonAnimation("Sunny",null,null)
           let msg = "%1's %2 intensified the sun's rays!";
           $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
           console.log(`[Ability triggered] ${pokemon.name} Drought made it sunny`);
         }
         if (pokemon.hasAbility('SANDSTREAM') && ($Battle.weather !== PE.Weathers.SandStorm || $Battle.weatherduration !== -1)) {
-          $Battle.weather = PE.Weathers.SandStorm;
-          $Battle.weatherduration = 5;
-          if (pokemon.hasItem('SMOOTHROCK')) $Battle.weatherduration = 8;
+          let weatherduration = pokemon.hasItem('SMOOTHROCK') ? 8 : 5;
+          $Battle.setWeather(PE.Weathers.SandStorm, weatherduration);
           $Battle.showAbilityIndicator(pokemon);
-          // battler.battle.pbCommonAnimation("Sandstorm",null,null)
           let msg = "%1's %2 whipped up a sandstorm!";
           $Battle.showMessage(i18n._(msg, pokemon.name, PE.Abilities.name(pokemon.ability)));
           console.log(`[Ability triggered] ${pokemon.name} Sand Stream made it sandstorm`);
         }
         if (pokemon.hasAbility('SNOWWARNING') && ($Battle.weather != PE.Weathers.Hail || $Battle.weatherduration != -1)) {
-          $Battle.weather = PE.Weathers.Hail;
-          $Battle.weatherduration = 5;
-          if (pokemon.hasItem('ICYROCK')) $Battle.weatherduration = 8;
+          let weatherduration = pokemon.hasItem('ICYROCK') ? 8 : 5;
+          $Battle.setWeather(PE.Weathers.Hail, weatherduration);
           $Battle.showAbilityIndicator(pokemon);
           // battler.battle.pbCommonAnimation("Hail",null,null)
           $Battle.showMessage(i18n._("%1's %2 made it hail!", pokemon.name, PE.Abilities.name(pokemon.ability)));
@@ -86,6 +73,7 @@ namespace PE.Abilities {
         }
       }
       if (pokemon.hasAbility('AIRLOCK') || pokemon.hasAbility('CLOUDNINE')) {
+        $Battle.clearWeather();
         $Battle.showAbilityIndicator(pokemon);
         $Battle.showMessage(i18n._("%1 has %2", pokemon.name, PE.Abilities.name(pokemon.ability)));
         $Battle.showMessage(i18n._("The effects of the weather disappeared."))

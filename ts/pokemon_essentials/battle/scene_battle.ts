@@ -258,7 +258,7 @@ namespace PE.Battle {
     partyPokemon: Pokemon.Pokemon;
 
     /** save all the objects display layers */
-    layers: { bg: Sprite; bg2: Sprite; } = { bg: undefined, bg2: undefined };
+    layers: { bg: Sprite; bg2: Sprite; weather: Weathers.WeatherLayer } = { bg: undefined, bg2: undefined, weather: undefined };
 
     create() {
       super.create();
@@ -305,6 +305,9 @@ namespace PE.Battle {
     createLayers() {
       this.createBackground();
       this.createBattlers();
+
+
+
       this.createWindowLayer();
       this.createMessageWindow();
     }
@@ -320,6 +323,8 @@ namespace PE.Battle {
 
       this.layers['bg2'] = new Sprite();
       this.addChild(this.layers['bg2']);
+
+
     }
 
     createMessageWindow() {
@@ -353,6 +358,9 @@ namespace PE.Battle {
       a.anchor.y = 1;
       this.addChild(a);
 
+      this.layers.weather = new PE.Weathers.WeatherLayer();
+      this.addChild(this.layers.weather);
+
       let h = new HPBar(this.partyPokemon, 16, Graphics.height - 64, false);
       this.addChild(h);
 
@@ -375,6 +383,9 @@ namespace PE.Battle {
       sing.x = x;
       sing.y = y;
       this.addChild(sing);
+    }
+    setWeather(weather: PE.Weathers) {
+      this.layers.weather.setWeather(weather);
     }
   }
 }
