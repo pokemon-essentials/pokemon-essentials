@@ -138,6 +138,161 @@ namespace PE.Battle {
     }
   }
 
+  class MoveButton extends PE.Sprites.Button {
+    activeText: Sprite;
+    idletext: Sprite;
+    row: number;
+    _active: boolean;
+    constructor(move, public x: number, public y: number) {
+      super(192, 64);
+      this._active = false;
+
+      // this.frame = frame;
+      // this.name = name;
+      // this.startY = y;
+
+      this.row = parseInt(Types[move.type]);
+      this.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'moves_buttons', undefined, undefined);
+      this.changeFrame(1, this.row);
+
+
+      this.idletext = new Sprite(new Bitmap(192, 64));
+      this.idletext.bitmap.fontSize = 18;
+      this.idletext.bitmap.outlineWidth = 4;
+      this.idletext.bitmap.outlineColor = "rgba(0,0,0, 0.3)";
+      this.idletext.bitmap.drawText(move.name, 0, 20, 192, 20, 'center');
+      this.idletext.x = 0;
+      this.idletext.y = 0;
+      this.addChild(this.idletext);
+
+      this.activeText = new Sprite(new Bitmap(192, 64));
+      this.activeText.x = 0;
+      this.activeText.y = 0;
+      this.activeText.bitmap.outlineWidth = 4;
+      this.activeText.bitmap.outlineColor = Types.color(move.type);
+      this.activeText.bitmap.fontSize = 18;
+      this.activeText.bitmap.drawText(move.name, 14, 10, 164, 20, 'center');
+      this.activeText.bitmap.fontSize = 14;
+      this.activeText.bitmap.drawText(move.type, 14, 36, 192, 20, 'left');
+      this.activeText.bitmap.drawText(`PP ${move.pp}/${move.pp}`, 0, 36, 178, 20, 'right');
+      this.activeText.visible = false;
+      this.addChild(this.activeText);
+    }
+
+    activate() {
+      this.idletext.visible = false;
+      this.activeText.visible = true;
+      this.changeFrame(0, this.row);
+    }
+
+    deactivate() {
+      this.idletext.visible = true;
+      this.activeText.visible = false;
+      this.changeFrame(1, this.row);
+    }
+  }
+
+
+  class _MovesSelection extends Sprite {
+    _moves: any;
+    _backButton: Sprite;
+    _bg: Sprite;
+    _inx: number;
+    _pos: { x: number; y: number; }[];
+    constructor(public _pokemon: Pokemon.Pokemon) {
+      super();
+      let x = Graphics.width - 392, y = Graphics.height - 152;
+      this._pos = [{ x: x, y: y }, { x: x + 196, y: y }, { x: x, y: y + 52 }, { x: x + 196, y: y + 52 }];
+      this._inx = 0;
+      this._moves = [];
+      this.createBackground();
+      this.createButtons();
+      this.visible = false;
+    }
+
+    createBackground() {
+      this._bg = new Sprite();
+      this._bg.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'moves_overlay', undefined, undefined);
+      this._bg.x = Graphics.width;
+      this._bg.y = Graphics.height - 152;
+      this._bg.anchor.x = 1;
+      this.addChild(this._bg);
+
+      this._backButton = new Sprite();
+      this._backButton.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'back_button', undefined, undefined);
+      this._backButton.x = 0;
+      this._backButton.y = Graphics.height - 4;
+      this._backButton.anchor.y = 1;
+      this.addChild(this._backButton);
+    }
+
+    createButtons() {
+      let i = 0;
+      for (let move of this._pokemon.moveset) {
+        let button = new MoveButton(move, this._pos[i].x, this._pos[i].y);
+        this._moves.push(button);
+        this.addChild(button);
+        i++;
+      }
+      this._moves[this._inx].activate();
+    }
+
+    updateInput() {
+      if (!this.visible) this.visible = true;
+
+      if (Input.isTriggered('cancel')) {
+        $Battle.changePhase(Battle.Phase.ActionSelection);
+        this.visible = false;
+      }
+
+      if (Input.isTriggered('right')) {
+        this._moves[this._inx].deactivate();
+        this._inx++;
+        if (this._inx >= this._moves.length) this._inx = 0;
+        this._moves[this._inx].activate();
+        SoundManager.playCursor();
+        return;
+      }
+
+      if (Input.isTriggered('left')) {
+        this._moves[this._inx].deactivate();
+        this._inx--;
+        if (this._inx < 0) this._inx = this._moves.length - 1;
+        this._moves[this._inx].activate();
+        SoundManager.playCursor();
+        return;
+      }
+
+      if (Input.isTriggered('down')) {
+        this._moves[this._inx].deactivate();
+        this._inx += 2;
+        if (this._inx >= this._moves.length) this._inx -= 4;
+        this._moves[this._inx].activate();
+        SoundManager.playCursor();
+        return;
+      }
+
+      if (Input.isTriggered('up')) {
+        this._moves[this._inx].deactivate();
+        this._inx -= 2;
+        if (this._inx < 0) this._inx += 4;
+        this._moves[this._inx].activate();
+        SoundManager.playCursor();
+        return;
+      }
+
+      if (Input.isTriggered('ok')) {
+        this.visible = false;
+        let move = this._pokemon.moveset[this._inx];
+        // $Battle.choose(move, this._pokemon.foeSide.actives[0]);
+        $Battle.changePhase(Battle.Phase.None);
+        // $Battle.runActions();
+      }
+    }
+  }
+
+
+
   class BattleCommands extends Sprite {
     _bg: Sprite;
     _inx: number;
@@ -168,8 +323,6 @@ namespace PE.Battle {
       this._bg.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'command_overlay', undefined, undefined);
       this._bg.x = 40;
       this._bg.y = 20;
-      // this._bg.anchor.x = 1;
-      // this._bg.anchor.y = 1;
       this.addChild(this._bg);
     }
 
@@ -181,32 +334,12 @@ namespace PE.Battle {
       this.options[this._inx].sprite.active = true;
     }
 
-    toggle() {
-      // this.speed *= -1;
-      // if (this.speed < 0) this.destX = this.initialX;
-      // else this.destX = Graphics.width;
-    }
-
-    update() {
-      super.update();
-      // if (this.x !== this.destX) {
-      //   this.x += this.speed;
-      // }
-      // if (this.y !== this.destY) {
-      //   this.y += this.speed;
-      // }
-    }
-
-    // isBusy() {
-    //   return this.x !== this.destX || this.y !== this.destY;
-    // }
-
     updateInput() {
       if (!this.visible) this.visible = true;
       // if (this.isBusy()) return;
 
       if (Input.isTriggered('cancel')) {
-        SceneManager.goto(Scene_Map);
+        SceneManager.goto(Scene_Title);
       }
 
       if (Input.isTriggered('right')) {
@@ -252,6 +385,7 @@ namespace PE.Battle {
 
 
   export class Scene_Battle extends Scene_Base {
+    movesSelection: _MovesSelection;
     battleCommands: BattleCommands;
     message: Window_Message;
     foePokemon: Pokemon.Pokemon;
@@ -287,9 +421,13 @@ namespace PE.Battle {
         case PE.Battle.Phase.ActionSelection:
           this.battleCommands.updateInput();
           break;
-      }
-      if (Input.isTriggered('cancel')) {
-        SceneManager.goto(Scene_Title);
+        case Battle.Phase.MoveSelection:
+          this.movesSelection.updateInput();
+          break;
+        default:
+          if (Input.isTriggered('cancel')) {
+            SceneManager.goto(Scene_Title);
+          }
       }
     }
 
@@ -306,7 +444,7 @@ namespace PE.Battle {
       this.createBackground();
       this.createBattlers();
 
-
+      this.createUI();
 
       this.createWindowLayer();
       this.createMessageWindow();
@@ -358,6 +496,12 @@ namespace PE.Battle {
       a.anchor.y = 1;
       this.addChild(a);
 
+
+
+    }
+
+
+    createUI() {
       this.layers.weather = new PE.Weathers.WeatherLayer();
       this.addChild(this.layers.weather);
 
@@ -372,6 +516,11 @@ namespace PE.Battle {
       this.battleCommands = new BattleCommands(x, y);
       this.battleCommands.visible = false;
       this.addChild(this.battleCommands);
+
+      this.movesSelection = new _MovesSelection(this.partyPokemon);
+      this.addChild(this.movesSelection);
+
+
     }
 
 

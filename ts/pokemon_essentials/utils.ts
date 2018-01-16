@@ -18,4 +18,8 @@ namespace PE.Utils {
     let index = keys[rand];
     return obj[index];
   }
+
+  export function capitalize(msg: string) {
+    return msg[0].toUpperCase() + msg.substr(1);
+  }
 }

@@ -110,6 +110,7 @@ namespace PE.Battle {
     }
 
     static showMessage(msg: string) {
+      msg = Utils.capitalize(msg);
       this.push(() => {
         while (msg.length > CHARACTERS_PER_LINE) {
           let line = msg.substring(0, CHARACTERS_PER_LINE);
@@ -123,6 +124,7 @@ namespace PE.Battle {
     }
 
     static showPausedMessage(msg: string) {
+      msg = Utils.capitalize(msg);
       this.push(() => {
         while (msg.length > CHARACTERS_PER_LINE) {
           let line = msg.substring(0, CHARACTERS_PER_LINE);
