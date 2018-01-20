@@ -6,7 +6,7 @@ namespace PE.Battle {
       super(new Bitmap(224, 32));
       this.bitmap.fontSize = 20;
       this.bitmap.fillAll('rgba(0,0,0,0.7)');
-      this.bitmap.drawText(PE.Abilities.name(ability), 0, 0, 224, 32, 'center');
+      this.bitmap.drawText(Abilities.name(ability), 0, 0, 224, 32, 'center');
       this.ticks = 0;
     }
 
@@ -14,7 +14,7 @@ namespace PE.Battle {
       super.update();
       this.ticks++;
       if (this.ticks > 60) {
-        $Battle.waitMode = PE.Battle.WaitMode.None;
+        $Battle.waitMode = WaitMode.None;
         this.destroy();
       }
     }
@@ -27,7 +27,7 @@ namespace PE.Battle {
     text: Sprite;
     bar: Sprite;
     box: Sprite;
-    constructor(public pokemon: PE.Pokemon.Pokemon, public _x: number, public _y: number, public foe: boolean) {
+    constructor(public pokemon: Pokemon.Pokemon, public _x: number, public _y: number, public foe: boolean) {
       super();
 
       // this.currentHP = this.pokemon.hp;
@@ -106,7 +106,7 @@ namespace PE.Battle {
     }
   }
 
-  class CommandButton extends PE.Sprites.Button {
+  class CommandButton extends Sprites.Button {
     private _active: boolean;
     private _text: Sprite;
     constructor(public name: string, public frame: number, public x: number, public y: number) {
@@ -138,7 +138,7 @@ namespace PE.Battle {
     }
   }
 
-  class MoveButton extends PE.Sprites.Button {
+  class MoveButton extends Sprites.Button {
     activeText: Sprite;
     idletext: Sprite;
     row: number;
@@ -377,7 +377,7 @@ namespace PE.Battle {
       }
 
       if (Input.isTriggered('ok')) {
-        $Battle.changePhase(PE.Battle.Phase.MoveSelection);
+        $Battle.changePhase(Phase.MoveSelection);
         this.visible = false;
       }
     }
@@ -400,24 +400,24 @@ namespace PE.Battle {
       this.createLayers();
     }
 
-    prepare(party: PE.Pokemon.Pokemon, foe: PE.Pokemon.Pokemon) {
+    prepare(party: Pokemon.Pokemon, foe: Pokemon.Pokemon) {
       this.partyPokemon = party;
       this.foePokemon = foe;
     }
 
     start() {
       super.start();
-      $Battle.setup([new PE.Trainers.Trainer([this.partyPokemon])], [new PE.Trainers.Trainer([this.foePokemon])]);
+      $Battle.setup([new Trainers.Trainer([this.partyPokemon])], [new Trainers.Trainer([this.foePokemon])]);
       $Battle.scene = this;
       $Battle.start();
-      $Battle.changePhase(PE.Battle.Phase.ActionSelection);
+      $Battle.changePhase(Phase.ActionSelection);
     }
 
     update() {
       super.update();
       $Battle.update();
       switch ($Battle.phase) {
-        case PE.Battle.Phase.ActionSelection:
+        case Phase.ActionSelection:
           this.battleCommands.updateInput();
           break;
         case Battle.Phase.MoveSelection:
@@ -475,7 +475,7 @@ namespace PE.Battle {
     createBattlers() {
       let fx = Graphics.width - 96;
       let fy = 240
-      let f = new PE.Sprites.Battler(this.foePokemon, PE.Sprites.BattlersFacing.Front);
+      let f = new Sprites.Battler(this.foePokemon, Sprites.BattlersFacing.Front);
       f.x = fx;
       f.y = fy;
       f.scale.x = 2;
@@ -486,7 +486,7 @@ namespace PE.Battle {
 
       let px = 96;
       let py = Graphics.height;
-      let a = new PE.Sprites.Battler(this.partyPokemon, PE.Sprites.BattlersFacing.Back);
+      let a = new Sprites.Battler(this.partyPokemon, Sprites.BattlersFacing.Back);
       a.x = px;
       a.y = py;
       a.scale.x = 3;
@@ -501,7 +501,7 @@ namespace PE.Battle {
 
 
     createUI() {
-      this.layers.weather = new PE.Weathers.WeatherLayer();
+      this.layers.weather = new Weathers.WeatherLayer();
       this.addChild(this.layers.weather);
 
       this.partyBar = new HPBar(this.partyPokemon, 16, Graphics.height - 64, false);
@@ -540,7 +540,7 @@ namespace PE.Battle {
       sing.y = y;
       this.addChild(sing);
     }
-    setWeather(weather: PE.Weathers) {
+    setWeather(weather: Weathers) {
       this.layers.weather.setWeather(weather);
     }
   }

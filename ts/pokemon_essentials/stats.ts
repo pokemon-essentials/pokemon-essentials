@@ -13,7 +13,7 @@ namespace PE {
 
 
 namespace PE.Stats {
-  export function name(stat: PE.Stats) {
+  export function name(stat: Stats) {
     let names = [
       i18n._('HP'),
       i18n._('Attack'),

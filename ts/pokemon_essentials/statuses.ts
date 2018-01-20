@@ -3,7 +3,7 @@ namespace PE {
 }
 
 namespace PE.Statuses {
-  export function name(id: PE.Statuses) {
+  export function name(id: Statuses) {
     let names = [
       i18n._("Healthy"),
       i18n._("Asleep"),

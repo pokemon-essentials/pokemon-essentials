@@ -49,7 +49,7 @@ namespace PE.Sprites {
 
   export class Battler extends SpriteAnimated {
 
-    constructor(public pokemon: PE.Pokemon.Pokemon, public facing: BattlersFacing) {
+    constructor(public pokemon: Pokemon.Pokemon, public facing: BattlersFacing) {
       super();
       this.setFrameRate(15)
       let path = 'img/battlers/';

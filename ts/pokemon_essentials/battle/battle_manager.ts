@@ -1,4 +1,4 @@
-/// <reference path="./weather.ts" />
+/// <reference path="../weather.ts" />
 
 namespace PE.Battle {
   const CHARACTERS_PER_LINE = 50;
@@ -13,7 +13,7 @@ namespace PE.Battle {
 
   export abstract class Manager {
 
-    static scene: PE.Battle.Scene_Battle;
+    static scene: Scene_Battle;
     /** Whether the player can escape or not */
     static canEscape: boolean;
     /** Player Trainer. */
@@ -43,14 +43,14 @@ namespace PE.Battle {
 
     static currentInx: number;
     /** All the Pokémon of all Trainers used deternime it's unique index */
-    static battlers: Battle.Battler[];
+    static battlers: Battler[];
     static priorityQueue: any[];
     private static _queue = [];
 
     /** The Pokémon in the field, the ones fithing right now*/
-    static actives: PE.Battle.Battler[] = [];
+    static actives: Battler[] = [];
 
-    static phase = PE.Battle.Phase.None;
+    static phase = Phase.None;
     static turncount = 0;
     static waitMode = WaitMode.None;
 
@@ -59,14 +59,14 @@ namespace PE.Battle {
       this.trainers = { player: allies, foe: opponets };
       this.player = allies[0];
       this.opponents = opponets;
-      this.field = new PE.Battle.ActiveField();
-      this.sides = { player: new PE.Battle.ActiveSide(), foe: new PE.Battle.ActiveSide() };
+      this.field = new ActiveField();
+      this.sides = { player: new ActiveSide(), foe: new ActiveSide() };
       this.actives = [];
       this.battlers = [];
       for (const trainer of allies) {
         let firstIndex = this.battlers.length;
         for (const pokemon of trainer.party) {
-          let battler = new PE.Battle.Battler(pokemon, this.battlers.length);
+          let battler = new Battler(pokemon, this.battlers.length);
           this.battlers.push(battler);
           trainer.battlers.push(battler);
           this.sides.player.battlers.push(battler.index);
@@ -79,7 +79,7 @@ namespace PE.Battle {
       for (const trainer of opponets) {
         let firstIndex = this.battlers.length;
         for (const pokemon of trainer.party) {
-          let battler = new PE.Battle.Battler(pokemon, this.battlers.length);
+          let battler = new Battler(pokemon, this.battlers.length);
           this.battlers.push(battler);
           trainer.battlers.push(battler);
           this.sides.foe.battlers.push(battler.index);
@@ -179,7 +179,7 @@ namespace PE.Battle {
       if (pokemon.hasItem('ASSAULTVEST') && move.isStatus()) {
         if (showMessages) {
           let msg = "The effects of the %1 prevent status moves from being used!";
-          this.showMessage(i18n._(msg, PE.Items.name(pokemon.item)));
+          this.showMessage(i18n._(msg, Items.name(pokemon.item)));
         }
         return false;
       }
@@ -188,7 +188,7 @@ namespace PE.Battle {
         if (move.id !== pokemon.effects[Effects.ChoiceBand]) {
           if (showMessages) {
             let msg = "%1 allows the use of only %2!";
-            this.showMessage(i18n._(msg, PE.Items.name(pokemon.item), move.name));
+            this.showMessage(i18n._(msg, Items.name(pokemon.item), move.name));
           }
           return false;
         }
@@ -249,7 +249,7 @@ namespace PE.Battle {
         this.canChooseMove(pokemon.index, pokemon.effects[Effects.EncoreMoveId], false)) {
         console.log(`[Auto choosing Encore move] ${pokemon.effects[Effects.EncoreMoveId]}`);
         this.choices = {
-          action: PE.Battle.Choice.UseMove,
+          action: Choice.UseMove,
           move: pokemon.effects[Effects.EncoreMoveId],
           target: pokemon.sides.foe.actives[0]
         }
@@ -474,7 +474,7 @@ namespace PE.Battle {
     }
 
 
-    static showAbilityIndicator(pokemon: PE.Battle.Battler) {
+    static showAbilityIndicator(pokemon: Battler) {
       let ability = pokemon.ability;
       this.push(() => {
         let foe = this.isOpposing(pokemon.index);
@@ -492,7 +492,7 @@ namespace PE.Battle {
      * @param weather the new weather
      * @param duration the duration. -1 for unlimited weather time.
      */
-    static setWeather(weather: PE.Weathers, duration: number) {
+    static setWeather(weather: Weathers, duration: number) {
       this.weather = weather;
       this.weatherDuration = duration;
       this.push(() => {

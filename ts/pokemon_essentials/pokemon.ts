@@ -7,7 +7,7 @@ namespace PE.Pokemon {
     id: number = 0;
     name: string = "";
     species: string = "";
-    nature: PE.Natures;
+    nature: Natures;
     abilities: any = {};
     baseStats = { hp: 1, atk: 1, def: 1, spa: 1, spd: 1, spe: 1 };
     effortPoints = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
@@ -34,7 +34,7 @@ namespace PE.Pokemon {
 
   export class Pokemon extends PokemonData {
     statusCount: number;
-    status: PE.Statuses;
+    status: Statuses;
     ability: string;
     abilityInx: number;
     evs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
@@ -61,7 +61,7 @@ namespace PE.Pokemon {
      * @param evs Pokémon Evs
      */
     constructor(public species: string, public level: number, public item?: string, moves?: string[], ability?: string,
-      nature?: PE.Natures, ivs?: number[], evs?: number[]) {
+      nature?: Natures, ivs?: number[], evs?: number[]) {
       super();
       if (!this.species || !this.level) throw Error("Species and Level are required to create a Pokemon");
 
@@ -75,7 +75,7 @@ namespace PE.Pokemon {
       this.level = Math.min(SETTINGS.MAXIMUM_LEVEL, level);
       if (!this.gender) this.gender = Math.random() < this.genderRatio.M ? "M" : "F";
 
-      this.nature = nature || PE.Utils.getRandomFromEnum(PE.Natures);
+      this.nature = nature || Utils.getRandomFromEnum(Natures);
 
       for (let i = 0; i < ivs.length; i++) {
         if (ivs[i]) this.ivs[Object.keys(this.ivs)[i]] = Math.min(31, ivs[i]);
@@ -107,7 +107,7 @@ namespace PE.Pokemon {
       }
       this.moveset = this.getMoveset(moves);
 
-      this.status = PE.Statuses.Healthy;
+      this.status = Statuses.Healthy;
       this.statusCount = 0;
       // this.exp = 0;
       // this.happiness = 0;
@@ -136,15 +136,15 @@ namespace PE.Pokemon {
       this.stats.hp = Math.floor(((((2 * this.baseStats.hp) + this.ivs.hp + (this.evs.hp / 4)) * this.level) / 100)
         + this.level + 10);
       this.stats.atk = Math.floor(Math.floor((((((2 * this.baseStats.atk) + this.ivs.atk + (this.evs.atk / 4))
-        * this.level) / 100) + 5)) * PE.Natures.stats(this.nature).atk);
+        * this.level) / 100) + 5)) * Natures.stats(this.nature).atk);
       this.stats.def = Math.floor(Math.floor((((((2 * this.baseStats.def) + this.ivs.def + (this.evs.def / 4))
-        * this.level) / 100) + 5)) * PE.Natures.stats(this.nature).def);
+        * this.level) / 100) + 5)) * Natures.stats(this.nature).def);
       this.stats.spa = Math.floor(Math.floor((((((2 * this.baseStats.spa) + this.ivs.spa + (this.evs.spa / 4))
-        * this.level) / 100) + 5)) * PE.Natures.stats(this.nature).spa);
+        * this.level) / 100) + 5)) * Natures.stats(this.nature).spa);
       this.stats.spd = Math.floor(Math.floor((((((2 * this.baseStats.spd) + this.ivs.spd + (this.evs.spd / 4))
-        * this.level) / 100) + 5)) * PE.Natures.stats(this.nature).spd);
+        * this.level) / 100) + 5)) * Natures.stats(this.nature).spd);
       this.stats.spe = Math.floor(Math.floor((((((2 * this.baseStats.spe) + this.ivs.spe + (this.evs.spe / 4)) * this.level) / 100) + 5))
-        * PE.Natures.stats(this.nature).spe);
+        * Natures.stats(this.nature).spe);
     }
 
     getMoveset(moves: string[]) {
@@ -173,6 +173,6 @@ namespace PE.Pokemon {
     var inx = Math.randomInt(Object.keys($PE_POKEDEX).length);
     var level = Math.randomInt(SETTINGS.MAXIMUM_LEVEL) + 1;
     var species = Object.keys($PE_POKEDEX)[inx];
-    return new PE.Pokemon.Pokemon(species, level);
+    return new Pokemon(species, level);
   }
 }

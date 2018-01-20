@@ -1,4 +1,4 @@
-namespace PE {
+namespace PE.Battle {
   export enum MoveTargets {
     Normal = 'NORMAL',
     AllAdjacentFoes = 'ALLADJACENTFOES',

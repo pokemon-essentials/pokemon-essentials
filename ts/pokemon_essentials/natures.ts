@@ -133,11 +133,11 @@ namespace PE.Natures {
     }
   }
 
-  export function stats(nature: PE.Natures) {
+  export function stats(nature: Natures) {
     return NATURES[nature].stats;
   }
 
-  export function name(nature: PE.Natures) {
+  export function name(nature: Natures) {
     return NATURES[nature].name;
   }
 }

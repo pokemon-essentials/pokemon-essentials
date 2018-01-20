@@ -82,12 +82,12 @@ namespace PE.Types {
     FAIRY: '#d59bbd'
   };
 
-  export function TypeChart(type: PE.Types) {
+  export function TypeChart(type: Types) {
     return TYPE_CHART[type];
   }
 
   export function effectiveness(userType, targetTypes, targetType3) {
-    let typeChart = PE.Types.TypeChart(userType);
+    let typeChart = Types.TypeChart(userType);
     let effectiveness = 1;
     for (const t of targetTypes) {
       effectiveness *= typeChart[t];

@@ -99,6 +99,7 @@ namespace PE {
     Torment,
     Toxic,
     Transform,
+    /** add to the effects test*/
     Truant,
     TwoTurnAttack,
     Type3,
@@ -106,6 +107,7 @@ namespace PE {
     Uproar,
     Uturn,
     WaterSport,
+    /** aumont of weigth add the normal Pokémon weight */
     WeightChange,
     Wish,
     WishAmount,
