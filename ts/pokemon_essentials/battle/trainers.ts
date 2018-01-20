@@ -9,4 +9,13 @@ namespace PE.Trainers {
       return this._party;
     }
   }
+
+  export function RandomTrainer() {
+    let length = Math.randomInt(5) + 1;
+    let party = [];
+    for (let i = 0; i < length; i++) {
+      party.push(Pokemon.getRandomPokemon());
+    }
+    return new Trainer(party);
+  }
 }

@@ -21,7 +21,7 @@ namespace PE {
     Electrify,
     Embargo,
     Encore,
-    EncoreIndex,
+    EncoreMoveId,
     EncoreMove,
     Endure,
     FirstPledge,

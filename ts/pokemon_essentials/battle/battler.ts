@@ -17,6 +17,7 @@ namespace PE.Battle {
   }
 
   export class Battler {
+    totalhp: number;
     _name: string;
     private _hp = 0;
     private _totalHp = 0;
@@ -46,8 +47,7 @@ namespace PE.Battle {
     level: number;
     movesUsed: {};
     moveset: any[];
-    ownSide: PE.Battle.ActiveSide = undefined;
-    foeSide: PE.Battle.ActiveSide = undefined;
+    sides: { own: ActiveSide, foe: ActiveSide } = { own: undefined, foe: undefined };
     participants: any[];
     species: string;
     statusCount: number;
@@ -85,6 +85,8 @@ namespace PE.Battle {
       this._speed = pokemon.stats.spe;
       this.status = pokemon.status;
       this.statusCount = pokemon.statusCount;
+
+      this.totalhp = pokemon.stats.hp;
 
       this.participants = []; // Participants will earn Exp.Points if this battler is defeated;
       // this.moves = [
@@ -165,7 +167,8 @@ namespace PE.Battle {
       this.effects[PE.Effects.BideDamage] = 0;
       this.effects[PE.Effects.BideTarget] = -1;
       this.effects[PE.Effects.Charge] = 0;
-      this.effects[PE.Effects.ChoiceBand] = -1;
+      /** The move id lock by choice band */
+      this.effects[PE.Effects.ChoiceBand] = undefined;
       this.effects[PE.Effects.Counter] = -1;
       this.effects[PE.Effects.CounterTarget] = -1;
       this.effects[PE.Effects.DefenseCurl] = false;
@@ -174,7 +177,7 @@ namespace PE.Battle {
       this.effects[PE.Effects.DisableMove] = 0;
       this.effects[PE.Effects.Electrify] = false;
       this.effects[PE.Effects.Encore] = 0;
-      this.effects[PE.Effects.EncoreIndex] = 0;
+      this.effects[PE.Effects.EncoreMoveId] = 0;
       this.effects[PE.Effects.EncoreMove] = 0;
       this.effects[PE.Effects.Endure] = false;
       this.effects[PE.Effects.FirstPledge] = 0;
@@ -330,10 +333,10 @@ namespace PE.Battle {
       if (this.hasItem('QUICKPOWDER') && this.species === 'DITTO' && !this.effects[PE.Effects.Transform]) {
         speedmod *= 2;
       }
-      if (this.ownSide.effects[PE.Effects.Tailwind] > 0) {
+      if (this.sides.own.effects[PE.Effects.Tailwind] > 0) {
         speedmod *= 2;
       }
-      if (this.ownSide.effects[PE.Effects.Swamp]) {
+      if (this.sides.own.effects[PE.Effects.Swamp]) {
         speedmod = Math.round(speedmod / 2);
       }
       if (this.status === PE.Statuses.Paralysis && !this.hasAbility('QUICKFEET')) {
@@ -341,6 +344,42 @@ namespace PE.Battle {
       }
       speed = Math.round(speed * speedmod);
       return Math.max(1, speed);
+    }
+
+    damage(amt) {
+      this._hp -= amt;
+      if (this._hp <= 0) {
+        this._hp = 0;
+        this.faint();
+      }
+    }
+
+    faint(showMessage = true) {
+      if (!this.isFainted()) {
+        console.log("!!!***Can't faint with HP greater than 0");
+        return true;
+      }
+      if (this._fainted) {
+        console.log("!!!***Can't faint if already fainted");
+        return true
+      }
+      // this.battle.scene.fainted(this);
+      this.initEffects(false);
+
+      this.status = 0;
+      this.statusCount = 0
+      // if (this.pokemon && this.battle.internalbattle) {
+      //   this.pokemon.changeHappiness("faint");
+      // }
+      // if (this.pokemon.isMega()) this.pokemon.makeUnmega();
+      // if (this.pokemon.isPrimal()) this.pokemon.makeUnprimal();
+      this._fainted = true;
+
+      $Battle.choices[this.index] = undefined;
+      this.sides.own.effects[Effects.LastRoundFainted] = $Battle.turncount;
+      if (showMessage) $Battle.showPausedMessage(`${this.name} fainted!`);
+      console.log(`[Pokémon fainted] ${this.name} fainted`);
+      return true;
     }
     //#endregion
     //==================================================================================================================
@@ -416,7 +455,7 @@ namespace PE.Battle {
     }
 
     isOpposing(index) {
-      for (const foeindex of this.foeSide.battlers) {
+      for (const foeindex of this.sides.foe.battlers) {
         if (foeindex === index) return true;
       }
       return false;
@@ -457,7 +496,7 @@ namespace PE.Battle {
           return false;
         }
 
-        if (this.ownSide.effects[PE.Effects.Safeguard] > 0 && (!attacker || !attacker.hasAbility('INFILTRATOR'))) {
+        if (this.sides.own.effects[PE.Effects.Safeguard] > 0 && (!attacker || !attacker.hasAbility('INFILTRATOR'))) {
           if (showMessages) $Battle.showMessage(i18n._("%1's team is protected by Safeguard!", this.name))
           return false;
         }
@@ -618,7 +657,7 @@ namespace PE.Battle {
           return false;
         }
       }
-      if (this.ownSide.effects[PE.Effects.Safeguard] > 0 &&
+      if (this.sides.own.effects[PE.Effects.Safeguard] > 0 &&
         (!attacker || !attacker.hasAbility('INFILTRATOR'))) {
         if (showMessages) $Battle.showMessage(i18n._("%1's team is protected by Safeguard!", this.name));
         return false
@@ -663,7 +702,7 @@ namespace PE.Battle {
         if (this.hasAbility('LEAFGUARD') && ($Battle.weather === PE.Weathers.SunnyDay ||
           $Battle.weather == PE.Weathers.HarshSun)) return false;
       }
-      if (this.ownSide.effects[PE.Effects.Safeguard] > 0) return false
+      if (this.sides.own.effects[PE.Effects.Safeguard] > 0) return false
       return true;
     }
 
@@ -744,7 +783,7 @@ namespace PE.Battle {
           return false;
         }
       }
-      if (this.ownSide.effects[PE.Effects.Safeguard] > 0 && (!attacker || !attacker.hasAbility('INFILTRATOR'))) {
+      if (this.sides.own.effects[PE.Effects.Safeguard] > 0 && (!attacker || !attacker.hasAbility('INFILTRATOR'))) {
         if (showMessages) $Battle.showMessage(i18n._("%1's team is protected by Safeguard!", this.name));
         return false;
       }
@@ -951,7 +990,7 @@ namespace PE.Battle {
           if (showMessages) $Battle.showMessage(i18n._("But it failed!"));
           return false;
         }
-        if (this.ownSide.effects[PE.Effects.Mist] > 0 && (!attacker || !attacker.hasAbility('INFILTRATOR'))) {
+        if (this.sides.own.effects[PE.Effects.Mist] > 0 && (!attacker || !attacker.hasAbility('INFILTRATOR'))) {
           if (showMessages) $Battle.showMessage(i18n._("%1 is protected by Mist!", this.name));
           return false;
         }
@@ -1121,7 +1160,7 @@ namespace PE.Battle {
         return false;
       }
       if (!opponent.hasAbility('CONTRARY')) {
-        if (this.ownSide.effects[PE.Effects.Mist] > 0) {
+        if (this.sides.own.effects[PE.Effects.Mist] > 0) {
           let msg = "%1 is protected from %2's %3 by Mist!";
           $Battle.showMessage(i18n._(msg, this.name, opponent.name, PE.Abilities.name(opponent.ability)))
           return false;

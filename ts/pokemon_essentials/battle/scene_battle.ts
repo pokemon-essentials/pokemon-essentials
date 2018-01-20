@@ -284,9 +284,9 @@ namespace PE.Battle {
       if (Input.isTriggered('ok')) {
         this.visible = false;
         let move = this._pokemon.moveset[this._inx];
-        // $Battle.choose(move, this._pokemon.foeSide.actives[0]);
+        $Battle.choose(move, $Battle.sides.foe.actives[0]);
         $Battle.changePhase(Battle.Phase.None);
-        // $Battle.runActions();
+        $Battle.runActions();
       }
     }
   }
@@ -385,6 +385,7 @@ namespace PE.Battle {
 
 
   export class Scene_Battle extends Scene_Base {
+    partyBar: HPBar;
     movesSelection: _MovesSelection;
     battleCommands: BattleCommands;
     message: Window_Message;
@@ -408,8 +409,6 @@ namespace PE.Battle {
       super.start();
       $Battle.setup([new PE.Trainers.Trainer([this.partyPokemon])], [new PE.Trainers.Trainer([this.foePokemon])]);
       $Battle.scene = this;
-      $Battle.showPausedMessage(i18n._('A wild %1 has apeared!', this.foePokemon.name));
-      $Battle.showMessage(i18n._('Go %1!', this.partyPokemon.name));
       $Battle.start();
       $Battle.changePhase(PE.Battle.Phase.ActionSelection);
     }
@@ -505,8 +504,8 @@ namespace PE.Battle {
       this.layers.weather = new PE.Weathers.WeatherLayer();
       this.addChild(this.layers.weather);
 
-      let h = new HPBar(this.partyPokemon, 16, Graphics.height - 64, false);
-      this.addChild(h);
+      this.partyBar = new HPBar(this.partyPokemon, 16, Graphics.height - 64, false);
+      this.addChild(this.partyBar);
 
       let h2 = new HPBar(this.foePokemon, Graphics.width - 208, 48, true);
       this.addChild(h2);
@@ -520,7 +519,15 @@ namespace PE.Battle {
       this.movesSelection = new _MovesSelection(this.partyPokemon);
       this.addChild(this.movesSelection);
 
-
+      let msg = i18n._('What will %1 do?', this.partyPokemon.name);
+      let t = new Sprite(new Bitmap(300, 32));
+      t.bitmap.fontSize = 20;
+      t.bitmap.drawText(msg, 0, 0, 300, 32, 'right');
+      t.x = Graphics.width - 8;
+      t.y = Graphics.height;
+      t.anchor.x = 1;
+      t.anchor.y = 1;
+      this.addChild(t);
     }
 
 
