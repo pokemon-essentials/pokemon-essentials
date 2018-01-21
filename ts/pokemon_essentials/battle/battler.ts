@@ -353,7 +353,7 @@ namespace PE.Battle {
       if (this.hasItem('CHOICESCARF')) {
         speedmod = Math.round(speed * 1.5);
       }
-      if (this.hasItem('QUICKPOWDER') && this.species === 'DITTO' && !this.effects[Effects.Transform]) {
+      if (this.hasItem('QUICKPOWDER') && this.species === Pokedex.DITTO && !this.effects[Effects.Transform]) {
         speedmod *= 2;
       }
       if (this.sides.own.effects[Effects.Tailwind] > 0) {
@@ -480,10 +480,9 @@ namespace PE.Battle {
       return false;
     }
 
-    hasMove(id: string) {
-      if (!id || id === "") return false;
+    hasMove(id: Moves) {
       for (const move of this.moveset) {
-        if (id === move) return true;
+        if (id === move.id) return true;
       }
       return false;
     }

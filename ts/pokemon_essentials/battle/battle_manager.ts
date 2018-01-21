@@ -195,7 +195,7 @@ namespace PE.Battle {
       }
       if (pokemon.effects[Effects.Imprison]) {
         for (const index of this.sides.foe.actives) {
-          if (this.battlers[index].hasMove(move)) {
+          if (this.battlers[index].hasMove(move.id)) {
             this.showMessage(i18n._("%1 can't use the sealed %2!", pokemon.name, move.name));
             return false;
           }
