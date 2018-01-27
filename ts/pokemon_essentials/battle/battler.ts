@@ -46,7 +46,7 @@ namespace PE.Battle {
     lastRoundMoved: number;
     level: number;
     movesUsed: {};
-    moveset: any[];
+    moveset: Moves.Move[];
     sides: { own: ActiveSide, foe: ActiveSide } = { own: undefined, foe: undefined };
     /** Participants will earn Exp. Points if this battler is defeated */
     participants: number[];
@@ -480,7 +480,7 @@ namespace PE.Battle {
       return false;
     }
 
-    hasMove(id: Moves) {
+    hasMove(id: Movedex) {
       for (const move of this.moveset) {
         if (id === move.id) return true;
       }
@@ -503,7 +503,7 @@ namespace PE.Battle {
       return this.hasAbilityIn([Abilities.MOLDBREAKER, Abilities.TERAVOLT, Abilities.TURBOBLAZE]);
     }
 
-    hasType(type: string) {
+    hasType(type: Types | string) {
       for (const t of this.types) {
         if (t === type) return true;
       }

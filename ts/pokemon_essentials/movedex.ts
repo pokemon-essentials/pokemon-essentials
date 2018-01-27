@@ -1,5 +1,5 @@
 namespace PE {
-  export enum Moves {
+  export enum Movedex {
     "10000000VOLTTHUNDERBOLT" = "10000000VOLTTHUNDERBOLT",
     ABSORB = "ABSORB",
     ACCELEROCK = "ACCELEROCK",

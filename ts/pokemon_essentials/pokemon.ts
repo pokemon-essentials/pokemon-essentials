@@ -44,7 +44,7 @@ namespace PE.Pokemon {
       hp: Math.randomInt(30) + 1, atk: Math.randomInt(30) + 1, def: Math.randomInt(30) + 1,
       spa: Math.randomInt(30) + 1, spd: Math.randomInt(30) + 1, spe: Math.randomInt(30) + 1
     };
-    moveset: string[];
+    moveset: Battle.Moves.Move[];
     pokerus = Math.randomInt(65356) < SETTINGS.POKERUS_CHANCE;
     stats = { hp: 1, atk: 1, def: 1, spa: 1, spd: 1, spe: 1 };
     shiny = Math.randomInt(65356) < SETTINGS.SHINY_CHANCE;
@@ -161,7 +161,7 @@ namespace PE.Pokemon {
       }
       let moveset = [];
       for (let m of moves) {
-        let move = $PE_MOVES[m];
+        let move = new Battle.Moves.Move(m);
         move.totalPP = move.pp;
         moveset.push(move);
       }

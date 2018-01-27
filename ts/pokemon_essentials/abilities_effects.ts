@@ -166,7 +166,7 @@ namespace PE.Abilities {
         if (pokemon.isOpposing(battler.index) && !battler.isFainted()) {
           for (const move of battler.moveset) {
             let effectiveness = Types.effectiveness(move.type, pokemon.types, pokemon.effects[Effects.Type3]);
-            if ((effectiveness >= 2 && move.basePower > 0) || Moves.isOHKOMove(move.id)) {
+            if ((effectiveness >= 2 && move.basePower > 0) || Battle.Moves.isOHKOMove(move.id)) {
               found = true;
               break;
             }
@@ -185,7 +185,7 @@ namespace PE.Abilities {
     //------------------------------------------------------------------------------------------------------------------
     // Forewarn - The Pokémon transforms with the weather to change its type to Water, Fire, or Ice.
     // if battler.hasAbility(Abilities.FOREWARN) && $Battle.pbOwnedByPlayer?(@index) && onactive
-    //   console.log("[Ability triggered] #{pbThis} has Forewarn")
+    //   console.log("[Ability triggered] ${name} has Forewarn")
     //   highpower=0
     //   fwmoves=[]
     //   for foe in [pbOpposing1,pbOpposing2]
@@ -222,7 +222,7 @@ namespace PE.Abilities {
     //   if fwmoves.length>0
     //     fwmove=fwmoves[Math.randomInt(fwmoves.length)]
     //     movename=PBMoves.getName(fwmove)
-    //     $Battle.showMessage(i18n._("${battler.name}'s Forewarn alerted it to {2}!",pbThis,movename))
+    //     $Battle.showMessage(i18n._("${battler.name}'s Forewarn alerted it to %2!",name,movename))
     //   end
     // end
     //------------------------------------------------------------------------------------------------------------------
@@ -294,7 +294,7 @@ namespace PE.Abilities {
 
     //------------------------------------------------------------------------------------------------------------------
     // Imposter - The Pokémon transforms itself into the Pokémon it's facing.
-    // if battler.hasAbility(Abilities.IMPOSTER) && !@effects[PBEffects::Transform] && onactive
+    // if battler.hasAbility(Abilities.IMPOSTER) && !@effects[Effects.Transform] && onactive
     //   choice=pbOppositeOpposing
     //   blacklist=[
     //      0xC9,// Fly
@@ -305,27 +305,26 @@ namespace PE.Abilities {
     //      0xCE,// Sky Drop
     //      0x14D// Phantom Force
     //   ]
-    //   if choice.effects[PBEffects::Transform] ||
-    //      choice.effects[PBEffects::Illusion] ||
-    //      choice.effects[PBEffects::Substitute]>0 ||
-    //      choice.effects[PBEffects::SkyDrop] ||
-    //      blacklist.include?(PBMoveData.new(choice.effects[PBEffects::TwoTurnAttack]).function)
+    //   if choice.effects[Effects.Transform] ||
+    //      choice.effects[Effects.Illusion] ||
+    //      choice.effects[Effects.Substitute]>0 ||
+    //      choice.effects[Effects.SkyDrop] ||
+    //      blacklist.include?(PBMoveData.new(choice.effects[Effects.TwoTurnAttack]).function)
     //     console.log("[Ability triggered] ${pokemon.name} Imposter couldn't transform")
     //   else
     //     console.log("[Ability triggered] ${pokemon.name} Imposter")
     //     $Battle.pbAnimation(getConst(PBMoves,:TRANSFORM),self,choice)
-    //     @effects[PBEffects::Transform]=true
+    //     @effects[Effects.Transform]=true
     //     @type1=choice.type1
     //     @type2=choice.type2
-    //     @effects[PBEffects::Type3]=-1
+    //     @effects[Effects.Type3]=-1
     //     @ability=choice.ability
     //     @attack=choice.attack
     //     @defense=choice.defense
     //     @speed=choice.speed
-    //     @spatk=choice.spatk
+    //     @SpAtk=choice.SpAtk
     //     @spdef=choice.spdef
-    //     for i in [PBStats::ATTACK,PBStats::DEFENSE,PBStats::SPEED,
-    //               PBStats::SPATK,PBStats::SPDEF,PBStats::ACCURACY,PBStats::EVASION]
+    //     for i in [Stats.EVASION]
     //       @stages[i]=choice.stages[i]
     //     end
     //     for i in 0...4
@@ -333,10 +332,10 @@ namespace PE.Abilities {
     //       @moves[i].pp=5
     //       @moves[i].totalpp=5
     //     end
-    //     @effects[PBEffects::Disable]=0
-    //     @effects[PBEffects::DisableMove]=0
-    //     $Battle.showMessage(i18n._("${battler.name} transformed into {2}!",pbThis,choice.pbThis(true)))
-    //     console.log("[Pokémon transformed] #{pbThis} transformed into #{choice.pbThis(true)}")
+    //     @effects[Effects.Disable]=0
+    //     @effects[Effects.DisableMove]=0
+    //     $Battle.showMessage(i18n._("${battler.name} transformed into %2!",name,choice.name(true)))
+    //     console.log("[Pokémon transformed] ${name} transformed into ${choice.name(true)}")
     //   end
     // end
     //------------------------------------------------------------------------------------------------------------------
@@ -349,5 +348,78 @@ namespace PE.Abilities {
     //------------------------------------------------------------------------------------------------------------------
 
 
+  }
+
+  export function moveHitTypeImmunity(move: Battle.Moves.Move, attacker: Battle.Battler, opponent: Battle.Battler) {
+    if (opponent.hasAbility(Abilities.SAPSIPPER) && move.type === Types.GRASS) {
+      console.log(`[Ability triggered] ${opponent.name}'s Sap Sipper (made ${move.name} ineffective)`)
+      if (opponent.canIncreaseStatStage(Stats.Attack, opponent)) {
+        opponent.increaseStatWithCause(Stats.Attack, 1, opponent, Abilities.name(opponent.ability));
+      }
+      else {
+        $Battle.showMessage(i18n._("%1's %2 made %3 ineffective!", opponent.name, Abilities.name(opponent.ability), self.name))
+      }
+      return true;
+    }
+    if ((opponent.hasAbility(Abilities.STORMDRAIN) && move.type === Types.WATER) ||
+      (opponent.hasAbility(Abilities.LIGHTNINGROD) && move.type === Types.ELECTRIC)) {
+      console.log("[Ability triggered] ${opponent.name}'s ${Abilities.name(opponent.ability)} (made ${move.name} ineffective)")
+      if (opponent.canIncreaseStatStage(Stats.SpAtk, opponent)) {
+        opponent.increaseStatWithCause(Stats.SpAtk, 1, opponent, Abilities.name(opponent.ability))
+      } else {
+        $Battle.showMessage(i18n._("%1's %2 made %3 ineffective!", opponent.name, Abilities.name(opponent.ability), self.name))
+      }
+      return true;
+    }
+    if (opponent.hasAbility(Abilities.MOTORDRIVE) && move.type === Types.ELECTRIC) {
+      console.log("[Ability triggered] ${opponent.name}'s Motor Drive (made ${move.name} ineffective)");
+      if (opponent.canIncreaseStatStage(Stats.Speed, opponent)) {
+
+        opponent.increaseStatWithCause(Stats.Speed, 1, opponent, Abilities.name(opponent.ability))
+      }
+      else {
+
+        $Battle.showMessage(i18n._("%1's %2 made %3 ineffective!", opponent.name, Abilities.name(opponent.ability), self.name))
+      }
+      return true;
+    }
+    if ((opponent.hasAbilityIn([Abilities.DRYSKIN, Abilities.WATERABSORB]) && move.type === Types.WATER) ||
+      (opponent.hasAbility(Abilities.VOLTABSORB) && move.type === Types.ELECTRIC)) {
+      console.log("[Ability triggered] ${opponent.name}'s ${Abilities.name(opponent.ability)} (made ${move.name} ineffective)")
+      let healed = false;
+      if (opponent.effects[Effects.HealBlock] == 0) {
+        // if (opponent.recoverHP(Math.floor(opponent.totalhp / 4), true) > 0){
+        //   $Battle.showMessage(i18n._("%1's %2 restored its HP!", opponent.name, Abilities.name(opponent.ability)))
+        //   healed = true;
+        // }
+      }
+      if (!healed) {
+        $Battle.showMessage(i18n._("%1's %2 made %3 useless!", opponent.name, Abilities.name(opponent.ability), move.name));
+      }
+      return true;
+    }
+    if (opponent.hasAbility(Abilities.FLASHFIRE) && move.type === Types.FIRE) {
+      console.log("[Ability triggered] ${opponent.name}'s Flash Fire (made ${move.name} ineffective)")
+
+      if (!opponent.effects[Effects.FlashFire]) {
+        opponent.effects[Effects.FlashFire] = true
+        $Battle.showMessage(i18n._("%1's %2 raised its Fire power!", opponent.name, Abilities.name(opponent.ability)))
+      }
+      else {
+        $Battle.showMessage(i18n._("%1's %2 made %3 ineffective!", opponent.name, Abilities.name(opponent.ability), self.name))
+      }
+      return true;
+    }
+    if (opponent.hasAbility(Abilities.TELEPATHY) && move.IsDamaging() && !opponent.isOpposing(attacker.index)) {
+      console.log("[Ability triggered] ${opponent.name}'s Telepathy (made ${move.name} ineffective)");
+      $Battle.showMessage(i18n._("%1 avoids attacks by its ally Pokémon!", opponent.name));
+      return true
+    }
+    if (opponent.hasAbility(Abilities.BULLETPROOF) && move.isBombMove()) {
+      console.log("[Ability triggered] ${opponent.name}'s Bulletproof (made ${move.name} ineffective)")
+      $Battle.showMessage(i18n._("%1's %2 made %3 ineffective!", opponent.name, Abilities.name(opponent.ability), self.name))
+      return true
+    }
+    return false;
   }
 }
