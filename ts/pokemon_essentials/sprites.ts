@@ -1,4 +1,20 @@
 namespace PE.Sprites {
+
+  export class Blinker extends Sprite {
+    constructor(private _speed) {
+      super();
+      this._speed = 60 / this._speed;
+    }
+
+    update() {
+      super.update();
+      this.opacity -= this._speed;
+      if (this.opacity <= 0 || this.opacity >= 255) {
+        this._speed *= -1;
+      }
+    }
+  }
+
   class SpriteAnimated extends Sprite_Base {
     private _currFrame: number = 0;
     private _frames: number = 0;

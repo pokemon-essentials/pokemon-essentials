@@ -339,7 +339,7 @@ namespace PE.Battle {
       // if (this.isBusy()) return;
 
       if (Input.isTriggered('cancel')) {
-        SceneManager.goto(Scene_Title);
+        SceneManager.goto(PE.TitleScenes.CustomScene);
       }
 
       if (Input.isTriggered('right')) {

@@ -23,14 +23,3 @@ var $PE_ITEMS: any;
 DataManager.loadDataFile('$PE_ABILITIES', 'pe/abilities.json');
 DataManager.loadDataFile('$PE_MOVES', 'pe/moves.json');
 DataManager.loadDataFile('$PE_POKEDEX', 'pe/pokedex.json');
-
-
-
-Scene_Title.prototype.commandNewGame = function () {
-  DataManager.setupNewGame();
-  this._commandWindow.close();
-  this.fadeOutAll();
-  SceneManager.goto(PE.Battle.Scene_Battle);
-  // SceneManager.prepareNextScene(new PE.Pokemon.Pokemon("KYOGRE", 100), new PE.Pokemon.Pokemon("GROUDON", 100));
-  SceneManager.prepareNextScene(PE.Pokemon.getRandomPokemon(), PE.Pokemon.getRandomPokemon());
-};
