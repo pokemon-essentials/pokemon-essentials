@@ -402,6 +402,7 @@ namespace PE.Battle {
 
 
   export class Scene_Battle extends Scene_Base {
+    hud: Sprite;
     partyBar: HPBar;
     movesSelection: _MovesSelection;
     battleCommands: BattleCommands;
@@ -435,14 +436,18 @@ namespace PE.Battle {
       $Battle.update();
       switch ($Battle.phase) {
         case Phase.ActionSelection:
+          this.partyBar.visible = true;
+          this.hud.visible = true;
           this.battleCommands.updateInput();
           break;
         case Battle.Phase.MoveSelection:
+          this.partyBar.visible = false;
+          this.hud.visible = false;
           this.movesSelection.updateInput();
           break;
         default:
           if (Input.isTriggered('cancel')) {
-            SceneManager.goto(Scene_Title);
+            SceneManager.goto(PE.TitleScenes.CustomScene);
           }
       }
     }
@@ -522,6 +527,7 @@ namespace PE.Battle {
       this.addChild(this.layers.weather);
 
       this.partyBar = new HPBar(this.partyPokemon, 16, Graphics.height - 64, false);
+      this.partyBar.visible = false;
       this.addChild(this.partyBar);
 
       let h2 = new HPBar(this.foePokemon, Graphics.width - 208, 48, true);
@@ -537,14 +543,15 @@ namespace PE.Battle {
       this.addChild(this.movesSelection);
 
       let msg = i18n._('What will %1 do?', this.partyPokemon.name);
-      let t = new Sprite(new Bitmap(300, 32));
-      t.bitmap.fontSize = 20;
-      t.bitmap.drawText(msg, 0, 0, 300, 32, 'right');
-      t.x = Graphics.width - 8;
-      t.y = Graphics.height;
-      t.anchor.x = 1;
-      t.anchor.y = 1;
-      this.addChild(t);
+      this.hud = new Sprite(new Bitmap(300, 32));
+      this.hud.bitmap.fontSize = 20;
+      this.hud.bitmap.drawText(msg, 0, 0, 300, 32, 'right');
+      this.hud.x = Graphics.width - 8;
+      this.hud.y = Graphics.height;
+      this.hud.anchor.x = 1;
+      this.hud.anchor.y = 1;
+      this.hud.visible = false;
+      this.addChild(this.hud);
     }
 
 
