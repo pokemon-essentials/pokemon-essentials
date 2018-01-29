@@ -1,9 +1,26 @@
 namespace PE.Battle {
 
+  class WindowBattleMessage extends Window_Message {
+    constructor() {
+      super();
+      this.changeTextColor("#fff");
+    }
+    frameskin: any;
+    loadFrameSkin() {
+      this.frameskin = ImageManager.loadSystem('battle_message_skin');
+    }
+
+    normalColor() {
+      return "#ffffff";
+    };
+
+  }
+
   class AbilityIndicator extends Sprite {
     ticks: number;
     constructor(public ability: string) {
       super(new Bitmap(224, 32));
+      this.bitmap.outlineWidth = 3;
       this.bitmap.fontSize = 20;
       this.bitmap.fillAll('rgba(0,0,0,0.7)');
       this.bitmap.drawText(Abilities.name(ability), 0, 0, 224, 32, 'center');
@@ -388,7 +405,7 @@ namespace PE.Battle {
     partyBar: HPBar;
     movesSelection: _MovesSelection;
     battleCommands: BattleCommands;
-    message: Window_Message;
+    message: WindowBattleMessage;
     foePokemon: Pokemon.Pokemon;
     partyPokemon: Pokemon.Pokemon;
 
@@ -465,7 +482,7 @@ namespace PE.Battle {
     }
 
     createMessageWindow() {
-      this.message = new Window_Message();
+      this.message = new WindowBattleMessage();
       this.addWindow(this.message);
       this.message.subWindows().forEach(function (window) {
         this.addWindow(window);
