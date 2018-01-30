@@ -1,5 +1,121 @@
 namespace PE.Battle {
 
+  interface BattlerEffects {
+    AquaRing: boolean,
+    Attract: number,
+    BatonPass: boolean,
+    Bide: number,
+    BideDamage: number,
+    BideTarget: number,
+    Charge: number,
+    /** The move id lock by choice band */
+    ChoiceBand: Movedex,
+    Confusion: number,
+    Counter: number,
+    CounterTarget: number,
+    Curse: boolean,
+    DefenseCurl: boolean,
+    DestinyBond: boolean,
+    Disable: number,
+    DisableMove: number,
+    Electrify: boolean,
+    Embargo: number,
+    Encore: number,
+    EncoreMoveId: Movedex,
+    EncoreMove: number,
+    Endure: boolean,
+    FirstPledge: number,
+    FlashFire: boolean,
+    Flinch: boolean,
+    FocusEnergy: number,
+    FollowMe: number,
+    Foresight: boolean,
+    FuryCutter: number,
+    FutureSight: number,
+    FutureSightMove: number,
+    FutureSightUser: number,
+    FutureSightUserPos: number,
+    GastroAcid: boolean,
+    Grudge: boolean,
+    HealBlock: number,
+    HealingWish: boolean,
+    HelpingHand: boolean,
+    HyperBeam: number,
+    Illusion: Pokemon.Pokemon,
+    Imprison: boolean,
+    Ingrain: boolean,
+    KingsShield: boolean,
+    LeechSeed: number,
+    LifeOrb: boolean,
+    LockOn: number,
+    LockOnPos: number,
+    LunarDance: boolean,
+    MagicCoat: boolean,
+    MagnetRise: number,
+    MeanLook: number,
+    MeFirst: boolean,
+    Metronome: number,
+    MicleBerry: boolean,
+    Minimize: boolean,
+    MiracleEye: boolean,
+    MirrorCoat: number,
+    MirrorCoatTarget: number,
+    MoveNext: boolean,
+    MudSport: boolean,
+    MultiTurn: number,
+    MultiTurnAttack: number,
+    MultiTurnUser: number,
+    Nightmare: boolean,
+    Outrage: number,
+    ParentalBond: number,
+    PerishSong: number,
+    PerishSongUser: number,
+    PickupItem: number,
+    PickupUse: number,
+    Pinch: boolean,
+    Powder: boolean,
+    PowerTrick: boolean,
+    Protect: boolean,
+    ProtectNegation: boolean,
+    ProtectRate: number,
+    Pursuit: boolean,
+    Quash: boolean,
+    Rage: boolean,
+    Roar: boolean,
+    Revenge: number,
+    Rollout: number,
+    Roost: boolean,
+    SkipTurn: boolean,
+    SkyDrop: boolean,
+    SmackDown: boolean,
+    Snatch: boolean,
+    SpikyShield: boolean,
+    Stockpile: number,
+    StockpileDef: number,
+    StockpileSpDef: number,
+    Substitute: number,
+    Taunt: number,
+    Telekinesis: number,
+    Torment: boolean,
+    Toxic: number,
+    Transform: boolean,
+    /** add to the effects test*/
+    Truant: boolean,
+    TwoTurnAttack: number,
+    Type3: Types,
+    Unburden: boolean,
+    Uproar: number,
+    Uturn: boolean,
+    WaterSport: boolean,
+    /** aumont of weigth add the normal Pokémon weight */
+    WeightChange: number,
+    Wish: number,
+    WishAmount: number,
+    WishMaker: number,
+    Yawn: number,
+
+  }
+
   const STAGE_MULT = {
     '-6': 0.2,
     '-5': 0.28,
@@ -31,7 +147,7 @@ namespace PE.Battle {
 
     ability: string;
     damageState: DamageState;
-    effects = {};
+    effects: BattlerEffects;
     forme: any;
     gender: any;
     item: string;
@@ -66,7 +182,6 @@ namespace PE.Battle {
       this._fainted = true;
       this._captured = false;
       this.stages = {};
-      this.effects = {};
       this.damageState = new DamageState();
       this.initPokemon(pokemon);
       this.initEffects(false);
@@ -112,36 +227,36 @@ namespace PE.Battle {
         this.stages[Stats.Accuracy] = 0;
 
         this.lastMoveUsedSketch = -1;
-        this.effects[Effects.AquaRing] = false;
-        this.effects[Effects.Confusion] = 0;
-        this.effects[Effects.Curse] = false;
-        this.effects[Effects.Embargo] = 0;
-        this.effects[Effects.FocusEnergy] = 0;
-        this.effects[Effects.GastroAcid] = false;
-        this.effects[Effects.HealBlock] = 0;
-        this.effects[Effects.Ingrain] = false;
-        this.effects[Effects.LeechSeed] = -1;
-        this.effects[Effects.LockOn] = 0;
-        this.effects[Effects.LockOnPos] = -1;
+        this.effects.AquaRing = false;
+        this.effects.Confusion = 0;
+        this.effects.Curse = false;
+        this.effects.Embargo = 0;
+        this.effects.FocusEnergy = 0;
+        this.effects.GastroAcid = false;
+        this.effects.HealBlock = 0;
+        this.effects.Ingrain = false;
+        this.effects.LeechSeed = -1;
+        this.effects.LockOn = 0;
+        this.effects.LockOnPos = -1;
         for (const battler of $Battle.actives) {
-          if (battler.effects[Effects.LockOnPos] === this.index && battler.effects[Effects.LockOn] > 0) {
-            battler.effects[Effects.LockOn] = 0;
-            battler.effects[Effects.LockOnPos] = -1;
+          if (battler.effects.LockOnPos === this.index && battler.effects.LockOn > 0) {
+            battler.effects.LockOn = 0;
+            battler.effects.LockOnPos = -1;
           }
         }
-        this.effects[Effects.MagnetRise] = 0;
-        this.effects[Effects.PerishSong] = 0;
-        this.effects[Effects.PerishSongUser] = -1;
-        this.effects[Effects.PowerTrick] = false;
-        this.effects[Effects.Substitute] = 0;
-        this.effects[Effects.Telekinesis] = 0;
+        this.effects.MagnetRise = 0;
+        this.effects.PerishSong = 0;
+        this.effects.PerishSongUser = -1;
+        this.effects.PowerTrick = false;
+        this.effects.Substitute = 0;
+        this.effects.Telekinesis = 0;
       } else {
-        if (this.effects[Effects.LockOn] > 0) {
-          this.effects[Effects.LockOn] = 2;
+        if (this.effects.LockOn > 0) {
+          this.effects.LockOn = 2;
         } else {
-          this.effects[Effects.LockOn] = 0;
+          this.effects.LockOn = 0;
         }
-        if (this.effects[Effects.PowerTrick]) {
+        if (this.effects.PowerTrick) {
           let aux = this.attack;
           this.attack = this.defense;
           this.defense = this.attack;
@@ -157,120 +272,119 @@ namespace PE.Battle {
       this.lastRoundMoved = -1;
       this.movesUsed = {};
       this.turncount = 0;
-      this.effects[Effects.Attract] = -1;
+      this.effects.Attract = -1;
       for (const battler of $Battle.actives) {
-        if (battler.effects[Effects.Attract] === this.index) {
-          battler.effects[Effects.Attract] = -1;
+        if (battler.effects.Attract === this.index) {
+          battler.effects.Attract = -1;
         }
       }
-      this.effects[Effects.BatonPass] = false;
-      this.effects[Effects.Bide] = 0;
-      this.effects[Effects.BideDamage] = 0;
-      this.effects[Effects.BideTarget] = -1;
-      this.effects[Effects.Charge] = 0;
-      /** The move id lock by choice band */
-      this.effects[Effects.ChoiceBand] = undefined;
-      this.effects[Effects.Counter] = -1;
-      this.effects[Effects.CounterTarget] = -1;
-      this.effects[Effects.DefenseCurl] = false;
-      this.effects[Effects.DestinyBond] = false;
-      this.effects[Effects.Disable] = 0;
-      this.effects[Effects.DisableMove] = 0;
-      this.effects[Effects.Electrify] = false;
-      this.effects[Effects.Encore] = 0;
-      this.effects[Effects.EncoreMoveId] = 0;
-      this.effects[Effects.EncoreMove] = 0;
-      this.effects[Effects.Endure] = false;
-      this.effects[Effects.FirstPledge] = 0;
-      this.effects[Effects.FlashFire] = false;
-      this.effects[Effects.Flinch] = false;
-      this.effects[Effects.FollowMe] = 0;
-      this.effects[Effects.Foresight] = false;
-      this.effects[Effects.FuryCutter] = 0;
-      this.effects[Effects.Grudge] = false;
-      this.effects[Effects.HelpingHand] = false;
-      this.effects[Effects.HyperBeam] = 0;
-      this.effects[Effects.Illusion] = null;
+      this.effects.BatonPass = false;
+      this.effects.Bide = 0;
+      this.effects.BideDamage = 0;
+      this.effects.BideTarget = -1;
+      this.effects.Charge = 0;
+      this.effects.ChoiceBand = undefined;
+      this.effects.Counter = -1;
+      this.effects.CounterTarget = -1;
+      this.effects.DefenseCurl = false;
+      this.effects.DestinyBond = false;
+      this.effects.Disable = 0;
+      this.effects.DisableMove = 0;
+      this.effects.Electrify = false;
+      this.effects.Encore = 0;
+      this.effects.EncoreMoveId = undefined;
+      this.effects.EncoreMove = 0;
+      this.effects.Endure = false;
+      this.effects.FirstPledge = 0;
+      this.effects.FlashFire = false;
+      this.effects.Flinch = false;
+      this.effects.FollowMe = 0;
+      this.effects.Foresight = false;
+      this.effects.FuryCutter = 0;
+      this.effects.Grudge = false;
+      this.effects.HelpingHand = false;
+      this.effects.HyperBeam = 0;
+      this.effects.Illusion = null;
       /**
        * Add here ilusion ability
        */
-      this.effects[Effects.Imprison] = false;
-      this.effects[Effects.KingsShield] = false;
-      this.effects[Effects.LifeOrb] = false;
-      this.effects[Effects.MagicCoat] = false;
-      this.effects[Effects.MeanLook] = -1;
+      this.effects.Imprison = false;
+      this.effects.KingsShield = false;
+      this.effects.LifeOrb = false;
+      this.effects.MagicCoat = false;
+      this.effects.MeanLook = -1;
       for (const battler of $Battle.actives) {
-        if (battler.effects[Effects.MeanLook] === this.index) battler.effects[Effects.MeanLook] = -1;
+        if (battler.effects.MeanLook === this.index) battler.effects.MeanLook = -1;
       }
-      this.effects[Effects.MeFirst] = false;
-      this.effects[Effects.Metronome] = 0;
-      this.effects[Effects.MicleBerry] = false;
-      this.effects[Effects.Minimize] = false;
-      this.effects[Effects.MiracleEye] = false;
-      this.effects[Effects.MirrorCoat] = -1;
-      this.effects[Effects.MirrorCoatTarget] = -1;
-      this.effects[Effects.MoveNext] = false;
-      this.effects[Effects.MudSport] = false;
-      this.effects[Effects.MultiTurn] = 0;
-      this.effects[Effects.MultiTurnAttack] = 0;
-      this.effects[Effects.MultiTurnUser] = -1;
+      this.effects.MeFirst = false;
+      this.effects.Metronome = 0;
+      this.effects.MicleBerry = false;
+      this.effects.Minimize = false;
+      this.effects.MiracleEye = false;
+      this.effects.MirrorCoat = -1;
+      this.effects.MirrorCoatTarget = -1;
+      this.effects.MoveNext = false;
+      this.effects.MudSport = false;
+      this.effects.MultiTurn = 0;
+      this.effects.MultiTurnAttack = 0;
+      this.effects.MultiTurnUser = -1;
       for (const battler of $Battle.actives) {
-        if (battler.effects[Effects.MultiTurnUser] === this.index) {
-          battler.effects[Effects.MultiTurn] = 0;
-          battler.effects[Effects.MultiTurnUser] = -1;
+        if (battler.effects.MultiTurnUser === this.index) {
+          battler.effects.MultiTurn = 0;
+          battler.effects.MultiTurnUser = -1;
         }
       }
-      this.effects[Effects.Nightmare] = false;
-      this.effects[Effects.Outrage] = 0;
-      this.effects[Effects.ParentalBond] = 0;
-      this.effects[Effects.PickupItem] = 0;
-      this.effects[Effects.PickupUse] = 0;
-      this.effects[Effects.Pinch] = false;
-      this.effects[Effects.Powder] = false;
-      this.effects[Effects.Protect] = false;
-      this.effects[Effects.ProtectNegation] = false;
-      this.effects[Effects.ProtectRate] = 1;
-      this.effects[Effects.Pursuit] = false;
-      this.effects[Effects.Quash] = false;
-      this.effects[Effects.Rage] = false;
-      this.effects[Effects.Revenge] = 0;
-      this.effects[Effects.Roar] = false;
-      this.effects[Effects.Rollout] = 0;
-      this.effects[Effects.Roost] = false;
-      this.effects[Effects.SkipTurn] = false;
-      this.effects[Effects.SkyDrop] = false;
-      this.effects[Effects.SmackDown] = false;
-      this.effects[Effects.Snatch] = false;
-      this.effects[Effects.SpikyShield] = false;
-      this.effects[Effects.Stockpile] = 0;
-      this.effects[Effects.StockpileDef] = 0;
-      this.effects[Effects.StockpileSpDef] = 0;
-      this.effects[Effects.Taunt] = 0;
-      this.effects[Effects.Torment] = false;
-      this.effects[Effects.Toxic] = 0;
-      this.effects[Effects.Transform] = false;
-      this.effects[Effects.Truant] = false;
-      this.effects[Effects.TwoTurnAttack] = 0;
-      this.effects[Effects.Type3] = undefined;
-      this.effects[Effects.Unburden] = false;
-      this.effects[Effects.Uproar] = 0;
-      this.effects[Effects.Uturn] = false;
-      this.effects[Effects.WaterSport] = false;
-      this.effects[Effects.WeightChange] = 0;
-      this.effects[Effects.Yawn] = 0;
+      this.effects.Nightmare = false;
+      this.effects.Outrage = 0;
+      this.effects.ParentalBond = 0;
+      this.effects.PickupItem = 0;
+      this.effects.PickupUse = 0;
+      this.effects.Pinch = false;
+      this.effects.Powder = false;
+      this.effects.Protect = false;
+      this.effects.ProtectNegation = false;
+      this.effects.ProtectRate = 1;
+      this.effects.Pursuit = false;
+      this.effects.Quash = false;
+      this.effects.Rage = false;
+      this.effects.Revenge = 0;
+      this.effects.Roar = false;
+      this.effects.Rollout = 0;
+      this.effects.Roost = false;
+      this.effects.SkipTurn = false;
+      this.effects.SkyDrop = false;
+      this.effects.SmackDown = false;
+      this.effects.Snatch = false;
+      this.effects.SpikyShield = false;
+      this.effects.Stockpile = 0;
+      this.effects.StockpileDef = 0;
+      this.effects.StockpileSpDef = 0;
+      this.effects.Taunt = 0;
+      this.effects.Torment = false;
+      this.effects.Toxic = 0;
+      this.effects.Transform = false;
+      this.effects.Truant = false;
+      this.effects.TwoTurnAttack = 0;
+      this.effects.Type3 = undefined;
+      this.effects.Unburden = false;
+      this.effects.Uproar = 0;
+      this.effects.Uturn = false;
+      this.effects.WaterSport = false;
+      this.effects.WeightChange = 0;
+      this.effects.Yawn = 0;
     }
 
     /**  These effects are always retained even if a Pokémon is replaced */
     initPermanentEffects() {
-      this.effects[Effects.FutureSight] = 0;
-      this.effects[Effects.FutureSightMove] = 0;
-      this.effects[Effects.FutureSightUser] = -1;
-      this.effects[Effects.FutureSightUserPos] = -1;
-      this.effects[Effects.HealingWish] = false;
-      this.effects[Effects.LunarDance] = false;
-      this.effects[Effects.Wish] = 0;
-      this.effects[Effects.WishAmount] = 0;
-      this.effects[Effects.WishMaker] = -1;
+      this.effects.FutureSight = 0;
+      this.effects.FutureSightMove = 0;
+      this.effects.FutureSightUser = -1;
+      this.effects.FutureSightUserPos = -1;
+      this.effects.HealingWish = false;
+      this.effects.LunarDance = false;
+      this.effects.Wish = 0;
+      this.effects.WishAmount = 0;
+      this.effects.WishMaker = -1;
     }
 
     initialize(pokemon: Pokemon.Pokemon, index: number, batonpass: boolean) {
@@ -341,7 +455,7 @@ namespace PE.Battle {
       if (this.hasAbility(Abilities.QUICKFEET) && this.status !== Statuses.Healthy) {
         speedmod = Math.round(speed * 1.5);
       }
-      if (this.hasAbility(Abilities.UNBURDEN) && this.effects[Effects.Unburden] && this.item == "") {
+      if (this.hasAbility(Abilities.UNBURDEN) && this.effects.Unburden && this.item == "") {
         speedmod *= 2;
       }
       if (this.hasAbility(Abilities.SLOWSTART) && this.turncount <= 5) {
@@ -353,13 +467,13 @@ namespace PE.Battle {
       if (this.hasItem('CHOICESCARF')) {
         speedmod = Math.round(speed * 1.5);
       }
-      if (this.hasItem('QUICKPOWDER') && this.species === Pokedex.DITTO && !this.effects[Effects.Transform]) {
+      if (this.hasItem('QUICKPOWDER') && this.species === Pokedex.DITTO && !this.effects.Transform) {
         speedmod *= 2;
       }
-      if (this.sides.own.effects[Effects.Tailwind] > 0) {
+      if (this.sides.own.effects.Tailwind > 0) {
         speedmod *= 2;
       }
-      if (this.sides.own.effects[Effects.Swamp]) {
+      if (this.sides.own.effects.Swamp) {
         speedmod = Math.round(speedmod / 2);
       }
       if (this.status === Statuses.Paralysis && !this.hasAbility(Abilities.QUICKFEET)) {
@@ -399,7 +513,7 @@ namespace PE.Battle {
       this._fainted = true;
 
       $Battle.choices[this.index] = undefined;
-      this.sides.own.effects[Effects.LastRoundFainted] = $Battle.turncount;
+      this.sides.own.effects.LastRoundFainted = $Battle.turncount;
       if (showMessage) $Battle.showPausedMessage(`${this.name} fainted!`);
       console.log(`[Pokémon fainted] ${this.name} fainted`);
       return true;
@@ -411,11 +525,11 @@ namespace PE.Battle {
 
     set status(value: Statuses) {
       if (this._status === Statuses.Sleep && value === Statuses.Healthy) {
-        this.effects[Effects.Truant] = false;
+        this.effects.Truant = false;
       }
       this._status = value;
       if (this.pokemon) this.pokemon.status = value; // Why?
-      if (value !== Statuses.Poison) this.effects[Effects.Toxic] = 0;
+      if (value !== Statuses.Poison) this.effects.Toxic = 0;
       if (value !== Statuses.Poison && value !== Statuses.Sleep) {
         this.statusCount = 0;
         this.pokemon.statusCount = 0;
@@ -429,7 +543,7 @@ namespace PE.Battle {
         if (this.hasAbility(Abilities.LIGHTMETAL)) w /= 2;
       }
       if (this.hasItem('FLOATSTONE')) w /= 2;
-      w *= this.effects[Effects.WeightChange];
+      w *= this.effects.WeightChange;
       w = Math.floor(w);
       if (w < 0) w = 1;
       return w;
@@ -454,7 +568,7 @@ namespace PE.Battle {
 
     hasAbility(ability: Abilities, ignorefainted?: boolean) {
       if (this._fainted && !ignorefainted) return false;
-      if (this.effects[Effects.GastroAcid]) return false;
+      if (this.effects.GastroAcid) return false;
       return this.ability === ability;
     }
 
@@ -467,8 +581,8 @@ namespace PE.Battle {
 
     hasItem(item: string, ignorefainted?: boolean) {
       if (this._fainted && !ignorefainted) return false;
-      if (this.effects[Effects.Embargo]) return false;
-      if ($Battle.field.effects[Effects.MagicRoom] > 0) return false;
+      if (this.effects.Embargo) return false;
+      if ($Battle.field.effects.MagicRoom > 0) return false;
       if (this.hasAbility(Abilities.KLUTZ, ignorefainted)) return false;
       return this.item === item;
     }
@@ -507,7 +621,7 @@ namespace PE.Battle {
       for (const t of this.types) {
         if (t === type) return true;
       }
-      if (this.effects[Effects.Type3] && this.effects[Effects.Type3] === type) return true;
+      if (this.effects.Type3 && this.effects.Type3 === type) return true;
       return false;
     }
 
@@ -525,12 +639,12 @@ namespace PE.Battle {
     /** Check if the Pokémon touch the field. */
     isAirborne(ignoreability: boolean) {
       if (this.hasItem('IRONBAll')) return false;
-      if (this.effects[Effects.Ingrain] || this.effects[Effects.SmackDown]) return false;
-      if ($Battle.field.effects[Effects.Gravity]) return false;
-      if (this.hasType('FLYING') && !this.effects[Effects.Roost]) return true;
+      if (this.effects.Ingrain || this.effects.SmackDown) return false;
+      if ($Battle.field.effects.Gravity) return false;
+      if (this.hasType('FLYING') && !this.effects.Roost) return true;
       if (this.hasAbility(Abilities.LEVITATE) && !ignoreability) return true;
       if (this.hasItem('AIRBALLOON')) return true;
-      if (this.effects[Effects.MagnetRise] || this.effects[Effects.Telekinesis]) return true;
+      if (this.effects.MagnetRise || this.effects.Telekinesis) return true;
       return false;
     }
     //#endregion
@@ -552,23 +666,23 @@ namespace PE.Battle {
       // user has sustitute or Safeguard
       if (!selfSleep) {
         if (this.status != Statuses.Healthy ||
-          (this.effects[Effects.Substitute] > 0 && (!move || !move.ignoresSubstitute(attacker)))) {
+          (this.effects.Substitute > 0 && (!move || !move.ignoresSubstitute(attacker)))) {
           if (showMessages) $Battle.showMessage(i18n._("But it failed!"));
           return false;
         }
 
-        if (this.sides.own.effects[Effects.Safeguard] > 0 && (!attacker || !attacker.hasAbility(Abilities.INFILTRATOR))) {
+        if (this.sides.own.effects.Safeguard > 0 && (!attacker || !attacker.hasAbility(Abilities.INFILTRATOR))) {
           if (showMessages) $Battle.showMessage(i18n._("%1's team is protected by Safeguard!", this.name))
           return false;
         }
       }
       // there are field terrains and user touch the field.
       if (!this.isAirborne(attacker && attacker.hasMoldBreaker())) {
-        if ($Battle.field.effects[Effects.ElectricTerrain] > 0) {
+        if ($Battle.field.effects.ElectricTerrain > 0) {
           if (showMessages)
             $Battle.showMessage(i18n._(`The Electric Terrain prevented %1 from falling asleep!`, this.name));
           return false
-        } else if ($Battle.field.effects[Effects.MistyTerrain] > 0) {
+        } else if ($Battle.field.effects.MistyTerrain > 0) {
           if (showMessages)
             $Battle.showMessage(i18n._(`The Misty Terrain prevented %1 from falling asleep!`, this.name));
           return false
@@ -577,7 +691,7 @@ namespace PE.Battle {
       // uproar
       if ((attacker && attacker.hasMoldBreaker()) || !this.hasAbility(Abilities.SOUNDPROOF)) {
         for (const battler of $Battle.actives) {
-          if (battler.effects[Effects.Uproar] > 0) {
+          if (battler.effects.Uproar > 0) {
             if (showMessages) $Battle.showMessage(i18n._(`But the uproar kept %1 awake!`, this.name));
             return false
           }
@@ -606,12 +720,12 @@ namespace PE.Battle {
       if (this.status !== Statuses.Healthy) return false;
       if (!this.hasAbility(Abilities.SOUNDPROOF)) {
         for (const battler of $Battle.actives) {
-          if (battler.effects[Effects.Uproar] > 0) return false;
+          if (battler.effects.Uproar > 0) return false;
         }
       }
       if (!this.isAirborne(undefined)) {
-        if ($Battle.field.effects[Effects.ElectricTerrain] > 0
-          || $Battle.field.effects[Effects.MistyTerrain] > 0) return false;
+        if ($Battle.field.effects.ElectricTerrain > 0
+          || $Battle.field.effects.MistyTerrain > 0) return false;
       }
       if (this.hasAbilityIn([Abilities.VITALSPIRIT, Abilities.INSOMNIA, Abilities.SWEETVEIL]) ||
         (this.hasAbility(Abilities.LEAFGUARD) && ($Battle.weather == Weathers.SunnyDay ||
@@ -649,7 +763,7 @@ namespace PE.Battle {
     canAttract(attacker, showMessages) {
       if (this.isFainted()) return false;
       if (!attacker || attacker.isFainted()) return false;
-      if (this.effects[Effects.Attract] >= 0) {
+      if (this.effects.Attract >= 0) {
         if (showMessages) $Battle.showMessage(i18n._("But it failed!"));
         return false;
       }
@@ -666,7 +780,7 @@ namespace PE.Battle {
     }
 
     attract(attacker: Battler, showMessage: boolean) {
-      this.effects[Effects.Attract] = attacker.index;
+      this.effects.Attract = attacker.index;
       // $Battle.pbCommonAnimation("Attract", this, null);
       if (showMessage) $Battle.showMessage(i18n._(`%1 fell in love!`, this.name));
       console.log(`[Lingering effect triggered] ${this.name} became infatuated (with ${attacker.name})`);
@@ -689,7 +803,7 @@ namespace PE.Battle {
         return false
       }
       if (this.status !== Statuses.Healthy ||
-        (this.effects[Effects.Substitute] > 0 && (!move || !move.ignoresSubstitute(attacker)))) {
+        (this.effects.Substitute > 0 && (!move || !move.ignoresSubstitute(attacker)))) {
         if (showMessages) $Battle.showMessage(i18n._("But it failed!"));
         return false
       }
@@ -697,7 +811,7 @@ namespace PE.Battle {
         if (showMessages) $Battle.showMessage(i18n._("It doesn't affect %1...", this.name));
         return false;
       }
-      if ($Battle.field.effects[Effects.MistyTerrain] > 0
+      if ($Battle.field.effects.MistyTerrain > 0
         && !this.isAirborne(attacker && attacker.hasMoldBreaker())) {
         let m = "The Misty Terrain prevented %1 from being poisoned!";
         if (showMessages) $Battle.showMessage(i18n._(m, this.name));
@@ -718,7 +832,7 @@ namespace PE.Battle {
           return false;
         }
       }
-      if (this.sides.own.effects[Effects.Safeguard] > 0 &&
+      if (this.sides.own.effects.Safeguard > 0 &&
         (!attacker || !attacker.hasAbility(Abilities.INFILTRATOR))) {
         if (showMessages) $Battle.showMessage(i18n._("%1's team is protected by Safeguard!", this.name));
         return false
@@ -763,14 +877,14 @@ namespace PE.Battle {
         if (this.hasAbility(Abilities.LEAFGUARD) && ($Battle.weather === Weathers.SunnyDay ||
           $Battle.weather == Weathers.HarshSun)) return false;
       }
-      if (this.sides.own.effects[Effects.Safeguard] > 0) return false
+      if (this.sides.own.effects.Safeguard > 0) return false
       return true;
     }
 
     poison(attacker: Battler = undefined, msg: string = undefined, toxic: boolean = false) {
       this.status = Statuses.Poison;
       this.statusCount = toxic ? 1 : 0;
-      this.effects[Effects.Toxic] = 0;
+      this.effects.Toxic = 0;
       // $Battle.pbCommonAnimation("Poison",self,nil)
       if (msg && msg !== "") $Battle.showMessage(msg);
       else {
@@ -812,11 +926,11 @@ namespace PE.Battle {
         return false;
       }
       if (this.status !== Statuses.Healthy ||
-        (this.effects[Effects.Substitute] > 0 && (!move || !move.ignoresSubstitute(attacker)))) {
+        (this.effects.Substitute > 0 && (!move || !move.ignoresSubstitute(attacker)))) {
         if (showMessages) $Battle.showMessage(i18n._("But it failed!"));
         return false;
       }
-      if ($Battle.field.effects[Effects.MistyTerrain] > 0 && !this.isAirborne(attacker && attacker.hasMoldBreaker())) {
+      if ($Battle.field.effects.MistyTerrain > 0 && !this.isAirborne(attacker && attacker.hasMoldBreaker())) {
         if (showMessages) {
           let msg = i18n._("The Misty Terrain prevented %1 from being burned!", this.name);
           $Battle.showMessage(msg);
@@ -844,7 +958,7 @@ namespace PE.Battle {
           return false;
         }
       }
-      if (this.sides.own.effects[Effects.Safeguard] > 0 && (!attacker || !attacker.hasAbility(Abilities.INFILTRATOR))) {
+      if (this.sides.own.effects.Safeguard > 0 && (!attacker || !attacker.hasAbility(Abilities.INFILTRATOR))) {
         if (showMessages) $Battle.showMessage(i18n._("%1's team is protected by Safeguard!", this.name));
         return false;
       }
@@ -1047,11 +1161,11 @@ namespace PE.Battle {
       }
       let selfreduce = attacker && attacker.index === this.index;
       if (!selfreduce) {
-        if (this.effects[Effects.Substitute] > 0 && (!move || !move.ignoresSubstitute(attacker))) {
+        if (this.effects.Substitute > 0 && (!move || !move.ignoresSubstitute(attacker))) {
           if (showMessages) $Battle.showMessage(i18n._("But it failed!"));
           return false;
         }
-        if (this.sides.own.effects[Effects.Mist] > 0 && (!attacker || !attacker.hasAbility(Abilities.INFILTRATOR))) {
+        if (this.sides.own.effects.Mist > 0 && (!attacker || !attacker.hasAbility(Abilities.INFILTRATOR))) {
           if (showMessages) $Battle.showMessage(i18n._("%1 is protected by Mist!", this.name));
           return false;
         }
@@ -1215,13 +1329,13 @@ namespace PE.Battle {
 
     reduceAttackStatIntimidate(opponent: Battler) {
       if (this._fainted) return false;
-      if (this.effects[Effects.Substitute] > 0) {
+      if (this.effects.Substitute > 0) {
         let msg = "%1's substitute protected it from %2's %3!";
         $Battle.showMessage(i18n._(msg, this.name, opponent.name, Abilities.name(opponent.ability)))
         return false;
       }
       if (!opponent.hasAbility(Abilities.CONTRARY)) {
-        if (this.sides.own.effects[Effects.Mist] > 0) {
+        if (this.sides.own.effects.Mist > 0) {
           let msg = "%1 is protected from %2's %3 by Mist!";
           $Battle.showMessage(i18n._(msg, this.name, opponent.name, Abilities.name(opponent.ability)))
           return false;

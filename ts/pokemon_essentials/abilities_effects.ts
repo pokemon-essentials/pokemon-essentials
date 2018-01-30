@@ -165,7 +165,7 @@ namespace PE.Abilities {
       for (const battler of $Battle.actives) {
         if (pokemon.isOpposing(battler.index) && !battler.isFainted()) {
           for (const move of battler.moveset) {
-            let effectiveness = Types.effectiveness(move.type, pokemon.types, pokemon.effects[Effects.Type3]);
+            let effectiveness = Types.effectiveness(move.type, pokemon.types, pokemon.effects.Type3);
             if ((effectiveness >= 2 && move.basePower > 0) || Battle.Moves.isOHKOMove(move.id)) {
               found = true;
               break;
@@ -294,7 +294,7 @@ namespace PE.Abilities {
 
     //------------------------------------------------------------------------------------------------------------------
     // Imposter - The Pokémon transforms itself into the Pokémon it's facing.
-    // if battler.hasAbility(Abilities.IMPOSTER) && !@effects[Effects.Transform] && onactive
+    // if battler.hasAbility(Abilities.IMPOSTER) && !@effects.Transform && onactive
     //   choice=pbOppositeOpposing
     //   blacklist=[
     //      0xC9,// Fly
@@ -305,19 +305,19 @@ namespace PE.Abilities {
     //      0xCE,// Sky Drop
     //      0x14D// Phantom Force
     //   ]
-    //   if choice.effects[Effects.Transform] ||
-    //      choice.effects[Effects.Illusion] ||
-    //      choice.effects[Effects.Substitute]>0 ||
-    //      choice.effects[Effects.SkyDrop] ||
-    //      blacklist.include?(PBMoveData.new(choice.effects[Effects.TwoTurnAttack]).function)
+    //   if choice.effects.Transform ||
+    //      choice.effects.Illusion ||
+    //      choice.effects.Substitute>0 ||
+    //      choice.effects.SkyDrop ||
+    //      blacklist.include?(PBMoveData.new(choice.effects.TwoTurnAttack).function)
     //     console.log("[Ability triggered] ${pokemon.name} Imposter couldn't transform")
     //   else
     //     console.log("[Ability triggered] ${pokemon.name} Imposter")
     //     $Battle.pbAnimation(getConst(PBMoves,:TRANSFORM),self,choice)
-    //     @effects[Effects.Transform]=true
+    //     @effects.Transform=true
     //     @type1=choice.type1
     //     @type2=choice.type2
-    //     @effects[Effects.Type3]=-1
+    //     @effects.Type3=-1
     //     @ability=choice.ability
     //     @attack=choice.attack
     //     @defense=choice.defense
@@ -332,8 +332,8 @@ namespace PE.Abilities {
     //       @moves[i].pp=5
     //       @moves[i].totalpp=5
     //     end
-    //     @effects[Effects.Disable]=0
-    //     @effects[Effects.DisableMove]=0
+    //     @effects.Disable=0
+    //     @effects.DisableMove=0
     //     $Battle.showMessage(i18n._("${battler.name} transformed into %2!",name,choice.name(true)))
     //     console.log("[Pokémon transformed] ${name} transformed into ${choice.name(true)}")
     //   end
@@ -387,7 +387,7 @@ namespace PE.Abilities {
       (opponent.hasAbility(Abilities.VOLTABSORB) && move.type === Types.ELECTRIC)) {
       console.log("[Ability triggered] ${opponent.name}'s ${Abilities.name(opponent.ability)} (made ${move.name} ineffective)")
       let healed = false;
-      if (opponent.effects[Effects.HealBlock] == 0) {
+      if (opponent.effects.HealBlock == 0) {
         // if (opponent.recoverHP(Math.floor(opponent.totalhp / 4), true) > 0){
         //   $Battle.showMessage(i18n._("%1's %2 restored its HP!", opponent.name, Abilities.name(opponent.ability)))
         //   healed = true;
@@ -401,8 +401,8 @@ namespace PE.Abilities {
     if (opponent.hasAbility(Abilities.FLASHFIRE) && move.type === Types.FIRE) {
       console.log("[Ability triggered] ${opponent.name}'s Flash Fire (made ${move.name} ineffective)")
 
-      if (!opponent.effects[Effects.FlashFire]) {
-        opponent.effects[Effects.FlashFire] = true
+      if (!opponent.effects.FlashFire) {
+        opponent.effects.FlashFire = true
         $Battle.showMessage(i18n._("%1's %2 raised its Fire power!", opponent.name, Abilities.name(opponent.ability)))
       }
       else {

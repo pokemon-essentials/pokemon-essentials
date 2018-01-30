@@ -79,11 +79,11 @@ namespace PE.Battle.Moves {
     getType(type: Types, attacker?: Battler, opponent?: Battler) {
       this.powerBoost = false;
       type = this.modifyType(type, attacker, opponent);
-      if ($Battle.field.effects[Effects.IonDeluge] && type === Types.NORMAL) {
+      if ($Battle.field.effects.IonDeluge && type === Types.NORMAL) {
         type = Types.ELECTRIC;
         this.powerBoost = false;
       }
-      if ($Battle.field.effects[Effects.Electrify]) {
+      if ($Battle.field.effects.Electrify) {
         type = Types.ELECTRIC;
         this.powerBoost = false;
       }

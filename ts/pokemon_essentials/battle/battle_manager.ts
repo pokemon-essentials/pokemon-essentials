@@ -148,9 +148,9 @@ namespace PE.Battle {
     static canShowCommands(index: number) {
       let pokemon = this.battlers[index];
       if (pokemon.isFainted()) return false;
-      if (pokemon.effects[Effects.TwoTurnAttack] > 0 || pokemon.effects[Effects.HyperBeam] > 0 ||
-        pokemon.effects[Effects.Rollout] > 0 || pokemon.effects[Effects.Outrage] > 0 ||
-        pokemon.effects[Effects.Uproar] > 0 || pokemon.effects[Effects.Bide] > 0) {
+      if (pokemon.effects.TwoTurnAttack > 0 || pokemon.effects.HyperBeam > 0 ||
+        pokemon.effects.Rollout > 0 || pokemon.effects.Outrage > 0 ||
+        pokemon.effects.Uproar > 0 || pokemon.effects.Bide > 0) {
         return false;
       }
       return true;
@@ -165,7 +165,7 @@ namespace PE.Battle {
         if (this.canChooseMove(index, move, false)) found = true;
       }
       if (!found) return false;
-      if (pokemon.effects[Effects.Encore]) return false;
+      if (pokemon.effects.Encore) return false;
       return true;
     }
 
@@ -184,8 +184,8 @@ namespace PE.Battle {
         return false;
       }
       if (pokemon.hasItemIn(['CHOICEBAND', 'CHOICESPECS', 'CHOICESCARF']) &&
-        pokemon.effects[Effects.ChoiceBand] !== undefined) {
-        if (move.id !== pokemon.effects[Effects.ChoiceBand]) {
+        pokemon.effects.ChoiceBand !== undefined) {
+        if (move.id !== pokemon.effects.ChoiceBand) {
           if (showMessages) {
             let msg = "%1 allows the use of only %2!";
             this.showMessage(i18n._(msg, Items.name(pokemon.item), move.name));
@@ -193,7 +193,7 @@ namespace PE.Battle {
           return false;
         }
       }
-      if (pokemon.effects[Effects.Imprison]) {
+      if (pokemon.effects.Imprison) {
         for (const index of this.sides.foe.actives) {
           if (this.battlers[index].hasMove(move.id)) {
             this.showMessage(i18n._("%1 can't use the sealed %2!", pokemon.name, move.name));
@@ -201,19 +201,19 @@ namespace PE.Battle {
           }
         }
       }
-      if (pokemon.effects[Effects.Taunt] > 0 && move.basePower <= 0) {
+      if (pokemon.effects.Taunt > 0 && move.basePower <= 0) {
         if (showMessages)
           this.showMessage(i18n._("%1 can't use %2 after the taunt!", pokemon.name, move.name))
         return false;
       }
-      if (pokemon.effects[Effects.Torment] > 0 && move.id === this.lastMoveUsed) {
+      if (pokemon.effects.Torment && move.id === this.lastMoveUsed) {
         if (showMessages) {
           let msg = "%1 can't use the same move twice in a row due to the torment!";
           this.showMessage(i18n._(msg, pokemon.name, move.name))
         }
         return false;
       }
-      if (pokemon.effects[Effects.DisableMove] === move.id && sleeptalk) {
+      if (pokemon.effects.DisableMove === move.id && sleeptalk) {
         if (showMessages)
           this.showMessage(i18n._("%1's %2 is disabled!", pokemon.name, move.name))
         return false;
@@ -226,7 +226,7 @@ namespace PE.Battle {
         }
         return false;
       }
-      if (pokemon.effects[Effects.Encore] > 0 && pokemon.effects[Effects.EncoreMoveId] !== move.index) {
+      if (pokemon.effects.Encore > 0 && pokemon.effects.EncoreMoveId !== move.index) {
         return false;
       }
       return true;
@@ -245,12 +245,12 @@ namespace PE.Battle {
         this.choices[pokemon.index] = undefined;
         return;
       }
-      if (pokemon.effects[Effects.Encore] &&
-        this.canChooseMove(pokemon.index, pokemon.effects[Effects.EncoreMoveId], false)) {
-        console.log(`[Auto choosing Encore move] ${pokemon.effects[Effects.EncoreMoveId]}`);
+      if (pokemon.effects.Encore &&
+        this.canChooseMove(pokemon.index, pokemon.effects.EncoreMoveId, false)) {
+        console.log(`[Auto choosing Encore move] ${pokemon.effects.EncoreMoveId}`);
         this.choices = {
           action: Choice.UseMove,
-          move: pokemon.effects[Effects.EncoreMoveId],
+          move: pokemon.effects.EncoreMoveId,
           target: pokemon.sides.foe.actives[0]
         }
       }
@@ -436,7 +436,7 @@ namespace PE.Battle {
         return 0;
       }
 
-      let effectiveness = Types.effectiveness(move.type, target.types, target.effects[Effects.Type3]);
+      let effectiveness = Types.effectiveness(move.type, target.types, target.effects.Type3);
 
       let msg = null;
       if (effectiveness <= 0.5) {
