@@ -440,7 +440,7 @@ namespace PE.Battle {
           this.hud.visible = true;
           this.battleCommands.updateInput();
           break;
-        case Battle.Phase.MoveSelection:
+        case Phase.MoveSelection:
           this.partyBar.visible = false;
           this.hud.visible = false;
           this.movesSelection.updateInput();

@@ -60,16 +60,16 @@ namespace PE.Battle.Moves {
     //==================================================================================================================
     // About the move
     modifyType(type: Types, attacker?: Battler, opponent?: Battler) {
-      if (attacker && attacker.hasAbility(Abilities.NORMALIZE)) {
+      if (attacker && attacker.hasAbility(Abilitydex.NORMALIZE)) {
         type = Types.NORMAL;
         this.powerBoost = true;
-      } else if (attacker && attacker.hasAbility(Abilities.AERILATE)) {
+      } else if (attacker && attacker.hasAbility(Abilitydex.AERILATE)) {
         type = Types.FLYING;
         this.powerBoost = true;
-      } else if (attacker && attacker.hasAbility(Abilities.REFRIGERATE)) {
+      } else if (attacker && attacker.hasAbility(Abilitydex.REFRIGERATE)) {
         type = Types.ICE;
         this.powerBoost = true;
-      } else if (attacker && attacker.hasAbility(Abilities.PIXILATE)) {
+      } else if (attacker && attacker.hasAbility(Abilitydex.PIXILATE)) {
         type = Types.FAIRY;
         this.powerBoost = true;
       }
@@ -168,7 +168,7 @@ namespace PE.Battle.Moves {
     typeImmunityByAbility(type: Types, attacker: Battler, opponent: Battler) {
       if (attacker.index === opponent.index) return false;
       if (attacker.hasMoldBreaker()) return false;
-      return Abilities.moveHitTypeImmunity(this, attacker, opponent);
+      return Battle.Abilities.moveHitTypeImmunity(this, attacker, opponent);
     }
 
     pbTypeModifier(){}

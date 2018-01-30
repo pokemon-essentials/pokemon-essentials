@@ -134,7 +134,7 @@ namespace PE.Battle {
 
     }
 
-    static checkGlobalAbility(ability: Abilities) {
+    static checkGlobalAbility(ability: Abilitydex) {
       for (const battler of this.actives) {
         if (battler.hasAbility(ability)) return battler;
       }

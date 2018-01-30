@@ -151,9 +151,7 @@ namespace PE.Battle {
     forme: any;
     gender: any;
     item: string;
-    ivs: {
-      hp: number; atk: number; def: number; spa: number; spd: number; spe: number;
-    };
+    ivs: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number; };
     lastAttacker: {};
     lastHPLost: number;
     lastMoveUsed: number;
@@ -169,7 +167,7 @@ namespace PE.Battle {
     species: string;
     _status: Statuses;
     statusCount: number;
-    stages = {};
+    stages: { HP, Attack, Defense, Speed, SpAtk, SpDef, Accuracy, Evasion };
     tookDamage: boolean;
     turncount: number;
     types: string[];
@@ -181,7 +179,6 @@ namespace PE.Battle {
       this._totalHP = 0;
       this._fainted = true;
       this._captured = false;
-      this.stages = {};
       this.damageState = new DamageState();
       this.initPokemon(pokemon);
       this.initEffects(false);
@@ -218,13 +215,13 @@ namespace PE.Battle {
     initEffects(batonpass: boolean) {
       if (!batonpass) {
         // These effects are retained if Baton Pass is used
-        this.stages[Stats.Attack] = 0;
-        this.stages[Stats.Defense] = 0;
-        this.stages[Stats.Speed] = 0;
-        this.stages[Stats.SpAtk] = 0;
-        this.stages[Stats.SpDef] = 0;
-        this.stages[Stats.Evasion] = 0;
-        this.stages[Stats.Accuracy] = 0;
+        this.stages.Attack = 0;
+        this.stages.Defense = 0;
+        this.stages.Speed = 0;
+        this.stages.SpAtk = 0;
+        this.stages.SpDef = 0;
+        this.stages.Evasion = 0;
+        this.stages.Accuracy = 0;
 
         this.lastMoveUsedSketch = -1;
         this.effects.AquaRing = false;
@@ -389,8 +386,8 @@ namespace PE.Battle {
 
     initialize(pokemon: Pokemon.Pokemon, index: number, batonpass: boolean) {
       //Cure status of previous Pokemon with Natural Cure
-      if (this.hasAbility(Abilities.NATURALCURE)) this.status = Statuses.Healthy;
-      // if (this.hasAbility(Abilities.REGENERATOR)) this.recoverHP(Math.floor(this.totalhp / 3));
+      if (this.hasAbility(Abilitydex.NATURALCURE)) this.status = Statuses.Healthy;
+      // if (this.hasAbility(Abilitydex.REGENERATOR)) this.recoverHP(Math.floor(this.totalhp / 3));
       this.initPokemon(pokemon);
       this.initEffects(batonpass);
     }
@@ -441,24 +438,24 @@ namespace PE.Battle {
 
     get speed() {
       let speed = this._speed;
-      speed = Math.floor(speed * STAGE_MULT[this.stages[Stats.Speed]]);
+      speed = Math.floor(speed * STAGE_MULT[this.stages.Speed]);
       let speedmod = 1;
-      if (($Battle.weather === Weathers.RainDance || $Battle.weather === Weathers.HeavyRain) && this.hasAbility(Abilities.SWIFTSWIM)) {
+      if (($Battle.weather === Weathers.RainDance || $Battle.weather === Weathers.HeavyRain) && this.hasAbility(Abilitydex.SWIFTSWIM)) {
         speedmod *= 2;
       }
-      if (($Battle.weather === Weathers.SunnyDay || $Battle.weather === Weathers.HarshSun) && this.hasAbility(Abilities.CHLOROPHYLL)) {
+      if (($Battle.weather === Weathers.SunnyDay || $Battle.weather === Weathers.HarshSun) && this.hasAbility(Abilitydex.CHLOROPHYLL)) {
         speedmod *= 2;
       }
-      if ($Battle.weather === Weathers.SandStorm && this.hasAbility(Abilities.SANDRUSH)) {
+      if ($Battle.weather === Weathers.SandStorm && this.hasAbility(Abilitydex.SANDRUSH)) {
         speedmod *= 2;
       }
-      if (this.hasAbility(Abilities.QUICKFEET) && this.status !== Statuses.Healthy) {
+      if (this.hasAbility(Abilitydex.QUICKFEET) && this.status !== Statuses.Healthy) {
         speedmod = Math.round(speed * 1.5);
       }
-      if (this.hasAbility(Abilities.UNBURDEN) && this.effects.Unburden && this.item == "") {
+      if (this.hasAbility(Abilitydex.UNBURDEN) && this.effects.Unburden && this.item == "") {
         speedmod *= 2;
       }
-      if (this.hasAbility(Abilities.SLOWSTART) && this.turncount <= 5) {
+      if (this.hasAbility(Abilitydex.SLOWSTART) && this.turncount <= 5) {
         speedmod = Math.round(speedmod / 2);
       }
       if (this.hasItemIn(['MACHOBRACE', 'POWERWEIGHT', 'POWERBRACER', 'POWERBELT', 'POWERANKLET', 'POWERLENS', 'POWERBAND', 'IRONBALL'])) {
@@ -476,7 +473,7 @@ namespace PE.Battle {
       if (this.sides.own.effects.Swamp) {
         speedmod = Math.round(speedmod / 2);
       }
-      if (this.status === Statuses.Paralysis && !this.hasAbility(Abilities.QUICKFEET)) {
+      if (this.status === Statuses.Paralysis && !this.hasAbility(Abilitydex.QUICKFEET)) {
         speedmod = Math.round(speedmod / 4);
       }
       speed = Math.round(speed * speedmod);
@@ -539,8 +536,8 @@ namespace PE.Battle {
     weight(attacker: Battler = undefined) {
       let w = this.pokemon.weightkg || 500;
       if (!attacker || !attacker.hasMoldBreaker()) {
-        if (this.hasAbility(Abilities.HEAVYMETAL)) w *= 2;
-        if (this.hasAbility(Abilities.LIGHTMETAL)) w /= 2;
+        if (this.hasAbility(Abilitydex.HEAVYMETAL)) w *= 2;
+        if (this.hasAbility(Abilitydex.LIGHTMETAL)) w /= 2;
       }
       if (this.hasItem('FLOATSTONE')) w /= 2;
       w *= this.effects.WeightChange;
@@ -566,13 +563,13 @@ namespace PE.Battle {
       }
     }
 
-    hasAbility(ability: Abilities, ignorefainted?: boolean) {
+    hasAbility(ability: Abilitydex, ignorefainted?: boolean) {
       if (this._fainted && !ignorefainted) return false;
       if (this.effects.GastroAcid) return false;
       return this.ability === ability;
     }
 
-    hasAbilityIn(abilities: Abilities[]) {
+    hasAbilityIn(abilities: Abilitydex[]) {
       for (const ability of abilities) {
         if (this.hasAbility(ability)) return true;
       }
@@ -583,7 +580,7 @@ namespace PE.Battle {
       if (this._fainted && !ignorefainted) return false;
       if (this.effects.Embargo) return false;
       if ($Battle.field.effects.MagicRoom > 0) return false;
-      if (this.hasAbility(Abilities.KLUTZ, ignorefainted)) return false;
+      if (this.hasAbility(Abilitydex.KLUTZ, ignorefainted)) return false;
       return this.item === item;
     }
 
@@ -614,7 +611,7 @@ namespace PE.Battle {
     }
 
     hasMoldBreaker() {
-      return this.hasAbilityIn([Abilities.MOLDBREAKER, Abilities.TERAVOLT, Abilities.TURBOBLAZE]);
+      return this.hasAbilityIn([Abilitydex.MOLDBREAKER, Abilitydex.TERAVOLT, Abilitydex.TURBOBLAZE]);
     }
 
     hasType(type: Types | string) {
@@ -642,7 +639,7 @@ namespace PE.Battle {
       if (this.effects.Ingrain || this.effects.SmackDown) return false;
       if ($Battle.field.effects.Gravity) return false;
       if (this.hasType('FLYING') && !this.effects.Roost) return true;
-      if (this.hasAbility(Abilities.LEVITATE) && !ignoreability) return true;
+      if (this.hasAbility(Abilitydex.LEVITATE) && !ignoreability) return true;
       if (this.hasItem('AIRBALLOON')) return true;
       if (this.effects.MagnetRise || this.effects.Telekinesis) return true;
       return false;
@@ -671,7 +668,7 @@ namespace PE.Battle {
           return false;
         }
 
-        if (this.sides.own.effects.Safeguard > 0 && (!attacker || !attacker.hasAbility(Abilities.INFILTRATOR))) {
+        if (this.sides.own.effects.Safeguard > 0 && (!attacker || !attacker.hasAbility(Abilitydex.INFILTRATOR))) {
           if (showMessages) $Battle.showMessage(i18n._("%1's team is protected by Safeguard!", this.name))
           return false;
         }
@@ -689,7 +686,7 @@ namespace PE.Battle {
         }
       }
       // uproar
-      if ((attacker && attacker.hasMoldBreaker()) || !this.hasAbility(Abilities.SOUNDPROOF)) {
+      if ((attacker && attacker.hasMoldBreaker()) || !this.hasAbility(Abilitydex.SOUNDPROOF)) {
         for (const battler of $Battle.actives) {
           if (battler.effects.Uproar > 0) {
             if (showMessages) $Battle.showMessage(i18n._(`But the uproar kept %1 awake!`, this.name));
@@ -699,16 +696,16 @@ namespace PE.Battle {
       }
 
       if (!attacker || selfSleep || !attacker.hasMoldBreaker()) {
-        if (this.hasAbilityIn([Abilities.VITALSPIRIT, Abilities.INSOMNIA, Abilities.SWEETVEIL]) ||
-          (this.hasAbility(Abilities.FLOWERVEIL) && this.hasType('GRASS')) ||
+        if (this.hasAbilityIn([Abilitydex.VITALSPIRIT, Abilitydex.INSOMNIA, Abilitydex.SWEETVEIL]) ||
+          (this.hasAbility(Abilitydex.FLOWERVEIL) && this.hasType('GRASS')) ||
           [Weathers.SunnyDay, Weathers.HarshSun].contains($Battle.weather)) {
           let msg = `%1 stayed awake using its %2!`;
           if (showMessages) $Battle.showMessage(i18n._(msg, this.name, Abilities.name(this.ability)));
           return false;
         }
-        // if this.partner.hasAbility(Abilities.SWEETVEIL) ||
-        //    (this.partner.hasAbility(Abilities.FLOWERVEIL) && this.hasType('GRASS'))
-        //   abilityname=Abilities.name(this.partner.ability)
+        // if this.partner.hasAbility(Abilitydex.SWEETVEIL) ||
+        //    (this.partner.hasAbility(Abilitydex.FLOWERVEIL) && this.hasType('GRASS'))
+        //   abilityname=AbilitiesEffetcs.name(this.partner.ability)
         //   $Battle.showMessage(i18n._("%1 stayed awake using its partner's %2!",this.name,abilityname)) if showMessages
         //   return false
         // end
@@ -718,19 +715,19 @@ namespace PE.Battle {
 
     canSleepYawn() {
       if (this.status !== Statuses.Healthy) return false;
-      if (!this.hasAbility(Abilities.SOUNDPROOF)) {
+      if (!this.hasAbility(Abilitydex.SOUNDPROOF)) {
         for (const battler of $Battle.actives) {
           if (battler.effects.Uproar > 0) return false;
         }
       }
       if (!this.isAirborne(undefined)) {
-        if ($Battle.field.effects.ElectricTerrain > 0
-          || $Battle.field.effects.MistyTerrain > 0) return false;
+        if ($Battle.field.effects.ElectricTerrain > 0 || $Battle.field.effects.MistyTerrain > 0) return false;
       }
-      if (this.hasAbilityIn([Abilities.VITALSPIRIT, Abilities.INSOMNIA, Abilities.SWEETVEIL]) ||
-        (this.hasAbility(Abilities.LEAFGUARD) && ($Battle.weather == Weathers.SunnyDay ||
-          $Battle.weather == Weathers.HarshSun)))
+      if (this.hasAbilityIn([Abilitydex.VITALSPIRIT, Abilitydex.INSOMNIA, Abilitydex.SWEETVEIL]) ||
+        (this.hasAbility(Abilitydex.LEAFGUARD) && ($Battle.weather == Weathers.SunnyDay ||
+          $Battle.weather == Weathers.HarshSun))) {
         return false;
+      }
       // return false if this.partner.this.hasAbility(:SWEETVEIL)
       return true;
     }
@@ -738,7 +735,7 @@ namespace PE.Battle {
     sleep(msg?: string) {
       this.status = Statuses.Sleep;
       this.statusCount = 2 + Math.randomInt(3);
-      if (this.hasAbility(Abilities.EARLYBIRD)) this.statusCount = Math.floor(this.statusCount / 2);
+      if (this.hasAbility(Abilitydex.EARLYBIRD)) this.statusCount = Math.floor(this.statusCount / 2);
       // pbCancelMoves()
       // $Battle.pbCommonAnimation("Sleep",self,nil)
       if (msg && msg !== "") $Battle.showMessage(msg);
@@ -750,7 +747,7 @@ namespace PE.Battle {
       this.status = Statuses.Sleep;
       if (duration > 0) this.statusCount = duration;
       else this.statusCount = 2 + Math.randomInt(3);
-      if (this.hasAbility(Abilities.EARLYBIRD)) this.statusCount = Math.floor(this.statusCount / 2);
+      if (this.hasAbility(Abilitydex.EARLYBIRD)) this.statusCount = Math.floor(this.statusCount / 2);
       // pbCancelMoves
       // $Battle.pbCommonAnimation("Sleep",self,nil)
       console.log("[Status change] #{this.name} made itself fall asleep (#{this.statusCount} turns)")
@@ -771,7 +768,7 @@ namespace PE.Battle {
         if (showMessages) $Battle.showMessage(i18n._("But it failed!"));
         return false;
       }
-      if ((!attacker || !attacker.hasMoldBreaker()) && this.hasAbility(Abilities.OBLIVIOUS)) {
+      if ((!attacker || !attacker.hasMoldBreaker()) && this.hasAbility(Abilitydex.OBLIVIOUS)) {
         if (showMessages)
           $Battle.showMessage(i18n._("%1's %2 prevents romance!", this.name, Abilities.name(this.ability)));
         return false;
@@ -818,22 +815,22 @@ namespace PE.Battle {
         return false;
       }
       if (!attacker || !attacker.hasMoldBreaker()) {
-        if (this.hasAbility(Abilities.IMMUNITY) || (this.hasAbility(Abilities.FLOWERVEIL) && this.hasType('GRASS')) ||
-          (this.hasAbility(Abilities.LEAFGUARD) && ($Battle.weather === Weathers.SunnyDay ||
+        if (this.hasAbility(Abilitydex.IMMUNITY) || (this.hasAbility(Abilitydex.FLOWERVEIL) && this.hasType('GRASS')) ||
+          (this.hasAbility(Abilitydex.LEAFGUARD) && ($Battle.weather === Weathers.SunnyDay ||
             $Battle.weather === Weathers.HarshSun))) {
           let m = "%1's %2 prevents poisoning!";
           if (showMessages) $Battle.showMessage(i18n._(m, this.name, Abilities.name(this.ability)));
           return false;
         }
 
-        if (this.partner.hasAbility(Abilities.FLOWERVEIL) && this.hasType('GRASS')) {
+        if (this.partner.hasAbility(Abilitydex.FLOWERVEIL) && this.hasType('GRASS')) {
           let m = "%1's partner's %2 prevents poisoning!";
           if (showMessages) $Battle.showMessage(i18n._(m, this.name, Abilities.name(this.partner.ability)))
           return false;
         }
       }
       if (this.sides.own.effects.Safeguard > 0 &&
-        (!attacker || !attacker.hasAbility(Abilities.INFILTRATOR))) {
+        (!attacker || !attacker.hasAbility(Abilitydex.INFILTRATOR))) {
         if (showMessages) $Battle.showMessage(i18n._("%1's team is protected by Safeguard!", this.name));
         return false
 
@@ -849,15 +846,15 @@ namespace PE.Battle {
         return false
       }
       if (this.status !== Statuses.Healthy) return false;
-      if (this.hasAbility(Abilities.IMMUNITY) || (this.hasAbility(Abilities.FLOWERVEIL) && this.hasType('GRASS')) ||
-        (this.hasAbility(Abilities.LEAFGUARD) && ($Battle.weather === Weathers.SunnyDay ||
+      if (this.hasAbility(Abilitydex.IMMUNITY) || (this.hasAbility(Abilitydex.FLOWERVEIL) && this.hasType('GRASS')) ||
+        (this.hasAbility(Abilitydex.LEAFGUARD) && ($Battle.weather === Weathers.SunnyDay ||
           $Battle.weather === Weathers.HarshSun))) {
         $Battle.showMessage(i18n._("%1's %2 prevents %3's %4 from working!",
           this.name, Abilities.name(this.ability),
           opponent.name, Abilities.name(opponent.ability)))
         return false
       }
-      if (this.partner.hasAbility(Abilities.FLOWERVEIL) && this.hasType('GRASS')) {
+      if (this.partner.hasAbility(Abilitydex.FLOWERVEIL) && this.hasType('GRASS')) {
         $Battle.showMessage(i18n._("%1's %2 prevents %3's %4 from working!",
           this.partner.name, Abilities.name(this.partner.ability),
           opponent.name, Abilities.name(opponent.ability)));
@@ -872,9 +869,9 @@ namespace PE.Battle {
       if (this.status !== Statuses.Healthy) return false;
       if (this.hasType('POISON') || this.hasType('STEEL')) return false;
       if (!moldbreaker) {
-        if (this.hasAbility(Abilities.IMMUNITY) || (this.hasAbility(Abilities.FLOWERVEIL) && this.hasType('GRASS')) ||
-          (this.partner.hasAbility(Abilities.FLOWERVEIL) && this.hasType('GRASS'))) return false;
-        if (this.hasAbility(Abilities.LEAFGUARD) && ($Battle.weather === Weathers.SunnyDay ||
+        if (this.hasAbility(Abilitydex.IMMUNITY) || (this.hasAbility(Abilitydex.FLOWERVEIL) && this.hasType('GRASS')) ||
+          (this.partner.hasAbility(Abilitydex.FLOWERVEIL) && this.hasType('GRASS'))) return false;
+        if (this.hasAbility(Abilitydex.LEAFGUARD) && ($Battle.weather === Weathers.SunnyDay ||
           $Battle.weather == Weathers.HarshSun)) return false;
       }
       if (this.sides.own.effects.Safeguard > 0) return false
@@ -893,7 +890,7 @@ namespace PE.Battle {
       }
       if (toxic) console.log("[Status change] #{this.name} was badly poisoned]");
       else console.log("[Status change] #{this.name} was poisoned");
-      if (attacker && this.index !== attacker.index && this.hasAbility(Abilities.SYNCHRONIZE)) {
+      if (attacker && this.index !== attacker.index && this.hasAbility(Abilitydex.SYNCHRONIZE)) {
         if (attacker.canPoisonSynchronize(this)) {
           console.log("[Ability triggered] #{this.this.name}'s Synchronize");
           let m = i18n._("%1's %2 poisoned %3!", this.name, Abilities.name(this.ability), attacker.name);
@@ -942,15 +939,15 @@ namespace PE.Battle {
         return false;
       }
       if (!attacker || !attacker.hasMoldBreaker()) {
-        if (this.hasAbility(Abilities.WATERVEIL) || (this.hasAbility(Abilities.FLOWERVEIL) && this.hasType('GRASS')) ||
-          (this.hasAbility(Abilities.LEAFGUARD) && ($Battle.weather === Weathers.SunnyDay || $Battle.weather === Weathers.HarshSun))) {
+        if (this.hasAbility(Abilitydex.WATERVEIL) || (this.hasAbility(Abilitydex.FLOWERVEIL) && this.hasType('GRASS')) ||
+          (this.hasAbility(Abilitydex.LEAFGUARD) && ($Battle.weather === Weathers.SunnyDay || $Battle.weather === Weathers.HarshSun))) {
           if (showMessages) {
             let msg = i18n._("%1's %2 prevents burns!", this.name, Abilities.name(this.ability));
             $Battle.showMessage(msg);
           }
           return false;
         }
-        if (this.partner.hasAbility(Abilities.FLOWERVEIL) && this.hasType('GRASS')) {
+        if (this.partner.hasAbility(Abilitydex.FLOWERVEIL) && this.hasType('GRASS')) {
           if (showMessages) {
             let msg = i18n._("%1's partner's %2 prevents burns!", this.name, Abilities.name(this.partner.ability));
             $Battle.showMessage(msg);
@@ -958,7 +955,7 @@ namespace PE.Battle {
           return false;
         }
       }
-      if (this.sides.own.effects.Safeguard > 0 && (!attacker || !attacker.hasAbility(Abilities.INFILTRATOR))) {
+      if (this.sides.own.effects.Safeguard > 0 && (!attacker || !attacker.hasAbility(Abilitydex.INFILTRATOR))) {
         if (showMessages) $Battle.showMessage(i18n._("%1's team is protected by Safeguard!", this.name));
         return false;
       }
@@ -979,13 +976,13 @@ namespace PE.Battle {
       }
       let text = "%1's %2 prevents %3's %4 from working!";
       let msg = i18n._(text, this.name, Abilities.name(this.ability), opponent.name, Abilities.name(opponent.ability));
-      if (this.hasAbility(Abilities.WATERVEIL) ||
-        (this.hasAbility(Abilities.FLOWERVEIL) && this.hasType('GRASS')) ||
-        (this.hasAbility(Abilities.LEAFGUARD) && ($Battle.weather === Weathers.SunnyDay || $Battle.weather == Weathers.HarshSun))) {
+      if (this.hasAbility(Abilitydex.WATERVEIL) ||
+        (this.hasAbility(Abilitydex.FLOWERVEIL) && this.hasType('GRASS')) ||
+        (this.hasAbility(Abilitydex.LEAFGUARD) && ($Battle.weather === Weathers.SunnyDay || $Battle.weather == Weathers.HarshSun))) {
         $Battle.showMessage(msg);
         return false;
       }
-      if (this.partner.hasAbility(Abilities.FLOWERVEIL) && this.hasType('GRASS')) {
+      if (this.partner.hasAbility(Abilitydex.FLOWERVEIL) && this.hasType('GRASS')) {
         $Battle.showMessage(msg);
         return false;
       }
@@ -1005,7 +1002,7 @@ namespace PE.Battle {
       if (msg && msg != "") $Battle.showMessage(msg);
       else $Battle.showMessage(i18n._("%1 was burned!", this.name))
       console.log("[Status change] #{this.name} was burned");
-      if (attacker && this.index !== attacker.index && this.hasAbility(Abilities.SYNCHRONIZE)) {
+      if (attacker && this.index !== attacker.index && this.hasAbility(Abilitydex.SYNCHRONIZE)) {
         if (attacker.canBurnSynchronize(this)) {
           console.log("[Ability triggered] #{this.this.name}'s Synchronize")
           let m = i18n._("%1's %2 burned %3!", this.name, Abilities.name(this.ability), attacker.name);
@@ -1030,7 +1027,7 @@ namespace PE.Battle {
       if (this._fainted) return false;
       if (!moldbreaker) {
         if (!attacker || attacker.index === this.index || !attacker.hasMoldBreaker()) {
-          if (this.hasAbility(Abilities.CONTRARY) && !ignoreContrary) {
+          if (this.hasAbility(Abilitydex.CONTRARY) && !ignoreContrary) {
             return this.canReduceStatStage(stat, attacker, showMessages, moldbreaker, true)
           }
         }
@@ -1046,10 +1043,10 @@ namespace PE.Battle {
       moldbreaker = false, ignoreContrary = false) {
       if (!moldbreaker) {
         if (!attacker || attacker.index == this.index || !attacker.hasMoldBreaker()) {
-          if (this.hasAbility(Abilities.CONTRARY) && !ignoreContrary) {
+          if (this.hasAbility(Abilitydex.CONTRARY) && !ignoreContrary) {
             return this.reduceStatBasic(stat, increment, attacker, moldbreaker, true)
           }
-          if (this.hasAbility(Abilities.SIMPLE)) increment *= 2;
+          if (this.hasAbility(Abilitydex.SIMPLE)) increment *= 2;
         }
       }
       increment = Math.min(increment, 6 - this.stages[stat]); // Why?
@@ -1064,7 +1061,7 @@ namespace PE.Battle {
       if (!(stat in Stats)) return false;
       if (!moldbreaker) {
         if (!attacker || attacker.index === this.index || !attacker.hasMoldBreaker()) {
-          if (this.hasAbility(Abilities.CONTRARY) && !ignoreContrary) {
+          if (this.hasAbility(Abilitydex.CONTRARY) && !ignoreContrary) {
             return this.reduceStat(stat, increment, attacker, showMessages, move, animation, moldbreaker, true);
           }
         }
@@ -1092,7 +1089,7 @@ namespace PE.Battle {
       if (!(stat in Stats)) return false;
       if (!moldbreaker) {
         if (!attacker || attacker.index == this.index || !attacker.hasMoldBreaker()) {
-          if (this.hasAbility(Abilities.CONTRARY) && !ignoreContrary) {
+          if (this.hasAbility(Abilitydex.CONTRARY) && !ignoreContrary) {
             return this.reduceStatWithCause(stat, increment, attacker, cause, showanim, showMessages, moldbreaker, true);
           }
         }
@@ -1154,7 +1151,7 @@ namespace PE.Battle {
       if (this._fainted) return false;
       if (!moldbreaker) {
         if (!attacker || attacker.index === this.index || !attacker.hasMoldBreaker()) {
-          if (this.hasAbility(Abilities.CONTRARY) && !ignoreContrary) {
+          if (this.hasAbility(Abilitydex.CONTRARY) && !ignoreContrary) {
             return this.canIncreaseStatStage(stat, attacker, showMessages, move, moldbreaker, true)
           }
         }
@@ -1165,12 +1162,12 @@ namespace PE.Battle {
           if (showMessages) $Battle.showMessage(i18n._("But it failed!"));
           return false;
         }
-        if (this.sides.own.effects.Mist > 0 && (!attacker || !attacker.hasAbility(Abilities.INFILTRATOR))) {
+        if (this.sides.own.effects.Mist > 0 && (!attacker || !attacker.hasAbility(Abilitydex.INFILTRATOR))) {
           if (showMessages) $Battle.showMessage(i18n._("%1 is protected by Mist!", this.name));
           return false;
         }
         if (!moldbreaker && (!attacker || !attacker.hasMoldBreaker())) {
-          if (this.hasAbilityIn([Abilities.CLEARBODY, Abilities.WHITESMOKE])) {
+          if (this.hasAbilityIn([Abilitydex.CLEARBODY, Abilitydex.WHITESMOKE])) {
             if (showMessages) {
               let msg = "%1's %2 prevents stat loss!";
               $Battle.showMessage(i18n._(msg, this.name, Abilities.name(this.ability)));
@@ -1178,14 +1175,14 @@ namespace PE.Battle {
             return false;
           }
           if (this.hasType('GRASS')) {
-            if (this.hasAbility(Abilities.FLOWERVEIL)) {
+            if (this.hasAbility(Abilitydex.FLOWERVEIL)) {
               if (showMessages) {
                 let msg = "%1's %2 prevents stat loss!";
                 $Battle.showMessage(i18n._(msg, this.name, Abilities.name(this.ability)));
               }
               return false;
             }
-            else if (this.partner.hasAbility(Abilities.FLOWERVEIL)) {
+            else if (this.partner.hasAbility(Abilitydex.FLOWERVEIL)) {
               if (showMessages) {
                 let msg = "%1's %2 prevents %3's stat loss!";
                 $Battle.showMessage(i18n._(msg, this.partner.name, Abilities.name(this.ability), this.name));
@@ -1193,21 +1190,21 @@ namespace PE.Battle {
               return false;
             }
           }
-          if (stat === Stats.Attack && this.hasAbility(Abilities.HYPERCUTTER)) {
+          if (stat === Stats.Attack && this.hasAbility(Abilitydex.HYPERCUTTER)) {
             if (showMessages) {
               let msg = "%1's %2 prevents Attack loss!";
               $Battle.showMessage(i18n._(msg, this.name, Abilities.name(this.ability)));
             }
             return false;
           }
-          if (stat === Stats.Defense && this.hasAbility(Abilities.BIGPECKS)) {
+          if (stat === Stats.Defense && this.hasAbility(Abilitydex.BIGPECKS)) {
             if (showMessages) {
               let msg = "%1's %2 prevents Defence loss!";
               $Battle.showMessage(i18n._(msg, this.name, Abilities.name(this.ability)));
             }
             return false;
           }
-          if (stat === Stats.Accuracy && this.hasAbility(Abilities.KEENEYE)) {
+          if (stat === Stats.Accuracy && this.hasAbility(Abilitydex.KEENEYE)) {
             if (showMessages) {
               let msg = "%1's %2 prevents Accuracy loss!";
               $Battle.showMessage(i18n._(msg, this.name, Abilities.name(this.ability)));
@@ -1228,10 +1225,10 @@ namespace PE.Battle {
       // moldbreaker is true only when Roar forces out a Pokémon into Sticky Web
       if (!moldbreaker) {
         if (!attacker || attacker.index == this.index || !attacker.hasMoldBreaker()) {
-          if (this.hasAbility(Abilities.CONTRARY) && !ignoreContrary) {
+          if (this.hasAbility(Abilitydex.CONTRARY) && !ignoreContrary) {
             return this.increaseStatBasic(stat, increment, attacker, moldbreaker, true);
           }
-          if (this.hasAbility(Abilities.SIMPLE)) increment *= 2;
+          if (this.hasAbility(Abilitydex.SIMPLE)) increment *= 2;
         }
       }
       increment = Math.min(increment, 6 + this.stages[stat]);
@@ -1247,7 +1244,7 @@ namespace PE.Battle {
       if (!moldbreaker) {
 
         if (!attacker || attacker.index === this.index || !attacker.hasMoldBreaker()) {
-          if (this.hasAbility(Abilities.CONTRARY) && !ignoreContrary) {
+          if (this.hasAbility(Abilitydex.CONTRARY) && !ignoreContrary) {
             return this.increaseStat(stat, increment, attacker, showMessages, move, downanim, moldbreaker, true)
           }
         }
@@ -1265,11 +1262,11 @@ namespace PE.Battle {
             i18n._("%1's %2 severely fell!", this.name, Stats.name(stat))]
           if (showMessages) $Battle.showMessage(texts[Math.min(increment - 1, 2)])
           // Defiant
-          if (this.hasAbility(Abilities.DEFIANT) && (!attacker || attacker.isOpposing(this.index))) {
+          if (this.hasAbility(Abilitydex.DEFIANT) && (!attacker || attacker.isOpposing(this.index))) {
             this.increaseStatWithCause(Stats.Attack, 2, this, Abilities.name(this.ability));
           }
           // Competitive
-          if (this.hasAbility(Abilities.COMPETITIVE) && (!attacker || attacker.isOpposing(this.index))) {
+          if (this.hasAbility(Abilitydex.COMPETITIVE) && (!attacker || attacker.isOpposing(this.index))) {
             this.increaseStatWithCause(Stats.SpAtk, 2, this, Abilities.name(this.ability))
           }
           return true;
@@ -1283,7 +1280,7 @@ namespace PE.Battle {
       if (!(stat in Stats)) return false;
       if (!moldbreaker) {
         if (!attacker || attacker.index === this.index || !attacker.hasMoldBreaker()) {
-          if (this.hasAbility(Abilities.CONTRARY) && !ignoreContrary) {
+          if (this.hasAbility(Abilitydex.CONTRARY) && !ignoreContrary) {
             return this.increaseStatWithCause(stat, increment, attacker, cause, showanim, showMessages, moldbreaker, true);
           }
         }
@@ -1314,11 +1311,11 @@ namespace PE.Battle {
           }
           if (showMessages) $Battle.showMessage(texts[Math.min(increment - 1, 2)]);
           // Defiant
-          if (this.hasAbility(Abilities.DEFIANT) && (!attacker || attacker.isOpposing(this.index))) {
+          if (this.hasAbility(Abilitydex.DEFIANT) && (!attacker || attacker.isOpposing(this.index))) {
             this.increaseStatWithCause(Stats.Attack, 2, this, Abilities.name(this.ability));
           }
           // Competitive
-          if (this.hasAbility(Abilities.COMPETITIVE) && (!attacker || attacker.isOpposing(this.index))) {
+          if (this.hasAbility(Abilitydex.COMPETITIVE) && (!attacker || attacker.isOpposing(this.index))) {
             this.increaseStatWithCause(Stats.SpAtk, 2, this, Abilities.name(this.ability))
           }
           return true
@@ -1334,19 +1331,19 @@ namespace PE.Battle {
         $Battle.showMessage(i18n._(msg, this.name, opponent.name, Abilities.name(opponent.ability)))
         return false;
       }
-      if (!opponent.hasAbility(Abilities.CONTRARY)) {
+      if (!opponent.hasAbility(Abilitydex.CONTRARY)) {
         if (this.sides.own.effects.Mist > 0) {
           let msg = "%1 is protected from %2's %3 by Mist!";
           $Battle.showMessage(i18n._(msg, this.name, opponent.name, Abilities.name(opponent.ability)))
           return false;
         }
-        if (this.hasAbilityIn([Abilities.CLEARBODY, Abilities.WHITESMOKE, Abilities.HYPERCUTTER]) || (this.hasAbility(Abilities.FLOWERVEIL) && this.hasType('GRASS'))) {
+        if (this.hasAbilityIn([Abilitydex.CLEARBODY, Abilitydex.WHITESMOKE, Abilitydex.HYPERCUTTER]) || (this.hasAbility(Abilitydex.FLOWERVEIL) && this.hasType('GRASS'))) {
           let msg = "%1's %2 prevented %3's %4 from working!";
           $Battle.showMessage(i18n._(msg, this.name, Abilities.name(this.ability),
             opponent.name, Abilities.name(opponent.ability)))
           return false;
         }
-        if (this.partner.hasAbility(Abilities.FLOWERVEIL) && this.hasType('GRASS')) {
+        if (this.partner.hasAbility(Abilitydex.FLOWERVEIL) && this.hasType('GRASS')) {
           let msg = "%1's %2 prevented %3's %4 from working!";
           $Battle.showMessage(i18n._(msg, this.partner.name, Abilities.name(this.partner.ability),
             opponent.name, Abilities.name(opponent.ability)))
