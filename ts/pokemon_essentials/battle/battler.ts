@@ -439,44 +439,13 @@ namespace PE.Battle {
     get speed() {
       let speed = this._speed;
       speed = Math.floor(speed * STAGE_MULT[this.stages.Speed]);
-      let speedmod = 1;
-      if (($Battle.weather === Weathers.RainDance || $Battle.weather === Weathers.HeavyRain) && this.hasAbility(Abilitydex.SWIFTSWIM)) {
-        speedmod *= 2;
-      }
-      if (($Battle.weather === Weathers.SunnyDay || $Battle.weather === Weathers.HarshSun) && this.hasAbility(Abilitydex.CHLOROPHYLL)) {
-        speedmod *= 2;
-      }
-      if ($Battle.weather === Weathers.SandStorm && this.hasAbility(Abilitydex.SANDRUSH)) {
-        speedmod *= 2;
-      }
-      if (this.hasAbility(Abilitydex.QUICKFEET) && this.status !== Statuses.Healthy) {
-        speedmod = Math.round(speed * 1.5);
-      }
-      if (this.hasAbility(Abilitydex.UNBURDEN) && this.effects.Unburden && this.item == "") {
-        speedmod *= 2;
-      }
-      if (this.hasAbility(Abilitydex.SLOWSTART) && this.turncount <= 5) {
-        speedmod = Math.round(speedmod / 2);
-      }
-      if (this.hasItemIn(['MACHOBRACE', 'POWERWEIGHT', 'POWERBRACER', 'POWERBELT', 'POWERANKLET', 'POWERLENS', 'POWERBAND', 'IRONBALL'])) {
-        speedmod = Math.round(speedmod / 2);
-      }
-      if (this.hasItem('CHOICESCARF')) {
-        speedmod = Math.round(speed * 1.5);
-      }
-      if (this.hasItem('QUICKPOWDER') && this.species === Pokedex.DITTO && !this.effects.Transform) {
-        speedmod *= 2;
-      }
-      if (this.sides.own.effects.Tailwind > 0) {
-        speedmod *= 2;
-      }
-      if (this.sides.own.effects.Swamp) {
-        speedmod = Math.round(speedmod / 2);
-      }
-      if (this.status === Statuses.Paralysis && !this.hasAbility(Abilitydex.QUICKFEET)) {
-        speedmod = Math.round(speedmod / 4);
-      }
-      speed = Math.round(speed * speedmod);
+      let mod = 1;
+      mod = Battle.Abilities.SpeedStatEffects(this, mod);
+      mod = Battle.Items.SpeedStatEffects(this, mod);
+      if (this.sides.own.effects.Tailwind > 0) mod *= 2;
+      if (this.sides.own.effects.Swamp) mod = Math.round(mod / 2);
+      if (this.status === Statuses.Paralysis && !this.hasAbility(Abilitydex.QUICKFEET)) mod = Math.round(mod / 4);
+      speed = Math.round(speed * mod);
       return Math.max(1, speed);
     }
 

@@ -422,4 +422,18 @@ namespace PE.Battle.Abilities {
     }
     return false;
   }
+
+
+
+  export function SpeedStatEffects(pokemon: Battler, speed: number) {
+    if (pokemon.hasAbility(Abilitydex.CHLOROPHYLL) && ($Battle.weather === Weathers.SunnyDay || $Battle.weather === Weathers.HarshSun)) speed *= 2;
+    else if (pokemon.hasAbility(Abilitydex.QUICKFEET) && pokemon.status !== Statuses.Healthy) speed = Math.round(speed * 1.5);
+    else if (pokemon.hasAbility(Abilitydex.SANDRUSH) && $Battle.weather === Weathers.SandStorm) speed *= 2;
+    else if (pokemon.hasAbility(Abilitydex.SLOWSTART) && pokemon.turncount <= 5) speed = Math.round(speed / 2);
+    else if (pokemon.hasAbility(Abilitydex.SLUSHRUSH) && $Battle.weather === Weathers.Hail) speed *= 2;
+    else if (pokemon.hasAbility(Abilitydex.SURGESURFER) && $Battle.field.effects.ElectricTerrain > 0) speed *= 2;
+    else if (pokemon.hasAbility(Abilitydex.SWIFTSWIM) && ($Battle.weather === Weathers.RainDance || $Battle.weather === Weathers.HeavyRain)) speed *= 2;
+    else if (pokemon.hasAbility(Abilitydex.UNBURDEN) && pokemon.effects.Unburden && pokemon.item == "") speed *= 2;
+    return speed;
+  }
 }
