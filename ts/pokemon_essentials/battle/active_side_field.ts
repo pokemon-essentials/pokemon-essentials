@@ -1,27 +1,27 @@
 namespace PE.Battle {
   interface SideEffects {
-    CraftyShield: boolean,
-    EchoedVoiceCounter: number,
-    EchoedVoiceUsed: boolean,
-    LastRoundFainted: number,
-    LightScreen: number,
-    LuckyChant: number,
-    MatBlock: boolean,
-    Mist: number,
-    QuickGuard: boolean,
-    Rainbow: number,
-    Reflect: number,
-    Round: number,
-    Safeguard: number,
-    SeaOfFire: number,
-    Spikes: number,
-    StealthRock: boolean,
-    StickyWeb: boolean,
-    Swamp: number,
+    CraftyShield?: boolean,
+    EchoedVoiceCounter?: number,
+    EchoedVoiceUsed?: boolean,
+    LastRoundFainted?: number,
+    LightScreen?: number,
+    LuckyChant?: number,
+    MatBlock?: boolean,
+    Mist?: number,
+    QuickGuard?: boolean,
+    Rainbow?: number,
+    Reflect?: number,
+    Round?: number,
+    Safeguard?: number,
+    SeaOfFire?: number,
+    Spikes?: number,
+    StealthRock?: boolean,
+    StickyWeb?: boolean,
+    Swamp?: number,
     /** Tail wind effets turn count */
-    Tailwind: number,
-    ToxicSpikes: number,
-    WideGuard: boolean
+    Tailwind?: number,
+    ToxicSpikes?: number,
+    WideGuard?: boolean
 
   }
 
@@ -30,10 +30,11 @@ namespace PE.Battle {
     /** The indexes of active Pokémon in Battle of this side */
     actives: number[];
 
-    effects: SideEffects;
+    effects?: SideEffects;
     constructor() {
       this.actives = [];
       this.battlers = [];
+      this.effects = {};
       this.effects.CraftyShield = false;
       this.effects.EchoedVoiceCounter = 0;
       this.effects.EchoedVoiceUsed = false;
@@ -59,26 +60,27 @@ namespace PE.Battle {
   }
 
   interface FieldEffects {
-    Electrify: boolean,
-    ElectricTerrain: number,
-    FairyLock: number,
-    FusionBolt: boolean,
-    FusionFlare: boolean,
-    GrassyTerrain: number,
-    Gravity: number,
-    IonDeluge: boolean,
-    MagicRoom: number,
-    MistyTerrain: number,
-    MudSportField: number,
-    TrickRoom: number,
-    WaterSportField: number,
-    WonderRoom: number,
+    Electrify?: boolean,
+    ElectricTerrain?: number,
+    FairyLock?: number,
+    FusionBolt?: boolean,
+    FusionFlare?: boolean,
+    GrassyTerrain?: number,
+    Gravity?: number,
+    IonDeluge?: boolean,
+    MagicRoom?: number,
+    MistyTerrain?: number,
+    MudSportField?: number,
+    TrickRoom?: number,
+    WaterSportField?: number,
+    WonderRoom?: number,
 
   }
 
   export class ActiveField {
     effects: FieldEffects;
     constructor() {
+      this.effects = {};
       this.effects.ElectricTerrain = 0;
       this.effects.FairyLock = 0;
       this.effects.FusionBolt = false;
