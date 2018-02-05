@@ -60,8 +60,8 @@ namespace PE.Pokemon {
      * @param ivs Pokémon IVs
      * @param evs Pokémon Evs
      */
-    constructor(public species: string, public level: number, public item?: string, moves?: string[], ability?: string,
-      nature?: Natures, ivs?: number[], evs?: number[]) {
+    constructor(public species: string, public level: number, public item?: string, moves?: Movedex[],
+      ability?: Abilitydex, nature?: Natures, ivs?: number[], evs?: number[]) {
       super();
       if (!this.species || !this.level) throw Error("Species and Level are required to create a Pokemon");
 
