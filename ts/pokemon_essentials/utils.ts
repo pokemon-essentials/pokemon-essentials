@@ -22,4 +22,8 @@ namespace PE.Utils {
   export function capitalize(msg: string) {
     return msg[0].toUpperCase() + msg.substr(1);
   }
+
+  export function range(range) {
+    return Array.apply(null, Array(range)).map(function (_, i) { return i; });
+  }
 }

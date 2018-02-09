@@ -101,7 +101,8 @@ namespace PE.TitleScenes {
 
     createCommandWindow() {
       this._commandWindow = new CustomTitleCommandWindow();
-      this._commandWindow.setHandler('newGame', this.commandNewGame.bind(this));
+      this._commandWindow.setHandler('battle', this.commandNewGame.bind(this));
+      this._commandWindow.setHandler('map', this.commandMap.bind(this));
       this._commandWindow.setHandler('continue', this.commandContinue.bind(this));
       this._commandWindow.setHandler('options', this.commandOptions.bind(this));
       this.addWindow(this._commandWindow);
@@ -111,8 +112,15 @@ namespace PE.TitleScenes {
       DataManager.setupNewGame();
       this._commandWindow.close();
       this.fadeOutAll();
-      SceneManager.goto(PE.Battle.Scene_Battle);
+      SceneManager.goto(Battle.Scene_Battle);
       SceneManager.prepareNextScene(PE.Pokemon.getRandomPokemon(), PE.Pokemon.getRandomPokemon());
+    };
+
+    commandMap() {
+      DataManager.setupNewGame();
+      this._commandWindow.close();
+      this.fadeOutAll();
+      SceneManager.goto(Scene_Map);
     };
 
     commandContinue() {
@@ -133,6 +141,12 @@ namespace PE.TitleScenes {
   }
 
   export class CustomTitleCommandWindow extends Window_TitleCommand {
+    makeCommandList() {
+      this.addCommand(i18n._('Wild Battle'), 'battle');
+      this.addCommand(i18n._('Map'), 'map');
+      this.addCommand(i18n._('Options'), 'options');
+    }
+
     updatePlacement() {
       this.x = (Graphics.boxWidth - this.width);
       this.y = Graphics.boxHeight - this.height;
