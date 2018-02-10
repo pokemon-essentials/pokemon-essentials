@@ -9,7 +9,7 @@ namespace PE.Battle {
   export const enum WaitMode { None, Animation, AbilitySing };
   export const enum ActionChoices { UseMove, UseItem, Switch };
 
-  export const enum Enviroments { None, TallGrass, Cave, StillWater };
+  export const enum Enviroments { None, TallGrass, Cave, StillWater, Building, Plain, Sand, Rock, LongGrass, PondWater, SeaWater, UnderWater };
 
   export abstract class Manager {
 

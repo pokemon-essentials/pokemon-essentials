@@ -627,7 +627,7 @@ namespace PE.Battle {
 
     //------------------------------------------------------------------------------------------------------------------
     //#region Sleep
-    canSleep(attacker: Battler, showMessages: boolean, move, ignorestatus: boolean) {
+    canSleep(attacker: Battler, showMessages: boolean, move?, ignorestatus?: boolean) {
       if (this.isFainted()) return false;
       let selfSleep = attacker && attacker.index === this.index;
       if (!ignorestatus && this.status === Statuses.Sleep) {
@@ -877,7 +877,7 @@ namespace PE.Battle {
 
     //------------------------------------------------------------------------------------------------------------------
     //#region Paralize
-    canParalize(attacker, opponent) { }
+    canParalize(attacker?, opponent?) { }
     paralize() { }
     //#endregion
     //------------------------------------------------------------------------------------------------------------------
