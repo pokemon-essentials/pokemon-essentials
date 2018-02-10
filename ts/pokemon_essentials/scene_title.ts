@@ -155,6 +155,30 @@ namespace PE.TitleScenes {
       return 180;
     }
   }
+
+  export class Window_SelectPokemon extends Window_Command {
+    makeCommandList() {
+      for (const pokemon in Pokedex) {
+        if (Pokedex.hasOwnProperty(pokemon)) {
+          this.addCommand(pokemon, 'pokemon');
+        }
+      }
+    }
+
+    updatePlacement() {
+      this.x = (Graphics.boxWidth - this.width);
+      this.y = Graphics.boxHeight - this.height;
+    }
+
+    windowWidth() {
+      return 260;
+    }
+    numVisibleRows() {
+      return 9;
+    }
+  }
+
+
 }
 
 Scene_Boot.prototype.start = function () {
