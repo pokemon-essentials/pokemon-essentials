@@ -22,4 +22,9 @@ namespace PE.Utils {
   export function capitalize(msg: string) {
     return msg[0].toUpperCase() + msg.substr(1);
   }
+
+
+  export function chance(chance: number){
+    return Math.randomInt(100) < chance;
+  }
 }

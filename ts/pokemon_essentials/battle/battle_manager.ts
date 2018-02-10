@@ -1,13 +1,13 @@
 /// <reference path="../weather.ts" />
 
 namespace PE.Battle {
-  const CHARACTERS_PER_LINE = 50;
+  const CHARACTERS_PER_LINE = 45;
 
   interface IBattleEvent { name: string, params: any[] };
 
   export const enum Phase { None, Init, ActionSelection, MoveSelection };
   export const enum WaitMode { None, Animation, AbilitySing };
-  export const enum Choice { UseMove, UseItem, Switch };
+  export const enum ActionChoices { UseMove, UseItem, Switch };
 
   export const enum Enviroments { None, TallGrass, Cave, StillWater };
 
@@ -249,7 +249,7 @@ namespace PE.Battle {
         this.canChooseMove(pokemon.index, pokemon.effects.EncoreMoveId, false)) {
         console.log(`[Auto choosing Encore move] ${pokemon.effects.EncoreMoveId}`);
         this.choices = {
-          action: Choice.UseMove,
+          action: ActionChoices.UseMove,
           move: pokemon.effects.EncoreMoveId,
           target: pokemon.sides.foe.actives[0]
         }
@@ -259,11 +259,12 @@ namespace PE.Battle {
       let speeds = [];
       let mPriorities = [];
       let priorityQueue = [];
-      for (let i = 0; i < this.actives.length; i++) {
-        const pokemon = this.actives[i];
+      for (const pokemon of this.actives) {
         speeds.push(pokemon.speed);
         priorityQueue.push(pokemon.index);
-        if (this.choices[pokemon.index] && this.choices[i].action === "USE_MOVE") mPriorities.push(this.choices[i].move.priority)
+        if (this.choices[pokemon.index] && this.choices[pokemon.index].action === ActionChoices.UseMove) {
+          mPriorities.push(this.choices[pokemon.index].move.priority)
+        }
       }
       // order the speeds, mPriorities and priority arrays (bubble sort) by speeds
       let swapped;
@@ -391,11 +392,6 @@ namespace PE.Battle {
     }
 
 
-
-
-
-
-
     static runActions() {
       this.turncount++;
       console.log(`Turn #${this.turncount}`);
@@ -467,7 +463,7 @@ namespace PE.Battle {
 
     static choose(move, target) {
       this.choices[this.currentInx] = {
-        action: "USE_MOVE",
+        action: ActionChoices.UseMove,
         move: move,
         target: target
       }
@@ -509,12 +505,12 @@ namespace PE.Battle {
   }
 }
 
-let $Battle = PE.Battle.Manager;
+const $Battle = PE.Battle.Manager;
 
 
 function DummySelection(battler: PE.Battle.Battler) {
   return {
-    action: PE.Battle.Choice.UseMove,
+    action: PE.Battle.ActionChoices.UseMove,
     move: battler.moveset[0],
     target: battler.sides.foe.actives[0]
   };

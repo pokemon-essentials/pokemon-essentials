@@ -133,7 +133,7 @@ namespace PE.Battle {
   }
 
   export class Battler {
-    private _name: string;
+    hpbar: HPBar;
     private _hp = 0;
     private _totalHP = 0;
     private _attack: number;
@@ -143,6 +143,7 @@ namespace PE.Battle {
     private _speed: number;
     private _fainted = false;
     private _captured = false;
+    nickname: string;
     totalhp: number;
 
     ability: string;
@@ -189,7 +190,7 @@ namespace PE.Battle {
 
     initPokemon(pokemon: Pokemon.Pokemon) {
       // if (pokemon.isEgg()) throw Error("An egg can't be an active Pokémon");
-      this._name = pokemon.name;
+      this.nickname = pokemon.name;
       this.species = pokemon.species;
       this.level = pokemon.level;
       this._hp = pokemon.stats.hp;
@@ -453,6 +454,8 @@ namespace PE.Battle {
 
     damage(amt) {
       this._hp -= amt;
+      this.hpbar.damage(amt);
+      this.hpbar.start();
       if (this._hp <= 0) {
         this._hp = 0;
         this.faint();
@@ -526,11 +529,11 @@ namespace PE.Battle {
 
     get name() {
       if ($Battle.isOpposing(this.index)) {
-        if ($Battle.opponent()) return i18n._("the opposing %1", this._name);
-        return i18n._("the wild %1", this._name);
+        if ($Battle.opponent()) return i18n._("the opposing %1", this.nickname);
+        return i18n._("the wild %1", this.nickname);
       } else {
-        if ($Battle.ownedByPlayer(this.index)) return this._name;
-        return i18n._("the ally %1", this._name);
+        if ($Battle.ownedByPlayer(this.index)) return this.nickname;
+        return i18n._("the ally %1", this.nickname);
       }
     }
 
@@ -874,7 +877,7 @@ namespace PE.Battle {
 
     //------------------------------------------------------------------------------------------------------------------
     //#region Paralize
-    canParalize() { }
+    canParalize(attacker, opponent) { }
     paralize() { }
     //#endregion
     //------------------------------------------------------------------------------------------------------------------
@@ -887,7 +890,7 @@ namespace PE.Battle {
      * @param showMessages Show or not the info messages
      * @param move the move used
      */
-    conBurn(attacker: Battler, showMessages: boolean, move: any = undefined) {
+    canBurn(attacker: Battler, showMessages: boolean, move: any = undefined) {
       if (this._fainted) return false;
       if (this.status === Statuses.Burn) {
         if (showMessages) $Battle.showMessage(i18n._("%1 already has a burn.", this.name));

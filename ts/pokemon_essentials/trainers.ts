@@ -8,6 +8,14 @@ namespace PE.Trainers {
     get party() {
       return this._party;
     }
+
+    get active(){
+      return this.battlers[0];
+    }
+
+    get leader(){
+      return this._party[0];
+    }
   }
 
   export function RandomTrainer() {
