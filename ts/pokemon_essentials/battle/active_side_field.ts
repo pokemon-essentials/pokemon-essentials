@@ -74,7 +74,6 @@ namespace PE.Battle {
     TrickRoom?: number,
     WaterSportField?: number,
     WonderRoom?: number,
-
   }
 
   export class ActiveField {
