@@ -542,6 +542,7 @@ namespace PE.Battle.Abilities {
     // target.pbAbilityCureCheck();
   }
 
+
   export function moveHitTypeImmunity(move: Battle.Moves.Move, attacker: Battle.Battler, opponent: Battle.Battler) {
     let movetype = move.getType(move.type, attacker, opponent);
     if (opponent.hasAbility(Abilitydex.SAPSIPPER) && movetype === Types.GRASS) {
@@ -618,6 +619,156 @@ namespace PE.Battle.Abilities {
 
 
 
+  export function AfterHitEffects(user: Battler, target: Battler, thismove: Moves.Move, turneffects) {
+    if (turneffects.TotalDamage === 0) return;
+
+    // if (!(user.hasAbility(Abilitydex.SHEERFORCE) && thismove.addlEffect > 0)) {
+    if (!(user.hasAbility(Abilitydex.SHEERFORCE))) {
+      // Target's held items:
+      // Red Card
+      if (target.hasItem('REDCARD') && $Battle.canSwitch(user.index, -1, false)) {
+        user.effects.Roar = true;
+        $Battle.showMessage(i18n._("%1 held up its %2 against the %3!", target.name, Items.name(target.item), user.name));
+        target.consumeItem();
+        // Eject Button
+      } else if (target.hasItem('EJECTBUTTON') && $Battle.canChooseNonActive(target.index)) {
+        target.effects.Uturn = true;
+        $Battle.showMessage(i18n._("%1 is switched out with the %2!", target.name, Items.name(target.item)));
+        target.consumeItem();
+      }
+      // User's held items:
+      // Shell Bell
+      if (user.hasItem('SHELLBELL') && user.effects.HealBlock == 0) {
+        console.log(`[Item triggered] ${user.name}'s Shell Bell (total damage=${turneffects.TotalDamage})`)
+        let hpgain = user.recoverHP(Math.floor(turneffects.TotalDamage / 8), true);
+        if (hpgain > 0)
+          $Battle.showMessage(i18n._("%1 restored a little HP using its %2!", user.name, Items.name(user.item)))
+      }
+      // Life Orb
+      if (user.effects.LifeOrb && !user.hasAbility(Abilitydex.MAGICGUARD)) {
+        console.log(`[Item triggered] ${user.name}'s Life Orb (recoil)`);
+        let hploss = user.reduceHP(Math.floor(user.totalhp / 10), true);
+        if (hploss > 0) $Battle.showMessage(i18n._("%1 lost some of its HP!", user.name));
+      }
+
+      if (user.isFainted()) user.faint();// no return
+      // Color Change
+      let movetype = thismove.getType(thismove.type, user, target);
+      if (target.hasAbility(Abilitydex.COLORCHANGE) && !target.hasType(movetype)) {
+        console.log(`[Ability triggered] ${target.name}'s Color Change made it ${movetype}-type`);
+        target.types = [movetype.toString()];
+        target.effects.Type3 = -1
+        $Battle.showMessage(i18n._("%1's %2 made it the %3 type!", target.name, Abilities.name(target.ability), movetype));
+      }
+    }
+    // Moxie
+    if (user.hasAbility(Abilitydex.MOXIE) && target.isFainted()) {
+      if (user.increaseStatWithCause(Stats.Attack, 1, user, Abilities.name(user.ability)))
+        console.log("[Ability triggered] ${user.name}'s Moxie");
+    }
+    // Magician
+    if (user.hasAbility(Abilitydex.MAGICIAN)) {
+      if (target.item && user.item == undefined && user.effects.Substitute == 0 && target.effects.Substitute == 0 &&
+        !target.hasAbility(Abilitydex.STICKYHOLD) && !$Battle.isUnlosableItem(target, target.item)
+        && !$Battle.isUnlosableItem(user, target.item) && ($Battle.opponent || !$Battle.isOpposing(user.index))) {
+        user.item = target.item;
+        target.item = undefined;
+        target.effects.Unburden = true;
+        // if !$Battle.opponent &&   // In a wild battle
+        //  user.pokemon.itemInitial==0 &&
+        //  target.pokemon.itemInitial==user.item
+        //  user.pokemon.itemInitial=user.item
+        // target.pokemon.itemInitial=0
+        // end
+        $Battle.showMessage(i18n._("%1 stole %2's %3 with {4}!", user.name,
+          target.name, Items.name(user.item), Abilities.name(user.ability)))
+        console.log(`[Ability triggered] ${user.name}'s Magician stole ${target.name}'s ${Items.name(user.item)}`)
+
+      }
+    }
+    // Pickpocket
+    if (target.hasAbility(Abilitydex.PICKPOCKET)) {
+      if (target.item == undefined && user.item && user.effects.Substitute == 0 && target.effects.Substitute == 0 &&
+        !user.hasAbility(Abilitydex.STICKYHOLD) && !$Battle.isUnlosableItem(user, user.item) &&
+        !$Battle.isUnlosableItem(target, user.item) && ($Battle.opponent || !$Battle.isOpposing(target.index))) {
+        target.item = user.item;
+        user.item = undefined;
+        user.effects.Unburden = true
+        if (!$Battle.opponent &&   // In a wild battle
+          target.itemInitial == undefined &&
+          user.itemInitial == target.item) {
+          target.itemInitial = target.item;
+          user.itemInitial = undefined;
+        }
+      }
+      $Battle.showMessage(i18n._("%1 pickpocketed %2's %3!", target.name,
+        user.name, Items.name(target.item)))
+      console.log("[Ability triggered] ${target.name}'s Pickpocket stole ${user.name(true)}'s ${Items.name(target.item)}")
+    }
+  }
+
+
+  export function AbilityCureCheck(pokemon: Battler) {
+    if (pokemon.isFainted()) return;
+    switch (pokemon.status) {
+      case Statuses.Sleep:
+        if (pokemon.hasAbilityIn([Abilitydex.VITALSPIRIT, Abilitydex.INSOMNIA])) {
+          console.log(`[Ability triggered] ${pokemon.name}'s ${Abilities.name(pokemon.ability)}`);
+          pokemon.cureStatus(false);
+          $Battle.showMessage(i18n._("%1's %2 woke it up!", pokemon.name, Abilities.name(pokemon.ability)))
+        }
+        break;
+      case Statuses.Poison:
+        if (pokemon.hasAbility(Abilitydex.IMMUNITY)) {
+          console.log(`[Ability triggered] ${pokemon.name}'s ${Abilities.name(pokemon.ability)}`);
+          pokemon.cureStatus(false);
+          $Battle.showMessage(i18n._("%1's %2 cured its poisoning!", pokemon.name, Abilities.name(pokemon.ability)))
+        }
+        break;
+      case Statuses.Burn:
+        if (pokemon.hasAbility(Abilitydex.WATERVEIL)) {
+
+          console.log(`[Ability triggered] ${pokemon.name}'s ${Abilities.name(pokemon.ability)}`);
+          pokemon.cureStatus(false);
+          $Battle.showMessage(i18n._("%1's %2 healed its burn!", pokemon.name, Abilities.name(pokemon.ability)))
+        }
+        break;
+      case Statuses.Paralysis:
+        if (pokemon.hasAbility(Abilitydex.LIMBER)) {
+
+          console.log(`[Ability triggered] ${pokemon.name}'s ${Abilities.name(pokemon.ability)}`);
+          pokemon.cureStatus(false);
+          $Battle.showMessage(i18n._("%1's %2 cured its paralysis!", pokemon.name, Abilities.name(pokemon.ability)))
+        }
+        break;
+      case Statuses.Frozen:
+        if (pokemon.hasAbility(Abilitydex.MAGMAARMOR)) {
+
+          console.log(`[Ability triggered] ${pokemon.name}'s ${Abilities.name(pokemon.ability)}`);
+          pokemon.cureStatus(false);
+          $Battle.showMessage(i18n._("%1's %2 defrosted it!", pokemon.name, Abilities.name(pokemon.ability)))
+        }
+    }
+    if (pokemon.effects.Confusion > 0 && pokemon.hasAbility(Abilitydex.OWNTEMPO)) {
+
+      console.log(`[Ability triggered] ${pokemon.name}'s ${Abilities.name(pokemon.ability)} (attract)`);
+      pokemon.cureConfusion(false)
+      $Battle.showMessage(i18n._("%1's %2 snapped it out of its confusion!", pokemon.name, Abilities.name(pokemon.ability)))
+    }
+    if (pokemon.effects.Attract >= 0 && pokemon.hasAbility(Abilitydex.OBLIVIOUS)) {
+
+      console.log(`[Ability triggered] ${pokemon.name}'s ${Abilities.name(pokemon.ability)}`);
+      pokemon.cureAttract()
+      $Battle.showMessage(i18n._("%1's %2 cured its infatuation status!", pokemon.name, Abilities.name(pokemon.ability)))
+    }
+    if (pokemon.effects.Taunt > 0 && pokemon.hasAbility(Abilitydex.OBLIVIOUS)) {
+      console.log(`[Ability triggered] ${pokemon.name}'s ${Abilities.name(pokemon.ability)} (taunt)`);
+      pokemon.effects.Taunt = 0
+      $Battle.showMessage(i18n._("%1's %2 made its taunt wear off!", pokemon.name, Abilities.name(pokemon.ability)))
+    }
+  }
+
+
   export function SpeedStatEffects(pokemon: Battler, speed: number) {
     if (pokemon.hasAbility(Abilitydex.CHLOROPHYLL) && ($Battle.weather === Weathers.SunnyDay || $Battle.weather === Weathers.HarshSun)) speed *= 2;
     else if (pokemon.hasAbility(Abilitydex.QUICKFEET) && pokemon.status !== Statuses.Healthy) speed = Math.round(speed * 1.5);
@@ -629,4 +780,7 @@ namespace PE.Battle.Abilities {
     else if (pokemon.hasAbility(Abilitydex.UNBURDEN) && pokemon.effects.Unburden && pokemon.item == "") speed *= 2;
     return speed;
   }
+
+
+
 }

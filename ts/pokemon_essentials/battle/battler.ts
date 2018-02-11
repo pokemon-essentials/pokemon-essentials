@@ -153,6 +153,7 @@ namespace PE.Battle {
     forme: any;
     gender: any;
     item: string;
+    itemInitial: string;
     ivs: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number; };
     lastAttacker: {};
     lastHPLost: number;
@@ -1333,14 +1334,31 @@ namespace PE.Battle {
     //==================================================================================================================
 
 
-    consumeItem(...args) { }
-
-    reduceHP(amt) {
-
+    consumeItem(...args) {
+      throw Error('Not Implemented');
     }
+
+    reduceHP(...args) {
+      return 0;
+    }
+
+    recoverHP(...arg) {
+      return 0;
+    }
+
 
     get partner() {
       return this;
+    }
+
+    cureStatus(...args){
+      throw Error('Not Implemented');
+    }
+    cureConfusion(...args){
+      throw Error('Not Implemented');
+    }
+    cureAttract(...args){
+      throw Error('Not Implemented');
     }
 
   }

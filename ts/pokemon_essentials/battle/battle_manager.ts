@@ -131,7 +131,11 @@ namespace PE.Battle {
     }
 
     static isUnlosableItem(pokemon: Battler, item) {
+      throw Error('Not Implemented');
+    }
 
+    static canChooseNonActive(...args){
+      throw Error('Not Implemented');
     }
 
     static checkGlobalAbility(ability: Abilitydex) {
