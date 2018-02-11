@@ -1,4 +1,5 @@
 namespace PE.Battle.Abilities {
+
   export function name(id: string) {
     return i18n._($PE_ABILITIES[id].name);
   }
@@ -8,7 +9,7 @@ namespace PE.Battle.Abilities {
    * @param pokemon the switch in Pokémon
    * @param onactive
    */
-  export function onSwitchInEffects(pokemon: Battle.Battler, onactive: boolean) {
+  export function OnSwitchInEffects(pokemon: Battle.Battler, onactive: boolean) {
     if (pokemon.isFainted()) return;
     // if (onactive) {
     //   battler.battle.pbPrimalReversion(battler.index);
@@ -165,7 +166,8 @@ namespace PE.Battle.Abilities {
       for (const battler of $Battle.actives) {
         if (pokemon.isOpposing(battler.index) && !battler.isFainted()) {
           for (const move of battler.moveset) {
-            let effectiveness = Types.effectiveness(move.type, pokemon.types, pokemon.effects.Type3);
+            let movetype = move.getType(move.type, battler);
+            let effectiveness = Types.effectiveness(movetype, pokemon.types, pokemon.effects.Type3);
             if ((effectiveness >= 2 && move.basePower > 0) || Battle.Moves.isOHKOMove(move.id)) {
               found = true;
               break;
@@ -350,8 +352,199 @@ namespace PE.Battle.Abilities {
 
   }
 
+
+
+  export function OnDealingDamageEffects(move: Moves.Move, user: Battler, target: Battler, damage: number) {
+    if (damage <= 0) return;
+    let movetype = move.getType(move.type, user, target);
+    //==================================================================================================================
+    // Contact Moves
+    // Long Reach - Contact moves from the user will not trigger effects caused by contact.
+    if (move.isContactMove() && !target.damageState.substitute && !user.hasAbility(Abilitydex.LONGREACH, true)) {
+      //----------------------------------------------------------------------------------------------------------------
+      // Aftermath - An attacker that knocks out this Pokémon with a contact move takes damage equal to 1/4 of its own max HP
+      if (target.hasAbility(Abilitydex.AFTERMATH, true) && target.isFainted() && !user.isFainted()) {
+        if (!$Battle.checkGlobalAbility(Abilitydex.DAMP) && !user.hasMoldBreaker() && !user.hasAbility(Abilitydex.MAGICGUARD)) {
+          // $Battle.scene.pbDamageAnimation(user, 0);
+          user.damage(Math.floor(user.totalhp / 4));
+          $Battle.showMessage(i18n._(`%1 was caught in the aftermath!`, user.name));
+          console.log(`[Ability triggered] ${target.name}'s Aftermath`);
+        }
+      }
+      //----------------------------------------------------------------------------------------------------------------
+
+      //----------------------------------------------------------------------------------------------------------------
+      // Cute Charm - Has a 30% chance of infatuating an attacker on contact.
+      if (target.hasAbility(Abilitydex.CUTECHARM) && Utils.chance(30)) {
+        if (!user.isFainted() && user.canAttract(target, false)) {
+          user.attract(target, false);
+          $Battle.showMessage(i18n._("%1's %2 made %3 fall in love", target.name, Abilities.name(target.ability), user.name));
+          console.log(`[Ability triggered] ${target.name}'s Cute Charm`);
+        }
+      }
+      //----------------------------------------------------------------------------------------------------------------
+
+      //----------------------------------------------------------------------------------------------------------------
+      // Effect Spore - Has a 30% chance of afflicting an attacker with poison, paralysis, or sleep on contact.
+      if (target.hasAbility(Abilitydex.EFFECTSPORE, true)) {
+        if (!user.hasType(Types.GRASS) || !user.hasAbility(Abilitydex.OVERCOAT) || !user.hasItem('SAFETYGOGGLES')) {
+          let msg = "";
+          if (Utils.chance(10) && user.canPoison(undefined, false)) {
+            user.poison(target);
+            msg = "%1's %2 poisoned %3!";
+          }
+          else if (Utils.chance(10) && user.canParalize(undefined, false)) {
+            user.paralize(target);
+            msg = "%1's %2 paralyzed %3 It may be unable to move!";
+          }
+          else if (Utils.chance(10) && user.canSleep(undefined, false)) {
+            user.sleep();
+            msg = "%1's %2 made %3 fall sleep!";
+          }
+          if (msg !== "") {
+            $Battle.showMessage(i18n._(msg, target.name, Abilities.name(target.ability), user.name));
+            console.log(`[Ability triggered] ${target.name}'s Effect Spore`);
+          }
+        }
+      }
+      //----------------------------------------------------------------------------------------------------------------
+
+      //----------------------------------------------------------------------------------------------------------------
+      // Flame Body - Has a 30% chance of burning an attacker on contact.
+      if (target.hasAbility(Abilitydex.FLAMEBODY, true) && Utils.chance(30) && user.canBurn(null, false)) {
+        console.log(`[Ability triggered] ${target.name}'s Flame Body`);
+        user.burn(target);
+        $Battle.showMessage(i18n._("%1's %2 burned %3", target.name, Abilities.name(target.ability), user.name));
+      }
+      //----------------------------------------------------------------------------------------------------------------
+
+      //----------------------------------------------------------------------------------------------------------------
+      // Fluffy - Halves damage taken from contact moves, but doubles damage taken from Fire-type moves.
+      //----------------------------------------------------------------------------------------------------------------
+
+      //----------------------------------------------------------------------------------------------------------------
+      // Gooey, Tangling Hair - TODO - Decreases an attacker's Speed by one stage on contact.
+      if (target.hasAbilityIn([Abilitydex.GOOEY, Abilitydex.TANGLINGHAIR])) {
+        console.log(`[Ability triggered] ${target.name}'s ${target.ability}`);
+        if (user.reduceStatWithCause(Stats.Speed, 1, target, Abilities.name(target.ability))) {
+        }
+      }
+      //----------------------------------------------------------------------------------------------------------------
+
+      //----------------------------------------------------------------------------------------------------------------
+      // Mummy - Replaces an attacker's Ability with Mummy on contact.
+      // TODO check Parental bound and Rock Head effects
+      if (target.hasAbility(Abilitydex.MUMMY, true) && !user.isFainted()) {
+        if (!user.hasAbilityIn([Abilitydex.MULTITYPE, Abilitydex.STANCECHANGE, Abilitydex.SCHOOLING,
+        Abilitydex.BATTLEBOND, Abilitydex.SHIELDSDOWN, Abilitydex.RKSSYSTEM, Abilitydex.DISGUISE, Abilitydex.MUMMY])) {
+          user.ability = Abilitydex.MUMMY;
+          $Battle.showMessage(i18n._(`%1 was mummified by %2!`, user.name, target.name));
+          console.log(`[Ability triggered] ${target.name}'s Mummy copied onto ${user.name}`);
+        }
+      }
+      //----------------------------------------------------------------------------------------------------------------
+
+      //----------------------------------------------------------------------------------------------------------------
+      // Poison Point - Has a 30% chance of poisoning an attacker on contact.
+      if (target.hasAbility(Abilitydex.POISONPOINT, true) && Utils.chance(30) && user.canPoison(undefined, false)) {
+        console.log(`[Ability triggered] ${target.name}'s Poison Point`);
+        user.poison(target);
+        $Battle.showMessage(i18n._("%1's %2 posioned %3", target.name, Abilities.name(target.ability), user.name));
+      }
+      //----------------------------------------------------------------------------------------------------------------
+
+      //----------------------------------------------------------------------------------------------------------------
+      // Rough Skin, Iron Barbs - Damages an attacker for 1/8 of its max HP on contact.
+      if (target.hasAbilityIn([Abilitydex.ROUGHSKIN, Abilitydex.IRONBARBS])) {
+        if (!user.hasAbility(Abilitydex.MAGICGUARD) && !user.isFainted()) {
+          // $Battle.scene.pbDamageAnimation(user, 0);
+          user.damage(Math.floor(user.totalhp / 8));
+          $Battle.showMessage(i18n._("%1's %2 hurt %3!", target.name, Abilities.name(target.ability), user.name));
+          console.log(`[Ability triggered] ${target.name}'s ${target.ability}}`);
+        }
+      }
+      //----------------------------------------------------------------------------------------------------------------
+
+      //----------------------------------------------------------------------------------------------------------------
+      // Poison Touch - Has a 30% chance of poisoning a target on contact.
+      if (user.hasAbility(Abilitydex.POISONTOUCH, true) && target.canPoison(undefined, false) && Utils.chance(30)) {
+        target.poison(user);
+        $Battle.showMessage(i18n._("%1's %2 poisoned %3", user.name, Abilities.name(user.ability), target.name));
+        console.log(`[Ability triggered] ${user.name}'s Poison Touch`)
+      }
+      //----------------------------------------------------------------------------------------------------------------
+
+      //----------------------------------------------------------------------------------------------------------------
+      // Static - Has a 30% chance of paralyzing an attacker on contact.
+      if (target.hasAbility(Abilitydex.STATIC, true) && Utils.chance(30) && user.canParalize(undefined, false)) {
+        user.paralize(target);
+        let msg = "%1's %2 paralyzed %3 It may be unable to move!";
+        $Battle.showMessage(i18n._(msg, target.name, Abilities.name(target.ability), user.name));
+        console.log(`[Ability triggered] ${target.name}'s Static`);
+      }
+      //----------------------------------------------------------------------------------------------------------------
+    }
+    //==================================================================================================================
+
+    if (!target.damageState.substitute) {
+      //----------------------------------------------------------------------------------------------------------------
+      // Anger Point
+      if (target.hasAbility(Abilitydex.ANGERPOINT)) {
+        if (target.damageState.critical && target.canIncreaseStatStage(Stats.Attack, target)) {
+          target.stages.Attack = 6;
+          // $Battle.pbCommonAnimation("StatUp", target, null);
+          // $Battle.showMessage(i18n._(`${target.name}'s ${Abilities.name(target.name)} disabled ${user}!`));
+          // console.log(`[Ability triggered] ${target.name}'s Cursed Body disabled ${user.name}`);
+        }
+      }
+      //----------------------------------------------------------------------------------------------------------------
+
+      //----------------------------------------------------------------------------------------------------------------
+      // Justified - Being hit by a Dark-type move boosts the Attack stat of the Pokémon, for justice.
+      if (target.hasAbility(Abilitydex.JUSTIFIED) && movetype === Types.DARK) {
+        if (target.increaseStatWithCause(Stats.Attack, 1, target, Abilities.name(target.ability))) {
+          console.log(`[Ability triggered] ${target.name}'s Justified`);
+        }
+      }
+      //----------------------------------------------------------------------------------------------------------------
+
+      //----------------------------------------------------------------------------------------------------------------
+      // Rattled - Dark, Ghost, and Bug type moves scare the Pokémon and boost its Speed stat.
+      if (target.hasAbility(Abilitydex.RATTLED) && [Types.DARK, Types.GHOST, Types.BUG].contains(movetype)) {
+        if (target.increaseStatWithCause(Stats.Speed, 1, target, Abilities.name(target.ability))) {
+          console.log(`[Ability triggered] ${target.name}'s Rattled`);
+        }
+      }
+      //----------------------------------------------------------------------------------------------------------------
+
+      //----------------------------------------------------------------------------------------------------------------
+      // Stamina - Boosts the Defense stat when hit by an attack.
+      if (target.hasAbility(Abilitydex.STAMINA)) {
+        if (target.increaseStatWithCause(Stats.Defense, 1, target, Abilities.name(target.ability))) {
+          console.log(`[Ability triggered] ${target.name}'s Stamina`);
+        }
+      }
+      //----------------------------------------------------------------------------------------------------------------
+
+      //----------------------------------------------------------------------------------------------------------------
+      // Weak Armor -Physical attacks to the Pokémon lower its Defense stat but sharply raise its Speed stat.
+      if (target.hasAbility(Abilitydex.WEAKARMOR) && move.category === Moves.Categories.Physical) {
+        if (target.reduceStatWithCause(Stats.Defense, 1, target, Abilities.name(target.ability))) {
+          console.log(`[Ability triggered] ${target.name}'s Weak Armor (lower Defense)`)
+        }
+        if (target.increaseStatWithCause(Stats.Speed, 1, target, Abilities.name(target.ability))) {
+          console.log(`[Ability triggered] ${target.name}'s Weak Armor (raise Speed)`)
+        }
+      }
+      //----------------------------------------------------------------------------------------------------------------
+    }
+    // user.pbAbilityCureCheck();
+    // target.pbAbilityCureCheck();
+  }
+
   export function moveHitTypeImmunity(move: Battle.Moves.Move, attacker: Battle.Battler, opponent: Battle.Battler) {
-    if (opponent.hasAbility(Abilitydex.SAPSIPPER) && move.type === Types.GRASS) {
+    let movetype = move.getType(move.type, attacker, opponent);
+    if (opponent.hasAbility(Abilitydex.SAPSIPPER) && movetype === Types.GRASS) {
       console.log(`[Ability triggered] ${opponent.name}'s Sap Sipper (made ${move.name} ineffective)`)
       if (opponent.canIncreaseStatStage(Stats.Attack, opponent)) {
         opponent.increaseStatWithCause(Stats.Attack, 1, opponent, Battle.Abilities.name(opponent.ability));
@@ -361,8 +554,8 @@ namespace PE.Battle.Abilities {
       }
       return true;
     }
-    if ((opponent.hasAbility(Abilitydex.STORMDRAIN) && move.type === Types.WATER) ||
-      (opponent.hasAbility(Abilitydex.LIGHTNINGROD) && move.type === Types.ELECTRIC)) {
+    if ((opponent.hasAbility(Abilitydex.STORMDRAIN) && movetype === Types.WATER) ||
+      (opponent.hasAbility(Abilitydex.LIGHTNINGROD) && movetype === Types.ELECTRIC)) {
       console.log("[Ability triggered] ${opponent.name}'s ${AbilitiesEffetcs.name(opponent.ability)} (made ${move.name} ineffective)")
       if (opponent.canIncreaseStatStage(Stats.SpAtk, opponent)) {
         opponent.increaseStatWithCause(Stats.SpAtk, 1, opponent, Battle.Abilities.name(opponent.ability))
@@ -371,7 +564,7 @@ namespace PE.Battle.Abilities {
       }
       return true;
     }
-    if (opponent.hasAbility(Abilitydex.MOTORDRIVE) && move.type === Types.ELECTRIC) {
+    if (opponent.hasAbility(Abilitydex.MOTORDRIVE) && movetype === Types.ELECTRIC) {
       console.log("[Ability triggered] ${opponent.name}'s Motor Drive (made ${move.name} ineffective)");
       if (opponent.canIncreaseStatStage(Stats.Speed, opponent)) {
 
@@ -383,8 +576,8 @@ namespace PE.Battle.Abilities {
       }
       return true;
     }
-    if ((opponent.hasAbilityIn([Abilitydex.DRYSKIN, Abilitydex.WATERABSORB]) && move.type === Types.WATER) ||
-      (opponent.hasAbility(Abilitydex.VOLTABSORB) && move.type === Types.ELECTRIC)) {
+    if ((opponent.hasAbilityIn([Abilitydex.DRYSKIN, Abilitydex.WATERABSORB]) && movetype === Types.WATER) ||
+      (opponent.hasAbility(Abilitydex.VOLTABSORB) && movetype === Types.ELECTRIC)) {
       console.log("[Ability triggered] ${opponent.name}'s ${AbilitiesEffetcs.name(opponent.ability)} (made ${move.name} ineffective)")
       let healed = false;
       if (opponent.effects.HealBlock == 0) {
@@ -398,7 +591,7 @@ namespace PE.Battle.Abilities {
       }
       return true;
     }
-    if (opponent.hasAbility(Abilitydex.FLASHFIRE) && move.type === Types.FIRE) {
+    if (opponent.hasAbility(Abilitydex.FLASHFIRE) && movetype === Types.FIRE) {
       console.log("[Ability triggered] ${opponent.name}'s Flash Fire (made ${move.name} ineffective)")
 
       if (!opponent.effects.FlashFire) {

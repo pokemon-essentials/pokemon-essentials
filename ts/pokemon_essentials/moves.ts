@@ -27,14 +27,14 @@ namespace PE.Battle.Moves {
     Dance = "dance"
   }
 
-  export enum MoveCategories { Special, Physical, Status }
+  export enum Categories { Special, Physical, Status }
   export class Move {
 
     num: number;
     /**Move's accuracy, true if never must fail e.g z move*/
     accuracy: number | boolean;
     basePower: number;
-    category: MoveCategories;
+    category: Categories;
     desc: string;
     name: string;
     /**The amount of PP remaining for this move */
@@ -91,7 +91,7 @@ namespace PE.Battle.Moves {
     }
 
     isStatus() {
-      return this.category === MoveCategories.Status;
+      return this.category === Categories.Status;
     }
 
     IsDamaging() {

@@ -326,7 +326,7 @@ namespace PE.Battle {
       $Battle.showMessage(i18n._('Go %1!', this.trainers.player[0].party[0].name));
       let priority = this.getPriority();
       for (const index of priority) {
-        Abilities.onSwitchInEffects(this.battlers[index], true);
+        Abilities.OnSwitchInEffects(this.battlers[index], true);
       }
     }
 

@@ -86,7 +86,7 @@ namespace PE.Types {
     return TYPE_CHART[type];
   }
 
-  export function effectiveness(userType, targetTypes, targetType3) {
+  export function effectiveness(userType: Types, targetTypes, targetType3) {
     let typeChart = Types.TypeChart(userType);
     let effectiveness = 1;
     for (const t of targetTypes) {

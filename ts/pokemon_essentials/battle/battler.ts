@@ -103,6 +103,7 @@ namespace PE.Battle {
     Truant?: boolean,
     TwoTurnAttack?: number,
     Type3?: Types,
+    /** check if an item is used or lost.*/
     Unburden?: boolean,
     Uproar?: number,
     Uturn?: boolean,
@@ -878,7 +879,7 @@ namespace PE.Battle {
     //------------------------------------------------------------------------------------------------------------------
     //#region Paralize
     canParalize(attacker?, opponent?) { }
-    paralize() { }
+    paralize(...args) { }
     //#endregion
     //------------------------------------------------------------------------------------------------------------------
 
@@ -1331,6 +1332,12 @@ namespace PE.Battle {
     //#endregion
     //==================================================================================================================
 
+
+    consumeItem(...args) { }
+
+    reduceHP(amt) {
+
+    }
 
     get partner() {
       return this;
