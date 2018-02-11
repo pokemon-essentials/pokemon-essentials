@@ -538,8 +538,8 @@ namespace PE.Battle.Abilities {
       }
       //----------------------------------------------------------------------------------------------------------------
     }
-    // user.pbAbilityCureCheck();
-    // target.pbAbilityCureCheck();
+    AbilityCureCheck(user);
+    AbilityCureCheck(target);
   }
 
 

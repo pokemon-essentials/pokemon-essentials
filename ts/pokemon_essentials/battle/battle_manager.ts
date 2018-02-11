@@ -505,6 +505,10 @@ namespace PE.Battle {
       this.weatherDuration = 0;
     }
 
+    static nextPickupUse():string{
+      throw Error('not implemented')
+    }
+
 
   }
 }
