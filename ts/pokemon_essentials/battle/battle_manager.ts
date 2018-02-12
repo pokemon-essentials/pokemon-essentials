@@ -55,9 +55,10 @@ namespace PE.Battle {
     static waitMode = WaitMode.None;
 
 
-    static setup(allies: Trainers.Trainer[], opponets: Trainers.Trainer[]) {
+    static setup(opponets: Trainers.Trainer[], allies: Trainers.Trainer[]) {
+      allies.unshift($Player);
       this.trainers = { player: allies, foe: opponets };
-      this.player = allies[0];
+      this.player = $Player;
       this.opponents = opponets;
       this.field = new ActiveField();
       this.sides = { player: new ActiveSide(), foe: new ActiveSide() };
@@ -134,7 +135,7 @@ namespace PE.Battle {
       throw Error('Not Implemented');
     }
 
-    static canChooseNonActive(...args){
+    static canChooseNonActive(...args) {
       throw Error('Not Implemented');
     }
 
@@ -505,7 +506,7 @@ namespace PE.Battle {
       this.weatherDuration = 0;
     }
 
-    static nextPickupUse():string{
+    static nextPickupUse(): string {
       throw Error('not implemented')
     }
 

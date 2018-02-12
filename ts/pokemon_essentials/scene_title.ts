@@ -113,7 +113,8 @@ namespace PE.TitleScenes {
       this._commandWindow.close();
       this.fadeOutAll();
       SceneManager.goto(PE.Battle.Scene_Battle);
-      $Battle.setup([Trainers.RandomTrainer()], [Trainers.RandomTrainer()]);
+      $Player.party = PE.Pokemon.getRandomParty(6);
+      $Battle.setup([Trainers.RandomTrainer()], []);
     };
 
     commandMap() {

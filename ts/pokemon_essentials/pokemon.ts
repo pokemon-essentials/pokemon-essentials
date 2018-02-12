@@ -178,4 +178,13 @@ namespace PE.Pokemon {
     var species = Object.keys($PE_POKEDEX)[inx];
     return new Pokemon(species, level);
   }
+
+  export function getRandomParty(length) {
+    if (length > 6) length = 6;
+    let party: Pokemon[] = [];
+    for (let i = 0; i < length; i++) {
+      party.push(getRandomPokemon());
+    }
+    return party;
+  }
 }

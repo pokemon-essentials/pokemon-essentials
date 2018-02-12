@@ -365,16 +365,16 @@ namespace PE.Battle {
   export class BattleCommands extends Sprite {
     _bg: Sprite;
     _inx: number;
-    options: { name: string; frame: number; x: number; y: number; sprite?: CommandButton }[];
+    options: { name: string; frame: number; x: number; y: number; sprite?: CommandButton; action: any }[];
     constructor(public x: number, public y: number) {
       super();
       let startX = 0;
       let startY = 0;
       this.options = [
-        { name: 'FIGTH', frame: 0, x: startX, y: startY },
-        { name: 'PARTY', frame: 1, x: startX + 84, y: startY },
-        { name: 'BAG', frame: 2, x: startX, y: startY + 32 },
-        { name: 'RUN', frame: 3, x: startX + 84, y: startY + 32 }
+        { name: 'FIGTH', frame: 0, x: startX, y: startY, action: this.openMovesSelection },
+        { name: 'PARTY', frame: 1, x: startX + 84, y: startY, action: this.openParty },
+        { name: 'BAG', frame: 2, x: startX, y: startY + 32, action: this.openBag },
+        { name: 'RUN', frame: 3, x: startX + 84, y: startY + 32, action: this.run }
       ];
       this._inx = 0;
       this.createBackground();
@@ -446,10 +446,20 @@ namespace PE.Battle {
       }
 
       if (Input.isTriggered('ok')) {
-        $Battle.changePhase(Phase.MoveSelection);
+        this.options[this._inx].action()
         this.visible = false;
       }
     }
+
+    openMovesSelection() {
+      $Battle.changePhase(Phase.MoveSelection);
+    }
+    openParty() {
+      SceneManager.push(PE.Party.Scene_Party);
+     }
+    openBag() { }
+    run() { }
+
   }
 
 
