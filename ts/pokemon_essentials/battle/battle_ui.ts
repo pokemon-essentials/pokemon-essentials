@@ -1,4 +1,9 @@
-namespace PE.Battle {
+namespace PE.Battle.UI {
+
+  export let actionsInx = 0;
+  export let movesInx = 0;
+
+
   export class Window_BattleMessage extends Window_Message {
     constructor() {
       super();
@@ -55,6 +60,7 @@ namespace PE.Battle {
 
       this.create();
       this.animate = false;
+      this.setWidth();
       // this.completeCallbacks = [];
     }
 
@@ -159,10 +165,17 @@ namespace PE.Battle {
 
 
     complete() {
+      $Battle.waitMode = WaitMode.None;
+      $Battle.phase = Phase.None;
       // for (const callback of this.completeCallbacks) {
       //   callback();
       // }
       this.animate = false;
+    }
+
+    setWidth() {
+      let width = Math.max(0, (192 * this.currentHP) / this.pokemon.totalhp);
+      this.bar.setFrame(0, 0, width, 24);
     }
   }
 
@@ -257,13 +270,11 @@ namespace PE.Battle {
     _moves: any;
     _backButton: Sprite;
     _bg: Sprite;
-    _inx: number;
     _pos: { x: number; y: number; }[];
     constructor(public _pokemon: Battler) {
       super();
       let x = Graphics.width - 392, y = Graphics.height - 120;
       this._pos = [{ x: x, y: y }, { x: x + 196, y: y }, { x: x, y: y + 52 }, { x: x + 196, y: y + 52 }];
-      this._inx = 0;
       this._moves = [];
       this.createBackground();
       this.createButtons();
@@ -288,7 +299,7 @@ namespace PE.Battle {
       let backtext = new Sprite(new Bitmap(64, 40));
       backtext.bitmap.fontSize = 20;
       backtext.bitmap.outlineWidth = 4;
-      backtext.bitmap.drawText(i18n._('Back'), 4, 10, 64, 20, 'left');
+      backtext.bitmap.drawText(i18n._('BACK'), 8, 10, 64, 20, 'left');
       backtext.x = 0;
       backtext.y = Graphics.height - 4;
       backtext.anchor.y = 1;
@@ -303,7 +314,7 @@ namespace PE.Battle {
         this.addChild(button);
         i++;
       }
-      this._moves[this._inx].activate();
+      this._moves[movesInx].activate();
     }
 
     updateInput() {
@@ -315,44 +326,44 @@ namespace PE.Battle {
       }
 
       if (Input.isTriggered('right')) {
-        this._moves[this._inx].deactivate();
-        this._inx++;
-        if (this._inx >= this._moves.length) this._inx = 0;
-        this._moves[this._inx].activate();
+        this._moves[movesInx].deactivate();
+        movesInx++;
+        if (movesInx >= this._moves.length) movesInx = 0;
+        this._moves[movesInx].activate();
         SoundManager.playCursor();
         return;
       }
 
       if (Input.isTriggered('left')) {
-        this._moves[this._inx].deactivate();
-        this._inx--;
-        if (this._inx < 0) this._inx = this._moves.length - 1;
-        this._moves[this._inx].activate();
+        this._moves[movesInx].deactivate();
+        movesInx--;
+        if (movesInx < 0) movesInx = this._moves.length - 1;
+        this._moves[movesInx].activate();
         SoundManager.playCursor();
         return;
       }
 
       if (Input.isTriggered('down')) {
-        this._moves[this._inx].deactivate();
-        this._inx += 2;
-        if (this._inx >= this._moves.length) this._inx -= 4;
-        this._moves[this._inx].activate();
+        this._moves[movesInx].deactivate();
+        movesInx += 2;
+        if (movesInx >= this._moves.length) movesInx -= 4;
+        this._moves[movesInx].activate();
         SoundManager.playCursor();
         return;
       }
 
       if (Input.isTriggered('up')) {
-        this._moves[this._inx].deactivate();
-        this._inx -= 2;
-        if (this._inx < 0) this._inx += 4;
-        this._moves[this._inx].activate();
+        this._moves[movesInx].deactivate();
+        movesInx -= 2;
+        if (movesInx < 0) movesInx += 4;
+        this._moves[movesInx].activate();
         SoundManager.playCursor();
         return;
       }
 
       if (Input.isTriggered('ok')) {
         this.visible = false;
-        let move = this._pokemon.moveset[this._inx];
+        let move = this._pokemon.moveset[movesInx];
         $Battle.choose(move, $Battle.sides.foe.actives[0]);
         $Battle.changePhase(Battle.Phase.None);
         $Battle.runActions();
@@ -364,7 +375,6 @@ namespace PE.Battle {
 
   export class BattleCommands extends Sprite {
     _bg: Sprite;
-    _inx: number;
     options: { name: string; frame: number; x: number; y: number; sprite?: CommandButton; action: any }[];
     constructor(public x: number, public y: number) {
       super();
@@ -376,7 +386,6 @@ namespace PE.Battle {
         { name: 'BAG', frame: 2, x: startX, y: startY + 32, action: this.openBag },
         { name: 'RUN', frame: 3, x: startX + 84, y: startY + 32, action: this.run }
       ];
-      this._inx = 0;
       this.createBackground();
       this.createButtons();
       // this.initialX = x;
@@ -400,7 +409,7 @@ namespace PE.Battle {
         option.sprite = new CommandButton(option.name, option.frame, option.x, option.y);
         this.addChild(option.sprite);
       }
-      this.options[this._inx].sprite.active = true;
+      this.options[actionsInx].sprite.active = true;
     }
 
     updateInput() {
@@ -412,41 +421,41 @@ namespace PE.Battle {
       }
 
       if (Input.isTriggered('right')) {
-        this.options[this._inx].sprite.active = false;
-        this._inx++;
-        if (this._inx >= this.options.length) this._inx = 0;
-        this.options[this._inx].sprite.active = true;
+        this.options[actionsInx].sprite.active = false;
+        actionsInx++;
+        if (actionsInx >= this.options.length) actionsInx = 0;
+        this.options[actionsInx].sprite.active = true;
         SoundManager.playCursor();
         return;
       }
 
       if (Input.isTriggered('left')) {
-        this.options[this._inx].sprite.active = false;
-        this._inx--;
-        if (this._inx < 0) this._inx = this.options.length - 1;
-        this.options[this._inx].sprite.active = true;
+        this.options[actionsInx].sprite.active = false;
+        actionsInx--;
+        if (actionsInx < 0) actionsInx = this.options.length - 1;
+        this.options[actionsInx].sprite.active = true;
         SoundManager.playCursor();
         return;
       }
       if (Input.isTriggered('down')) {
-        this.options[this._inx].sprite.active = false;
-        this._inx += 2;
-        if (this._inx >= this.options.length) this._inx -= 4;
-        this.options[this._inx].sprite.active = true;
+        this.options[actionsInx].sprite.active = false;
+        actionsInx += 2;
+        if (actionsInx >= this.options.length) actionsInx -= 4;
+        this.options[actionsInx].sprite.active = true;
         SoundManager.playCursor();
         return;
       }
       if (Input.isTriggered('up')) {
-        this.options[this._inx].sprite.active = false;
-        this._inx -= 2;
-        if (this._inx < 0) this._inx += 4;
-        this.options[this._inx].sprite.active = true;
+        this.options[actionsInx].sprite.active = false;
+        actionsInx -= 2;
+        if (actionsInx < 0) actionsInx += 4;
+        this.options[actionsInx].sprite.active = true;
         SoundManager.playCursor();
         return;
       }
 
       if (Input.isTriggered('ok')) {
-        this.options[this._inx].action()
+        this.options[actionsInx].action()
         this.visible = false;
       }
     }
@@ -456,7 +465,7 @@ namespace PE.Battle {
     }
     openParty() {
       SceneManager.push(PE.Party.Scene_Party);
-     }
+    }
     openBag() { }
     run() { }
 

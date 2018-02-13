@@ -115,6 +115,7 @@ namespace PE.TitleScenes {
       SceneManager.goto(PE.Battle.Scene_Battle);
       $Player.party = PE.Pokemon.getRandomParty(6);
       $Battle.setup([Trainers.RandomTrainer()], []);
+      $Battle.start();
     };
 
     commandMap() {

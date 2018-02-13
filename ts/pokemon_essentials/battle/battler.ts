@@ -134,7 +134,7 @@ namespace PE.Battle {
   }
 
   export class Battler {
-    hpbar: HPBar;
+    hpbar: UI.HPBar;
     private _hp = 0;
     private _totalHP = 0;
     private _attack: number;
@@ -457,7 +457,7 @@ namespace PE.Battle {
     damage(amt) {
       this._hp -= amt;
       this.hpbar.damage(amt);
-      this.hpbar.start();
+      $Battle.recoverHPAnimation(this.index);
       if (this._hp <= 0) {
         this._hp = 0;
         this.faint();

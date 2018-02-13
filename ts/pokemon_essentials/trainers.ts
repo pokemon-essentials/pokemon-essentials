@@ -28,6 +28,9 @@ namespace PE.Trainers {
     get leader() {
       return this.data.party[0];
     }
+
+
+
   }
 
   export class Player extends Trainer {

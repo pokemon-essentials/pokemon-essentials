@@ -5,7 +5,7 @@ namespace PE.Battle {
 
   interface IBattleEvent { name: string, params: any[] };
 
-  export const enum Phase { None, Init, ActionSelection, MoveSelection };
+  export const enum Phase { None, Init, ActionSelection, MoveSelection, Animation };
   export const enum WaitMode { None, Animation, AbilitySing };
   export const enum ActionChoices { UseMove, UseItem, Switch };
 
@@ -108,6 +108,9 @@ namespace PE.Battle {
 
       this.phase = Phase.Init;
       this.currentInx = 0;
+
+      UI.actionsInx = 0;
+      UI.movesInx = 0;
     }
 
     //==================================================================================================================
@@ -361,6 +364,10 @@ namespace PE.Battle {
 
     static clear() {
       this._queue = [];
+      this.actives = [];
+      $Player.battlers = [];
+      UI.actionsInx = 0;
+      UI.movesInx = 0;
       this.clearWeather();
     }
 
@@ -508,6 +515,14 @@ namespace PE.Battle {
 
     static nextPickupUse(): string {
       throw Error('not implemented')
+    }
+
+    static recoverHPAnimation(index: number) {
+      this.push(() => {
+        this.battlers[index].hpbar.start();
+        this.waitMode = WaitMode.Animation;
+        this.phase = Phase.Animation;
+      });
     }
 
 

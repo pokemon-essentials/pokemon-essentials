@@ -11,5 +11,13 @@ namespace PE.Party {
       this.bg.bitmap = ImageManager.loadBitmap('img/titles1/', 'custom_background', undefined, false);
       this.addChild(this.bg);
     }
+
+    update() {
+      super.update();
+      if (Input.isTriggered('cancel')) {
+        SceneManager.pop();
+        SoundManager.playCancel();
+      }
+    }
   }
 }

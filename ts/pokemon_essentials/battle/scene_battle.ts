@@ -1,17 +1,14 @@
 namespace PE.Battle {
-
-
-
-
   export class Scene_Battle extends Scene_Base {
     hud: Sprite;
-    partyBar: HPBar;
-    movesSelection: _MovesSelection;
-    battleCommands: BattleCommands;
-    message: Window_BattleMessage;
+    partyBar: UI.HPBar;
+    movesSelection: UI._MovesSelection;
+    battleCommands: UI.BattleCommands;
+    message: UI.Window_BattleMessage;
 
-    /** save all the objects display layers */
     layers: { bg: Sprite; bg2: Sprite; weather: Weathers.WeatherLayer } = { bg: undefined, bg2: undefined, weather: undefined };
+
+    sprites = {};
 
     create() {
       super.create();
@@ -21,7 +18,6 @@ namespace PE.Battle {
     start() {
       super.start();
       $Battle.scene = this;
-      $Battle.start();
       $Battle.changePhase(Phase.ActionSelection);
     }
 
@@ -39,9 +35,14 @@ namespace PE.Battle {
           this.hud.visible = false;
           this.movesSelection.updateInput();
           break;
+        case Phase.Animation:
+          this.partyBar.visible = true;
+          break;
         default:
+          this.partyBar.visible = false;
           if (Input.isTriggered('cancel')) {
             SceneManager.goto(PE.TitleScenes.CustomScene);
+            $Battle.terminate();
           }
       }
     }
@@ -51,7 +52,6 @@ namespace PE.Battle {
     }
 
     terminate() {
-      $Battle.terminate();
       super.terminate();
     }
 
@@ -81,7 +81,7 @@ namespace PE.Battle {
     }
 
     createMessageWindow() {
-      this.message = new Window_BattleMessage();
+      this.message = new UI.Window_BattleMessage();
       this.addWindow(this.message);
       this.message.subWindows().forEach(function (window) {
         this.addWindow(window);
@@ -89,30 +89,34 @@ namespace PE.Battle {
     }
 
     createBattlers() {
-      let fx = Graphics.width - 96;
-      let fy = 240
-      let f = new Sprites.Battler($Battle.opponents[0].leader, Sprites.BattlersFacing.Front);
-      f.x = fx;
-      f.y = fy;
-      f.scale.x = 2;
-      f.scale.y = 2;
-      f.anchor.x = 0.5;
-      f.anchor.y = 1;
-      this.addChild(f);
 
-      let px = 96;
-      let py = Graphics.height;
-      let a = new Sprites.Battler($Battle.player.leader, Sprites.BattlersFacing.Back);
-      a.x = px;
-      a.y = py;
-      a.scale.x = 3;
-      a.scale.y = 3;
-      a.anchor.x = 0.5;
-      a.anchor.y = 1;
-      this.addChild(a);
+      for (const index of $Battle.sides.foe.actives) {
+        let battler = $Battle.battlers[index];
+        let fx = Graphics.width - 96;
+        let fy = 240
+        this.sprites[index] = new Sprites.Battler(battler.pokemon, Sprites.BattlersFacing.Front);
+        this.sprites[index].x = fx;
+        this.sprites[index].y = fy;
+        this.sprites[index].scale.x = 2;
+        this.sprites[index].scale.y = 2;
+        this.sprites[index].anchor.x = 0.5;
+        this.sprites[index].anchor.y = 1;
+        this.addChild(this.sprites[index]);
+      }
 
-
-
+      for (const index of $Battle.sides.player.actives) {
+        let battler = $Battle.battlers[index];
+        let x = 96;
+        let y = Graphics.height;
+        this.sprites[index] = new Sprites.Battler(battler.pokemon, Sprites.BattlersFacing.Back);
+        this.sprites[index].x = x;
+        this.sprites[index].y = y;
+        this.sprites[index].scale.x = 3;
+        this.sprites[index].scale.y = 3;
+        this.sprites[index].anchor.x = 0.5;
+        this.sprites[index].anchor.y = 1;
+        this.addChild(this.sprites[index]);
+      }
     }
 
 
@@ -120,21 +124,31 @@ namespace PE.Battle {
       this.layers.weather = new Weathers.WeatherLayer();
       this.addChild(this.layers.weather);
 
-      this.partyBar = new HPBar($Battle.player.active, 16, Graphics.height - 64, false);
-      this.partyBar.visible = false;
-      this.addChild(this.partyBar);
-
-      let h2 = new HPBar($Battle.opponents[0].active, Graphics.width - 208, 48, true);
-      this.addChild(h2);
-
       let x = Graphics.width - 168;
       let y = Graphics.height - 108;
-      this.battleCommands = new BattleCommands(x, y);
+      this.battleCommands = new UI.BattleCommands(x, y);
       this.battleCommands.visible = false;
       this.addChild(this.battleCommands);
 
-      this.movesSelection = new _MovesSelection($Battle.player.active);
-      this.addChild(this.movesSelection);
+      for (const index of $Battle.sides.foe.actives) {
+        let battler = $Battle.battlers[index];
+        let h2 = new UI.HPBar(battler, Graphics.width - 208, 48, true);
+        this.addChild(h2);
+      }
+
+      for (const index of $Battle.sides.player.actives) {
+        let battler = $Battle.battlers[index];
+        this.partyBar = new UI.HPBar(battler, 16, Graphics.height - 64, false);
+        this.partyBar.visible = false;
+        this.addChild(this.partyBar);
+
+        this.movesSelection = new UI._MovesSelection(battler);
+        this.addChild(this.movesSelection);
+      }
+
+
+
+
 
       let msg = i18n._('What will %1 do?', $Battle.player.active.name);
       this.hud = new Sprite(new Bitmap(300, 32));
@@ -153,7 +167,7 @@ namespace PE.Battle {
       let x = 0;
       let y = 192;
       if (foeSide) { x = Graphics.width - 224; y = 96; }
-      let sing = new AbilityIndicator(ability);
+      let sing = new UI.AbilityIndicator(ability);
       sing.x = x;
       sing.y = y;
       this.addChild(sing);
