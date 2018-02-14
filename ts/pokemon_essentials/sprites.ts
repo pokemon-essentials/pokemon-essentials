@@ -89,4 +89,33 @@ namespace PE.Sprites {
       super.setFrame(this._width * col, this._height * row, this._width, this._height);
     }
   }
+
+  export class PokeIcon extends Sprite {
+    private _dy: number;
+    private _frameRate: number;
+    private _frameCount: number;
+
+    constructor(pokemon, x, y) {
+      super();
+      this._frameCount = 0;
+      this._frameRate = 30;
+      let path = 'img/icons/pokemon/';
+      path += pokemon.shiny ? 'shiny/' : 'regular/';
+      path += '/';
+      this.bitmap = ImageManager.loadBitmap('img/icons/pokemon/regular/', pokemon.species.toLowerCase(), undefined, undefined);
+      this.x = x;
+      this.y = y;
+      this._dy = 5;
+    }
+
+    update() {
+      super.update();
+      if (this._frameCount === 0) {
+        this.y += this._dy;
+        this._dy *= -1;
+      }
+      this._frameCount++;
+      this._frameCount %= this._frameRate;
+    }
+  }
 }
