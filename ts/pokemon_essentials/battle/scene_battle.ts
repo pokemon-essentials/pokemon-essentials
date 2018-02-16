@@ -40,10 +40,6 @@ namespace PE.Battle {
           break;
         default:
           this.partyBar.visible = false;
-          if (Input.isTriggered('cancel')) {
-            SceneManager.goto(PE.TitleScenes.CustomScene);
-            $Battle.terminate();
-          }
       }
     }
 

@@ -416,10 +416,6 @@ namespace PE.Battle.UI {
       if (!this.visible) this.visible = true;
       // if (this.isBusy()) return;
 
-      if (Input.isTriggered('cancel')) {
-        SceneManager.goto(PE.TitleScenes.CustomScene);
-      }
-
       if (Input.isTriggered('right')) {
         this.options[actionsInx].sprite.active = false;
         actionsInx++;
@@ -467,7 +463,10 @@ namespace PE.Battle.UI {
       SceneManager.push(PE.Party.Scene_Party);
     }
     openBag() { }
-    run() { }
+    run() {
+      $Battle.terminate();
+      SceneManager.goto(PE.TitleScenes.CustomScene);
+    }
 
   }
 
