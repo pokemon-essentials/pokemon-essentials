@@ -326,6 +326,7 @@ namespace PE.Battle.UI {
       }
 
       if (Input.isTriggered('right')) {
+        if (this._moves.length <= 1) return;
         this._moves[movesInx].deactivate();
         movesInx++;
         if (movesInx >= this._moves.length) movesInx = 0;
@@ -335,6 +336,7 @@ namespace PE.Battle.UI {
       }
 
       if (Input.isTriggered('left')) {
+        if (this._moves.length <= 1) return;
         this._moves[movesInx].deactivate();
         movesInx--;
         if (movesInx < 0) movesInx = this._moves.length - 1;
@@ -344,18 +346,20 @@ namespace PE.Battle.UI {
       }
 
       if (Input.isTriggered('down')) {
+        if (this._moves.length < 2) return;
         this._moves[movesInx].deactivate();
         movesInx += 2;
-        if (movesInx >= this._moves.length) movesInx -= 4;
+        if (movesInx >= this._moves.length) movesInx = Math.abs(this._moves.length - movesInx);
         this._moves[movesInx].activate();
         SoundManager.playCursor();
         return;
       }
 
       if (Input.isTriggered('up')) {
+        if (this._moves.length <= 2) return;
         this._moves[movesInx].deactivate();
         movesInx -= 2;
-        if (movesInx < 0) movesInx += 4;
+        if (movesInx < 0) movesInx = this._moves.length - Math.abs(movesInx);
         this._moves[movesInx].activate();
         SoundManager.playCursor();
         return;

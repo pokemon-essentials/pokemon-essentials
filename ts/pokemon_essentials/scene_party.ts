@@ -3,6 +3,8 @@ namespace PE.Party {
     sprites: {};
     panels: any[];
     bg: Sprite;
+    inx = 0;
+    activePanels = [];
     constructor() {
       super();
       var x = 8;
@@ -22,7 +24,7 @@ namespace PE.Party {
         });
         y += 104;
       }
-      this.sprites = [];
+      this.sprites = {};
     }
 
     create() {
@@ -48,8 +50,8 @@ namespace PE.Party {
 
       for (let index = 0; index < $Player.party.length; index++) {
         const pokemon = $Player.party[index];
-        const panel = this.panels[index].sprite;
-        this.sprites[pokemon.name] = new Sprites.PokeIcon(pokemon, panel.x + 4, panel.y + 2);
+        const panel = this.panels[index];
+        this.sprites[pokemon.name] = new Sprites.PokeIcon(pokemon, panel.sprite.x + 4, panel.sprite.y + 2);
         this.sprites[pokemon.name].scale.x = 2;
         this.sprites[pokemon.name].scale.y = 2;
         this.addChild(this.sprites[pokemon.name]);
@@ -58,13 +60,13 @@ namespace PE.Party {
         this.sprites['hpbox'].bitmap = ImageManager.loadBitmap('img/pictures/party/', 'hpbar_box', undefined, undefined);
         this.sprites['hpbox'].x = 88;
         this.sprites['hpbox'].y = 40;
-        panel.addChild(this.sprites['hpbox']);
+        panel.sprite.addChild(this.sprites['hpbox']);
 
         this.sprites['hpbar'] = new Sprite();
         this.sprites['hpbar'].bitmap = ImageManager.loadBitmap('img/pictures/party/', 'hpbar', undefined, undefined);
         this.sprites['hpbar'].x = 88;
         this.sprites['hpbar'].y = 40;
-        panel.addChild(this.sprites['hpbar']);
+        panel.sprite.addChild(this.sprites['hpbar']);
 
         this.sprites['text'] = new Sprite(new Bitmap(224, 96));
         this.sprites['text'].bitmap.fontSize = 20;
@@ -99,11 +101,12 @@ namespace PE.Party {
         this.sprites['text'].bitmap.drawText(pokemon.hp + '/' + pokemon.stats.hp, 128, 52, 224, 10, 'left');
         this.sprites['text'].x = 0;
         this.sprites['text'].y = 0;
-        panel.addChild(this.sprites['text']);
+        panel.sprite.addChild(this.sprites['text']);
 
-        panel.changeFrame(1, 0);
+        panel.sprite.changeFrame(1, 0);
+        this.activePanels.push(panel);
       }
-      this.panels[0].sprite.changeFrame(0, 0);
+      this.activePanels[this.inx].sprite.changeFrame(0, 0);
 
     }
 
@@ -112,6 +115,47 @@ namespace PE.Party {
       if (Input.isTriggered('cancel')) {
         SceneManager.pop();
         SoundManager.playCancel();
+      }
+      if (Input.isTriggered('right')) {
+        this.activePanels[this.inx].sprite.changeFrame(1, 0);
+        this.inx++;
+        if (this.inx >= this.activePanels.length) {
+          this.inx = 0;
+        }
+        this.activePanels[this.inx].sprite.changeFrame(0, 0);
+        SoundManager.playCursor();
+      }
+
+      if (Input.isTriggered('left')) {
+        this.activePanels[this.inx].sprite.changeFrame(1, 0);
+        this.inx--;
+        if (this.inx < 0) {
+          this.inx = this.activePanels.length - 1;
+        }
+        this.activePanels[this.inx].sprite.changeFrame(0, 0);
+        SoundManager.playCursor();
+      }
+
+      if (Input.isTriggered('down')) {
+        if (this.activePanels.length < 2) return;
+        this.activePanels[this.inx].sprite.changeFrame(1, 0);
+        this.inx += 2;
+        if (this.inx >= this.activePanels.length) {
+          this.inx = Math.abs(this.activePanels.length - this.inx);
+        }
+        this.activePanels[this.inx].sprite.changeFrame(0, 0);
+        SoundManager.playCursor();
+      }
+
+      if (Input.isTriggered('up')) {
+        if (this.activePanels.length < 2) return;
+        this.activePanels[this.inx].sprite.changeFrame(1, 0);
+        this.inx -= 2;
+        if (this.inx < 0) {
+          this.inx = this.activePanels.length - Math.abs(this.inx);
+        }
+        this.activePanels[this.inx].sprite.changeFrame(0, 0);
+        SoundManager.playCursor();
       }
     }
   }
