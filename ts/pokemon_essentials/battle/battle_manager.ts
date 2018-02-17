@@ -1,7 +1,7 @@
 /// <reference path="../weather.ts" />
 
 namespace PE.Battle {
-  const CHARACTERS_PER_LINE = 45;
+  const CHARACTERS_PER_LINE = 40;
 
   interface IBattleEvent { name: string, params: any[] };
 
@@ -53,6 +53,8 @@ namespace PE.Battle {
     static phase = Phase.None;
     static turncount = 0;
     static waitMode = WaitMode.None;
+
+    static started = false;
 
 
     static setup(opponets: Trainers.Trainer[], allies: Trainers.Trainer[]) {
@@ -336,6 +338,7 @@ namespace PE.Battle {
       for (const index of priority) {
         Abilities.OnSwitchInEffects(this.battlers[index], true);
       }
+      this.push(() => this.started = true);
     }
 
     static update() {
@@ -366,6 +369,7 @@ namespace PE.Battle {
       this._queue = [];
       this.actives = [];
       $Player.battlers = [];
+      this.started = false;
       UI.actionsInx = 0;
       UI.movesInx = 0;
       this.clearWeather();
@@ -379,7 +383,7 @@ namespace PE.Battle {
           let truncateIndex = Math.min(line.length, line.lastIndexOf(" "));
           line = line.substring(0, truncateIndex);
           $gameMessage.add(line + '\\n');
-          msg = msg.substring(truncateIndex);
+          msg = msg.substring(truncateIndex + 1);
         }
         $gameMessage.add(msg + '\\|\\^');
       });
@@ -391,9 +395,9 @@ namespace PE.Battle {
         while (msg.length > CHARACTERS_PER_LINE) {
           let line = msg.substring(0, CHARACTERS_PER_LINE);
           let truncateIndex = Math.min(line.length, line.lastIndexOf(" "));
-          line = line.substring(0, truncateIndex);
+          line = line.substring(0, truncateIndex + 1);
           $gameMessage.add(line + '\\n');
-          msg = msg.substring(truncateIndex);
+          msg = msg.substring(truncateIndex + 1);
         }
         $gameMessage.add(msg);
       });

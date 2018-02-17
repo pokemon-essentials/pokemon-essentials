@@ -114,6 +114,7 @@ namespace PE.TitleScenes {
       this.fadeOutAll();
       SceneManager.goto(PE.Battle.Scene_Battle);
       $Player.party = PE.Pokemon.getRandomParty(6);
+      // $Player.party = [new Pokemon.Pokemon(Pokedex.GROUDON, 100)];
       $Battle.setup([Trainers.RandomTrainer()], []);
       $Battle.start();
     };

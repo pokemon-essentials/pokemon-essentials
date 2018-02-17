@@ -18,6 +18,7 @@ namespace PE.Battle {
     start() {
       super.start();
       $Battle.scene = this;
+      if ($Battle.started) this.setWeather($Battle.weather);
       $Battle.changePhase(Phase.ActionSelection);
     }
 
