@@ -166,7 +166,7 @@ namespace PE.Battle.UI {
 
     complete() {
       $Battle.waitMode = WaitMode.None;
-      $Battle.phase = Phase.None;
+      $Battle.changePhase(Phase.None);
       // for (const callback of this.completeCallbacks) {
       //   callback();
       // }

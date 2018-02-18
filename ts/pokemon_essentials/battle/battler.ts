@@ -402,9 +402,9 @@ namespace PE.Battle {
       if (this.isFainted()) return;
       if ($Battle.isOpposing(this.index)) {
         // Just the player Pokémon will gain epx
-        for (const index of this.sides.foe.actives) {
-          if (!(index in this.participants) && !$Battle.battlers[index].isFainted()) {
-            this.participants.push(index);
+        for (const battler of this.sides.foe.actives) {
+          if (!(battler.index in this.participants) && !$Battle.battlers[battler.index].isFainted()) {
+            this.participants.push(battler.index);
           }
         }
 

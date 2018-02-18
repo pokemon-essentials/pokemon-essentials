@@ -77,7 +77,7 @@ namespace PE.Battle {
           battler.sides.foe = this.sides.foe;
         }
         this.actives.push(this.battlers[firstIndex]);
-        this.sides.player.actives.push(this.battlers[firstIndex].index);
+        this.sides.player.actives.push(this.battlers[firstIndex]);
       }
       for (const trainer of opponets) {
         let firstIndex = this.battlers.length;
@@ -90,7 +90,7 @@ namespace PE.Battle {
           battler.sides.foe = this.sides.player;
         }
         this.actives.push(this.battlers[firstIndex]);
-        this.sides.foe.actives.push(this.battlers[firstIndex].index);
+        this.sides.foe.actives.push(this.battlers[firstIndex]);
       }
       this.partyOrder = [];
       for (const pokemon of this.player.battlers) {
@@ -204,8 +204,8 @@ namespace PE.Battle {
         }
       }
       if (pokemon.effects.Imprison) {
-        for (const index of this.sides.foe.actives) {
-          if (this.battlers[index].hasMove(move.id)) {
+        for (const battler of this.sides.foe.actives) {
+          if (battler.hasMove(move.id)) {
             this.showMessage(i18n._("%1 can't use the sealed %2!", pokemon.name, move.name));
             return false;
           }
@@ -311,9 +311,6 @@ namespace PE.Battle {
           }
         }
       } while (swapped);
-
-      console.log("Priority Queue");
-      console.log(priorityQueue);
       return priorityQueue;
     }
     //endregion
@@ -327,6 +324,15 @@ namespace PE.Battle {
 
     static canSwitch(currIndex, switchingIndex, showMessages, ignoreMeanLook = false) {
       // let currPokemon =
+      return true;
+    }
+
+    static switchIn(index: number) {
+      this.choices[this.currentInx] = ({
+        action: ActionChoices.Switch,
+        index: index
+      })
+      this.runActions();
     }
     //==================================================================================================================
 
@@ -404,6 +410,7 @@ namespace PE.Battle {
     }
 
     static changePhase(phase: Phase) {
+      console.log(phase)
       this.push(() => this.phase = phase);
     }
 
@@ -415,20 +422,38 @@ namespace PE.Battle {
         if (this.choices[battler.index]) continue;
         this.choices[battler.index] = (DummySelection(battler));
       }
+
       let priority = this.getPriority();
+
+      for (const index of priority) {
+        let choice = this.choices[index];
+        if (choice.action === ActionChoices.Switch) {
+          let out = this.actives[this.currentInx];
+          let enter = this.battlers[choice.index];
+          this.actives[this.currentInx] = enter;
+          out.sides.own.actives[this.currentInx] = enter;
+          Abilities.OnSwitchInEffects(enter, true);
+        }
+      }
+
+
       // use moves
       for (const index of priority) {
-        if (this.battlers[index].isFainted()) continue;
+        let user = this.battlers[index];
+        if (user.isFainted()) continue;
         let choice = this.choices[index];
-        let target = this.battlers[choice.target];
-        console.log(`${this.battlers[index].name} Speed: ${this.battlers[index].speed}`);
-        console.log(`${this.battlers[index].name} used ${choice.move.name}, move priority: ${choice.move.priority}`);
-        this.showMessage(i18n._('%1 used %2', this.battlers[index].name, choice.move.name));
-        let d = this.getDamage(this.battlers[index], target, choice.move);
-        if (d > 0) {
-          this.battlers[choice.target].damage(d);
-          console.log(`Damage: ${d}`);
-          console.log(`${target.name} HP: ${target.totalhp} --> ${target.hp}`);
+        let target = user.sides.foe.actives[choice.target];
+        if (choice.action === ActionChoices.UseMove) {
+          console.log(`${user.name} Speed: ${user.speed}`);
+          console.log(`${user.name} used ${choice.move.name}, move priority: ${choice.move.priority}`);
+          this.showMessage(i18n._('%1 used %2', user.name, choice.move.name));
+          let d = this.getDamage(user, target, choice.move);
+          if (d > 0) {
+            target.damage(d)
+            // this.push(() => target.damage(d));;
+            // console.log(`Damage: ${d}`);
+            // console.log(`${target.name} HP: ${target.totalhp} --> ${target.hp}`);
+          }
         }
       }
       this.changePhase(Phase.ActionSelection);
@@ -478,10 +503,10 @@ namespace PE.Battle {
 
 
     static choose(move, target) {
-      this.choices[this.currentInx] = {
+      this.choices[this.actives[this.currentInx].index] = {
         action: ActionChoices.UseMove,
         move: move,
-        target: target
+        target: 0
       }
     }
 
@@ -540,6 +565,6 @@ function DummySelection(battler: PE.Battle.Battler) {
   return {
     action: PE.Battle.ActionChoices.UseMove,
     move: battler.moveset[0],
-    target: battler.sides.foe.actives[0]
+    target: 0
   };
 }

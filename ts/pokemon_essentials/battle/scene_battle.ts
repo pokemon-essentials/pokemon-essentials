@@ -87,32 +87,30 @@ namespace PE.Battle {
 
     createBattlers() {
 
-      for (const index of $Battle.sides.foe.actives) {
-        let battler = $Battle.battlers[index];
+      for (const battler of $Battle.sides.foe.actives) {
         let fx = Graphics.width - 96;
         let fy = 240
-        this.sprites[index] = new Sprites.Battler(battler.pokemon, Sprites.BattlersFacing.Front);
-        this.sprites[index].x = fx;
-        this.sprites[index].y = fy;
-        this.sprites[index].scale.x = 2;
-        this.sprites[index].scale.y = 2;
-        this.sprites[index].anchor.x = 0.5;
-        this.sprites[index].anchor.y = 1;
-        this.addChild(this.sprites[index]);
+        this.sprites[battler.index] = new Sprites.Battler(battler.pokemon, Sprites.BattlersFacing.Front);
+        this.sprites[battler.index].x = fx;
+        this.sprites[battler.index].y = fy;
+        this.sprites[battler.index].scale.x = 2;
+        this.sprites[battler.index].scale.y = 2;
+        this.sprites[battler.index].anchor.x = 0.5;
+        this.sprites[battler.index].anchor.y = 1;
+        this.addChild(this.sprites[battler.index]);
       }
 
-      for (const index of $Battle.sides.player.actives) {
-        let battler = $Battle.battlers[index];
+      for (const battler of $Battle.sides.player.actives) {
         let x = 96;
         let y = Graphics.height;
-        this.sprites[index] = new Sprites.Battler(battler.pokemon, Sprites.BattlersFacing.Back);
-        this.sprites[index].x = x;
-        this.sprites[index].y = y;
-        this.sprites[index].scale.x = 3;
-        this.sprites[index].scale.y = 3;
-        this.sprites[index].anchor.x = 0.5;
-        this.sprites[index].anchor.y = 1;
-        this.addChild(this.sprites[index]);
+        this.sprites[battler.index] = new Sprites.Battler(battler.pokemon, Sprites.BattlersFacing.Back);
+        this.sprites[battler.index].x = x;
+        this.sprites[battler.index].y = y;
+        this.sprites[battler.index].scale.x = 3;
+        this.sprites[battler.index].scale.y = 3;
+        this.sprites[battler.index].anchor.x = 0.5;
+        this.sprites[battler.index].anchor.y = 1;
+        this.addChild(this.sprites[battler.index]);
       }
     }
 
@@ -127,14 +125,12 @@ namespace PE.Battle {
       this.battleCommands.visible = false;
       this.addChild(this.battleCommands);
 
-      for (const index of $Battle.sides.foe.actives) {
-        let battler = $Battle.battlers[index];
+      for (const battler of $Battle.sides.foe.actives) {
         let h2 = new UI.HPBar(battler, Graphics.width - 208, 48, true);
         this.addChild(h2);
       }
 
-      for (const index of $Battle.sides.player.actives) {
-        let battler = $Battle.battlers[index];
+      for (const battler of $Battle.sides.player.actives) {
         this.partyBar = new UI.HPBar(battler, 16, Graphics.height - 64, false);
         this.partyBar.visible = false;
         this.addChild(this.partyBar);
@@ -147,7 +143,7 @@ namespace PE.Battle {
 
 
 
-      let msg = i18n._('What will %1 do?', $Battle.player.active.name);
+      let msg = i18n._('What will %1 do?', $Battle.battlers[$Battle.currentInx].name);
       this.hud = new Sprite(new Bitmap(300, 32));
       this.hud.bitmap.fontSize = 20;
       this.hud.bitmap.drawText(msg, 0, 0, 300, 32, 'right');

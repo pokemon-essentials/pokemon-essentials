@@ -28,7 +28,7 @@ namespace PE.Battle {
   export class ActiveSide {
     battlers: number[];
     /** The indexes of active Pokémon in Battle of this side */
-    actives: number[];
+    actives: Battler[];
 
     effects?: SideEffects;
     constructor() {

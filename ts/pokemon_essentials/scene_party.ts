@@ -48,8 +48,8 @@ namespace PE.Party {
         this.addChild(panel.sprite);
       }
 
-      for (let index = 0; index < $Player.party.length; index++) {
-        const pokemon = $Player.party[index];
+      for (let index = 0; index < $Player.battlers.length; index++) {
+        const pokemon = $Player.battlers[index];
         const panel = this.panels[index];
         this.sprites[pokemon.name] = new Sprites.PokeIcon(pokemon, panel.sprite.x + 4, panel.sprite.y + 2);
         this.sprites[pokemon.name].scale.x = 2;
@@ -98,7 +98,7 @@ namespace PE.Party {
         // this.sprites['text'].bitmap.shadowColor = "#999";
         this.sprites['text'].bitmap.drawText(pokemon.level, 16 + width, 66, 224, 18, 'left');
         this.sprites['text'].bitmap.fontSize = 16;
-        this.sprites['text'].bitmap.drawText(pokemon.hp + '/' + pokemon.stats.hp, 128, 52, 224, 10, 'left');
+        this.sprites['text'].bitmap.drawText(pokemon.hp + '/' + pokemon.totalhp, 128, 52, 224, 10, 'left');
         this.sprites['text'].x = 0;
         this.sprites['text'].y = 0;
         panel.sprite.addChild(this.sprites['text']);
@@ -116,6 +116,13 @@ namespace PE.Party {
         SceneManager.pop();
         SoundManager.playCancel();
       }
+      if (Input.isTriggered('ok')) {
+        if (this.inx != 0) {
+          this.SwitchIn();
+          SceneManager.pop();
+        }
+      }
+
       if (Input.isTriggered('right')) {
         this.activePanels[this.inx].sprite.changeFrame(1, 0);
         this.inx++;
@@ -157,6 +164,16 @@ namespace PE.Party {
         this.activePanels[this.inx].sprite.changeFrame(0, 0);
         SoundManager.playCursor();
       }
+    }
+
+
+    SwitchIn() {
+      if ($Battle.canSwitch($Battle.currentInx, $Player.battlers[this.inx].index, false)) {
+        $Battle.switchIn($Player.battlers[this.inx].index);
+      }
+      // let aux = $Player.party[0];
+      // $Player.party[0] = $Player.party[this.inx];
+      // $Player.party[this.inx] = aux;
     }
   }
 }
