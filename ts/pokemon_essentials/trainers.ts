@@ -4,13 +4,16 @@ namespace PE.Trainers {
     name: string;
     party: Pokemon.Pokemon[];
     money?: number;
+    gender?: number;
+    filename?: string;
   }
 
   export class Trainer {
     battlers: Battle.Battler[] = [];
     data: TrainerData;
     constructor() {
-      this.data = { party: undefined, name: undefined }
+      this.data = { party: undefined, name: undefined };
+      this.data.gender = 1;
     }
 
     get party() {

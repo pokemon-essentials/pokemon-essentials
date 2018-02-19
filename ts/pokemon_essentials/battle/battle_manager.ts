@@ -449,8 +449,8 @@ namespace PE.Battle {
           this.showMessage(i18n._('%1 used %2', user.name, choice.move.name));
           let d = this.getDamage(user, target, choice.move);
           if (d > 0) {
-            target.damage(d)
-            // this.push(() => target.damage(d));;
+            // target.damage(d)
+            this.push(() => target.damage(d));;
             // console.log(`Damage: ${d}`);
             // console.log(`${target.name} HP: ${target.totalhp} --> ${target.hp}`);
           }

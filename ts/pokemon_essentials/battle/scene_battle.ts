@@ -9,8 +9,11 @@ namespace PE.Battle {
     layers: { bg: Sprite; bg2: Sprite; weather: Weathers.WeatherLayer } = { bg: undefined, bg2: undefined, weather: undefined };
 
     sprites = {};
+    viewport: Sprite;
 
     create() {
+      this.viewport = new Sprite(new Bitmap(Graphics.width, Graphics.height));
+      this.addChild(this.viewport);
       super.create();
       this.createLayers();
     }
@@ -24,6 +27,9 @@ namespace PE.Battle {
 
     update() {
       super.update();
+
+      // if (this.scale.x > 1) this.scale.x -= 0.01;
+      // if (this.scale.y > 1) this.scale.y -= 0.01;
       $Battle.update();
       switch ($Battle.phase) {
         case Phase.ActionSelection:
@@ -69,10 +75,10 @@ namespace PE.Battle {
       this.layers['bg'].y = Graphics.height + 80;
       this.layers['bg'].anchor.x = 0.5;
       this.layers['bg'].anchor.y = 1;
-      this.addChild(this.layers['bg']);
+      this.viewport.addChild(this.layers['bg']);
 
       this.layers['bg2'] = new Sprite();
-      this.addChild(this.layers['bg2']);
+      this.viewport.addChild(this.layers['bg2']);
 
 
     }
@@ -97,7 +103,7 @@ namespace PE.Battle {
         this.sprites[battler.index].scale.y = 2;
         this.sprites[battler.index].anchor.x = 0.5;
         this.sprites[battler.index].anchor.y = 1;
-        this.addChild(this.sprites[battler.index]);
+        this.viewport.addChild(this.sprites[battler.index]);
       }
 
       for (const battler of $Battle.sides.player.actives) {
@@ -110,33 +116,33 @@ namespace PE.Battle {
         this.sprites[battler.index].scale.y = 3;
         this.sprites[battler.index].anchor.x = 0.5;
         this.sprites[battler.index].anchor.y = 1;
-        this.addChild(this.sprites[battler.index]);
+        this.viewport.addChild(this.sprites[battler.index]);
       }
     }
 
 
     createUI() {
       this.layers.weather = new Weathers.WeatherLayer();
-      this.addChild(this.layers.weather);
+      this.viewport.addChild(this.layers.weather);
 
       let x = Graphics.width - 168;
       let y = Graphics.height - 108;
       this.battleCommands = new UI.BattleCommands(x, y);
       this.battleCommands.visible = false;
-      this.addChild(this.battleCommands);
+      this.viewport.addChild(this.battleCommands);
 
       for (const battler of $Battle.sides.foe.actives) {
         let h2 = new UI.HPBar(battler, Graphics.width - 208, 48, true);
-        this.addChild(h2);
+        this.viewport.addChild(h2);
       }
 
       for (const battler of $Battle.sides.player.actives) {
         this.partyBar = new UI.HPBar(battler, 16, Graphics.height - 64, false);
         this.partyBar.visible = false;
-        this.addChild(this.partyBar);
+        this.viewport.addChild(this.partyBar);
 
         this.movesSelection = new UI._MovesSelection(battler);
-        this.addChild(this.movesSelection);
+        this.viewport.addChild(this.movesSelection);
       }
 
 
@@ -152,7 +158,10 @@ namespace PE.Battle {
       this.hud.anchor.x = 1;
       this.hud.anchor.y = 1;
       this.hud.visible = false;
-      this.addChild(this.hud);
+      this.viewport.addChild(this.hud);
+
+
+      // this.zoomIn();
     }
 
 
@@ -163,10 +172,16 @@ namespace PE.Battle {
       let sing = new UI.AbilityIndicator(ability);
       sing.x = x;
       sing.y = y;
-      this.addChild(sing);
+      this.viewport.addChild(sing);
     }
     setWeather(weather: Weathers) {
       this.layers.weather.setWeather(weather);
+    }
+
+
+    zoomIn() {
+      this.viewport.scale.x = 2;
+      this.viewport.scale.y = 2;
     }
   }
 }
