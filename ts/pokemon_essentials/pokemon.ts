@@ -23,7 +23,7 @@ namespace PE.Pokemon {
     color = 0;
     rareness = 0;
     stepsToHatch = 0;
-    growthRate = "NORMAL";
+    growthRate: Experience;
     baseSpecies = null;
     forme = null;
     gender = null;
@@ -34,6 +34,7 @@ namespace PE.Pokemon {
 
   }
   export class Pokemon extends PokemonData {
+    exp: number;
     itemRecycle: string;
     itemInitial: string;
     statusCount: number;
@@ -77,6 +78,8 @@ namespace PE.Pokemon {
 
       this.level = Math.min(SETTINGS.MAXIMUM_LEVEL, level);
       if (!this.gender) this.gender = Math.random() < this.genderRatio.M ? "M" : "F";
+
+      this.exp = Experience.getExpByLevel(this.growthRate, this.level);
 
       this.nature = nature || Utils.getRandomFromEnum(Natures);
 
@@ -169,6 +172,22 @@ namespace PE.Pokemon {
         moveset.push(move);
       }
       return moveset;
+    }
+
+    gainExp(amt) {
+      this.exp += amt;
+      let done = false;
+      while (!done) {
+        if (Experience.getExpByLevel(this.growthRate, this.level + 1) < this.exp) {
+          this.levelUp();
+        } else {
+          done = true;
+        }
+      }
+    }
+
+    levelUp() {
+
     }
   }
 
