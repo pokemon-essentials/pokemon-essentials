@@ -120,7 +120,7 @@ namespace PE.Battle {
       }
 
 
-      this.sprites['front'] = new Sprites.TrainerFront('000');
+      this.sprites['front'] = new Sprites.TrainerFront('BW_080');
       this.sprites['front'].x = Graphics.height;
       this.sprites['front'].anchor.x = 1;
       this.addChild(this.sprites['front']);

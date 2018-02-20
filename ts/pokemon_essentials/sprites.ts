@@ -123,6 +123,8 @@ namespace PE.Sprites {
 
 
   export class TrainerBack extends SpriteAnimated {
+    moving = false;
+
     constructor() {
       super();
       let filename = SETTINGS.GENDERS[$Player.data.gender].back;
@@ -137,6 +139,7 @@ namespace PE.Sprites {
 
     start() {
       this.animate = true;
+      this.moving = true;
     }
 
     update() {
@@ -149,6 +152,8 @@ namespace PE.Sprites {
           // this.changeFrame(this._currFrame);
         }
       }
+      if (this.moving) this.x -= 4;
+      if (this.x < -this.width - 64) this.moving = false;
       this.updateAnimation();
     }
   }
@@ -157,7 +162,7 @@ namespace PE.Sprites {
   export class TrainerFront extends SpriteAnimated {
     constructor(filename) {
       super();
-      this.bitmap = ImageManager.loadBitmap('img/characters/', filename, undefined, undefined);
+      this.bitmap = ImageManager.loadBitmap('img/characters/trainers/', filename, undefined, undefined);
       this.bitmap.addLoadListener(this.grenerateFrames.bind(this));
       this.setFrameRate(15);
       this.scale.x = 3;
