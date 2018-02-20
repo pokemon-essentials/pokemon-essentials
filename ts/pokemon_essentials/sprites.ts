@@ -16,10 +16,11 @@ namespace PE.Sprites {
   }
 
   class SpriteAnimated extends Sprite_Base {
-    private _currFrame: number = 0;
-    private _frames: number = 0;
-    private _framesCount: number = 0;
-    private _animationSpeed: number = 0;
+    public _currFrame: number = 0;
+    public _frames: number = 0;
+    public _framesCount: number = 0;
+    public _animationSpeed: number = 0;
+    animate = true;
     constructor(private _frameWidth?: number, private _frameHeight?: number, frameRate: number = 15) {
       super();
       this.setFrameRate(frameRate);
@@ -45,7 +46,7 @@ namespace PE.Sprites {
 
     update() {
       super.update.call(this);
-      if (this._framesCount === 0) {
+      if (this.animate && this._framesCount === 0) {
         this.changeFrame(this._currFrame);
         this._currFrame++;
         if (this._currFrame === this._frames) {
@@ -118,4 +119,64 @@ namespace PE.Sprites {
       this._frameCount %= this._frameRate;
     }
   }
+
+
+
+  export class TrainerBack extends SpriteAnimated {
+    constructor() {
+      super();
+      let filename = SETTINGS.GENDERS[$Player.data.gender].back;
+      this.bitmap = ImageManager.loadBitmap('img/characters/', filename, undefined, undefined);
+      this.bitmap.addLoadListener(this.grenerateFrames.bind(this));
+      this.setFrameRate(5);
+      this.scale.x = 1.5;
+      this.scale.y = 1.5;
+      this.animate = false;
+    }
+
+
+    start() {
+      this.animate = true;
+    }
+
+    update() {
+      if (this._framesCount === 0) {
+        if (this.animate) this.changeFrame(this._currFrame);
+        this._currFrame++;
+        if (this._currFrame === this._frames) {
+          this._currFrame = 0;
+          this.animate = false;
+          // this.changeFrame(this._currFrame);
+        }
+      }
+      this.updateAnimation();
+    }
+  }
+
+
+  export class TrainerFront extends SpriteAnimated {
+    constructor(filename) {
+      super();
+      this.bitmap = ImageManager.loadBitmap('img/characters/', filename, undefined, undefined);
+      this.bitmap.addLoadListener(this.grenerateFrames.bind(this));
+      this.setFrameRate(15);
+      this.scale.x = 3;
+      this.scale.y = 3;
+    }
+
+
+    update() {
+      if (this._framesCount === 0) {
+        if (this.animate) this.changeFrame(this._currFrame);
+        this._currFrame++;
+        if (this._currFrame === this._frames) {
+          this._currFrame = 0;
+          this.animate = !this.animate;
+        }
+      }
+      this.updateAnimation();
+    }
+  }
+
+
 }

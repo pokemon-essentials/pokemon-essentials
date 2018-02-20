@@ -356,14 +356,14 @@ namespace PE.Battle {
       return $gameMessage.isBusy() || this.waitMode !== WaitMode.None;
     }
 
-    static push(method) {
-      this._queue.push(method);
+    static push(method, scope: any = this) {
+      this._queue.push({ method: method, scope: scope });
     }
 
     static pop() {
       if (this._queue.length <= 0) return;
-      let method = this._queue.shift();
-      method.apply(this);
+      let action = this._queue.shift();
+      action.method.apply(action.scope);
     }
 
     static terminate() {

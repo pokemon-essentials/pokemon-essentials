@@ -14,12 +14,14 @@ namespace SETTINGS {
     {
       name: 'Boy',
       sprite: 'dp_hero',
-      dashSprite: 'dp_hero_running'
+      dashSprite: 'dp_hero_running',
+      back: 'trback000'
     },
     {
       name: 'Girl',
       sprite: 'dp_heroine',
-      dashSprite: 'dp_heroine_running'
+      dashSprite: 'dp_heroine_running',
+      back: 'trback000'
     }
   ]
 }

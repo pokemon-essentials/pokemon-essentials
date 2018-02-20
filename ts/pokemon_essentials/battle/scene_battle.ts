@@ -118,6 +118,22 @@ namespace PE.Battle {
         this.sprites[battler.index].anchor.y = 1;
         this.viewport.addChild(this.sprites[battler.index]);
       }
+
+
+      this.sprites['front'] = new Sprites.TrainerFront('000');
+      this.sprites['front'].x = Graphics.height;
+      this.sprites['front'].anchor.x = 1;
+      this.addChild(this.sprites['front']);
+
+      this.sprites['back'] = new Sprites.TrainerBack();
+      this.sprites['back'].y = Graphics.height;
+      this.sprites['back'].anchor.y = 1;
+      this.addChild(this.sprites['back']);
+
+
+
+
+      $Battle.push(() => this.sprites['back'].start(), this);
     }
 
 
