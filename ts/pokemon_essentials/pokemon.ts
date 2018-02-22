@@ -30,9 +30,8 @@ namespace PE.Pokemon {
     otherFormes = null;
     pokedex = "";
     genderRatio = { M: .5, F: .5 };
-
-
   }
+  
   export class Pokemon extends PokemonData {
     exp: number;
     itemRecycle: string;

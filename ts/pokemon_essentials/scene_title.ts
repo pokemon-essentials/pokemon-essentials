@@ -180,8 +180,6 @@ namespace PE.TitleScenes {
       return 9;
     }
   }
-
-
 }
 
 Scene_Boot.prototype.start = function () {
