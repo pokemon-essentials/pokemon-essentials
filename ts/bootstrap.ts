@@ -16,6 +16,11 @@ SceneManager.preferableRendererType = function () {
 };
 
 
+SceneManager.initNwjs = function () { 
+  console.log("hoal")
+}
+
+
 /**
  * load Pokémon database files and store in the given constants.
  */

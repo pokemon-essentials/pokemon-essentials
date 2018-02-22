@@ -1,4 +1,6 @@
 .vscode/
+node_modules/
+dist/
 save/
 js/pokemon_essentials.js
 img/battlers
