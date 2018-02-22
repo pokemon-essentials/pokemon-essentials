@@ -24,7 +24,7 @@ git clone --recursive https://github.com/pokemon-essentials/pokemon-essentials
 > the **--recursive** param in the git command will download the corescript submodule.
 
 Some graphics like the Pokémon Battlers sprites and icons are not include in this repository.
-You can download the missing graphics from [here]() and just uncompress on the root folder.
+You can download the missing graphics from [here](https://drive.google.com/drive/folders/1oXbTrwAlL1SBVLykaHS1HlZf9c-IJWLo?usp=sharing) and just uncompress on the root folder.
 
 ## License
 
