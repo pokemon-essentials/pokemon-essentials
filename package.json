@@ -1,6 +1,6 @@
 {
   "name": "pokemon-essentials",
-  "main": "electron.js",
+  "main": "index.html",
   "version": "0.0.1",
   "devDependencies": {
     "gulp": "^3.9.1",
