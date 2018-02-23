@@ -6,14 +6,20 @@ Pokémon Essentials is a Pokémon game project made in RPG Maker MV. Based on th
 ## Getting Started
 This is a standalone version of a RPG Maker MV project, not need the RPG Maker Editor to run.
 
-### Prerequisites
+## Prerequisites
 
 * [Node JS and npm](https://nodejs.org/en/download/)
-* [TypeScript](https://www.typescriptlang.org/index.html#download-links)
-* [NW.JS](https://nwjs.io/)
+* [electron](https://electronjs.org/)
+    ```
+    npm i g electron
+    ```
+* [gulp]()
+    ```
+    npm i g gulp-cli
+    ```
 
 
-### Installing
+## Installing
 
 Copy the repository to your machine.
 
@@ -25,6 +31,18 @@ git clone --recursive https://github.com/pokemon-essentials/pokemon-essentials
 
 Some graphics like the Pokémon Battlers sprites and icons are not include in this repository.
 You can download the missing graphics from [here](https://drive.google.com/drive/folders/1oXbTrwAlL1SBVLykaHS1HlZf9c-IJWLo?usp=sharing) and just uncompress on the root folder.
+
+```
+npm i
+```
+
+### build
+You can build the minified js file using gulp
+
+```
+gulp watch
+```
+
 
 ## License
 

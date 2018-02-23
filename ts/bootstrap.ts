@@ -16,9 +16,7 @@ SceneManager.preferableRendererType = function () {
 };
 
 
-SceneManager.initNwjs = function () { 
-  console.log("hoal")
-}
+SceneManager.initNwjs = function () { }
 
 
 /**
@@ -56,3 +54,6 @@ DataManager.extractSaveContents = function (contents) {
 
 var $Player = new PE.Trainers.Player();
 //===========================================================================
+
+// if debug
+// location.search = "test";

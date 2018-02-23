@@ -570,9 +570,9 @@ interface Game_Map {
   isHalfTile(): void,
   checkMapLevelChanging(x, y),
   _getTextureId(tileId),
-  checkLayeredTilesAttribute(index, matchCallback),
   checkTilePropertie(index, attr),
   getTilePropertie(index, attr),
+  getCollisionType(index, attr),
 }
 
 Object.defineProperty(Game_Map.prototype, 'tiledData', {
@@ -723,17 +723,19 @@ Game_Map.prototype._setupCollisionArrow = function () {
 
   if (this.isHalfTile()) size /= 4;
 
-  for (let layerData of this.tiledData.layers) {
-    if (!layerData.properties || !layerData.properties.collision) continue;
-    if (layerData.properties.collision !== "arrow") continue;
-    if (!layerData.properties.arrowImpassable) continue;
+  for (let layer of this.tiledData.layers) {
+    if (!layer.properties || !layer.properties.collisions) continue;
+    // if (layer.properties.collisions !== "arrow") continue;
+    // if (!layer.properties.arrowImpassable) continue;
 
-    if (layerData.properties.arrowImpassable === "left") bit = 1;
-    if (layerData.properties.arrowImpassable === "up") bit = 2;
-    if (layerData.properties.arrowImpassable === "right") bit = 4;
-    if (layerData.properties.arrowImpassable === "down") bit = 8;
+    // if (layer.properties.arrowImpassable === "left") bit = 1;
+    // if (layer.properties.arrowImpassable === "up") bit = 2;
+    // if (layer.properties.arrowImpassable === "right") bit = 4;
+    // if (layer.properties.arrowImpassable === "down") bit = 8;
 
-    let level = parseInt(layerData.properties.level) || 0;
+    let level = 0 //parseInt(layer.properties.level) || 0;
+    console.log(layer.name)
+    console.log(layer.properties)
     this._initializeMapLevel(level);
     let arrowCollisionMap = this._arrowCollisionMap[level];
     for (let x of PE.Utils.range(size)) {
@@ -742,7 +744,10 @@ Game_Map.prototype._setupCollisionArrow = function () {
         realX = Math.floor(x / halfWidth) * width * 2 + (x % halfWidth) * 2;
       }
 
-      if (!!layerData.data[x]) {
+      // console.log(this.getCollisionType(x, 'collideUp'));
+      console.log(this.tiledData)
+
+      if (!!layer.data[x]) {
         arrowCollisionMap[realX] = arrowCollisionMap[realX] ^ bit;
         if (this.isHalfTile()) {
           arrowCollisionMap[realX + 1] = arrowCollisionMap[realX + 1] ^ bit;
@@ -778,7 +783,7 @@ Game_Map.prototype._setupRegion = function () {
       }
 
       if (!!layerData.data[x]) {
-        var properties = this.checkLayeredTilesAttribute(x, function (properties) {
+        var properties = this.getTilePropertie(x, function (properties) {
           return properties;
         });
         regionMap[realX] = parseInt(properties.region);
@@ -901,43 +906,50 @@ Game_Map.prototype.isPassable = function (x, y, d) {
   }
   let index = x + this.width() * y;
   let arrows = this._arrowCollisionMap[this.currentMapLevel];
+
+  if (this.getTilePropertie(index, 'collide')) return false;
+
   if (d === 4) {
     if (!(arrows[index] & 1) ||
-      this.checkLayeredTilesAttribute(index,
+      this.getTilePropertie(index,
         function (tileProp) {
-          if (tileProp["arrowImpassableLeft"] === "true") return true;
-          if (tileProp["arrowImpassableLeft"] === "false") return false;
-          if (tileProp["collision"] === "true") return true;
-          if (tileProp["collision"] === "false") return false;
-          return null;
+          if (tileProp["collideLeft"] === "true") return true;
+          if (tileProp["collideLeft"] === "false") return false;
+          if (tileProp["collide"] === "true") return true;
+          if (tileProp["collide"] === "false") return false;
+          return false;
         })) {
       return false;
     }
+  }
+  // console.log(d, d === 8, this.getTilePropertie(index, 'collideUp'), this.getTilePropertie(index, 'collide'));
+  if (d === 8 && (this.getTilePropertie(index, 'collideUp') || this.getTilePropertie(index, 'collide'))) {
+    return false;
   }
 
-  if (d === 8) {
-    if (!(arrows[index] & 2) ||
-      this.checkLayeredTilesAttribute(index,
-        function (tileProp) {
-          if (tileProp["arrowImpassableUp"] === "true") return true;
-          if (tileProp["arrowImpassableUp"] === "false") return false;
-          if (tileProp["collision"] === "true") return true;
-          if (tileProp["collision"] === "false") return false;
-          return null;
-        })) {
-      return false;
-    }
-  }
+  // if (d === 8) {
+  //   if (!(arrows[index] & 2) ||
+  //     this.getTilePropertie(index,
+  //       function (tileProp) {
+  //         if (tileProp["collideUp"] === "true") return true;
+  //         if (tileProp["collideUp"] === "false") return false;
+  //         if (tileProp["collide"] === "true") return true;
+  //         if (tileProp["collide"] === "false") return false;
+  //         return false;
+  //       })) {
+  //     return false;
+  //   }
+  // }
 
   if (d === 6) {
     if (!(arrows[index] & 4) ||
-      this.checkLayeredTilesAttribute(index,
+      this.getTilePropertie(index,
         function (tileProp) {
-          if (tileProp["arrowImpassableRight"] === "true") return true;
-          if (tileProp["arrowImpassableRight"] === "false") return false;
-          if (tileProp["collision"] === "true") return true;
-          if (tileProp["collision"] === "false") return false;
-          return null;
+          if (tileProp["collideRight"] === "true") return true;
+          if (tileProp["collideRight"] === "false") return false;
+          if (tileProp["collide"] === "true") return true;
+          if (tileProp["collide"] === "false") return false;
+          return false;
         })) {
       return false;
     }
@@ -945,13 +957,13 @@ Game_Map.prototype.isPassable = function (x, y, d) {
 
   if (d === 2) {
     if (!(arrows[index] & 8) ||
-      this.checkLayeredTilesAttribute(index,
+      this.getTilePropertie(index,
         function (tileProp) {
-          if (tileProp["arrowImpassableDown"] === "true") return true;
-          if (tileProp["arrowImpassableDown"] === "false") return false;
-          if (tileProp["collision"] === "true") return true;
-          if (tileProp["collision"] === "false") return false;
-          return null;
+          if (tileProp["collideDown"] === "true") return true;
+          if (tileProp["collideDown"] === "false") return false;
+          if (tileProp["collide"] === "true") return true;
+          if (tileProp["collide"] === "false") return false;
+          return false;
         })) {
       return false;
     }
@@ -980,42 +992,48 @@ Game_Map.prototype._getTextureId = function (tileId) {
   return textureId;
 }
 
-Game_Map.prototype.checkLayeredTilesAttribute = function (index, matchCallback) {
+Game_Map.prototype.getTilePropertie = function (index, attr) {
   var layers = this.tiledData.layers;
   // start at the top (layers on top trump layers on bottom)
-  for (var i = layers.length - 1; i >= 0; i--) {
-    var layer = layers[i];
-    if (!layer.visible) continue;
+  for (const layer of layers) {
+    if (!layer.properties || !layer.properties.collisions) continue;
     var tileId = layer.data[index];
     if (tileId <= 0) continue;
     var textureId = this._getTextureId(tileId);
     if (!textureId) continue;
     var localTileId = tileId - this.tiledData.tilesets[textureId].firstgid;
     if (!this.tiledData.tilesets[textureId].tileproperties) continue;
-    var tileProp = this.tiledData.tilesets[textureId].tileproperties[localTileId];
-    if (tileProp) {
-      var match = matchCallback(tileProp);
-      if (match == null) continue;
-      return match;
+    var properties = this.tiledData.tilesets[textureId].tileproperties[localTileId];
+    if (properties && properties[attr]) {
+      return properties[attr];
     }
   }
-  return false;
+  return null;
+}
+
+
+Game_Map.prototype.getCollisionType = function (tileId, attr) {
+  if (tileId <= 0) return null;
+  var textureId = this._getTextureId(tileId);
+  if (!textureId) return null;
+  var localTileId = tileId - this.tiledData.tilesets[textureId].firstgid;
+  console.log(this.tiledData.tilesets[textureId].tileproperties)
+  if (!this.tiledData.tilesets[textureId].tileproperties) return null;
+  var properties = this.tiledData.tilesets[textureId].tileproperties[localTileId];
+  if (properties && properties[attr]) {
+    return properties[attr];
+  }
+  return null;
 }
 
 Game_Map.prototype.checkTilePropertie = function (index, attr) {
-  return this.checkLayeredTilesAttribute(index, function (properties) {
+  return this.getTilePropertie(index, function (properties) {
     if (properties[attr] === "true") return true;
     if (properties[attr] === "false") return false;
     return null;
   });
 }
 
-Game_Map.prototype.getTilePropertie = function (index, attr) {
-  return this.checkLayeredTilesAttribute(index, function (properties) {
-    if (properties[attr]) return properties[attr];
-    return null;
-  });
-}
 
 Game_Map.prototype.isBush = function (x, y) {
   var index = x + this.width() * y;

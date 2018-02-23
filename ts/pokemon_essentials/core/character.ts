@@ -102,7 +102,12 @@ Sprite_Character.prototype.patternHeight = function () {
 // #endregion
 //===========================================================================
 
-
+let charOffsetY = -4;
+let _shiftY_ = Game_CharacterBase.prototype.shiftY;
+Game_CharacterBase.prototype.shiftY = function () {
+  var v = _shiftY_.call(this);
+  return v > 0 ? charOffsetY : 0;
+};
 
 
 
