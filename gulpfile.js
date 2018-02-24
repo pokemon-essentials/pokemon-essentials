@@ -16,8 +16,17 @@ gulp.task("build", function () {
     .pipe(gulp.dest('dist'));
 });
 
+gulp.task("dev-build", function () {
+  return gulp.src('ts/**/*.ts')
+    .pipe(ts({
+      noImplicitAny: false,
+      outFile: 'pokemon_essentials.js'
+    }))
+    .pipe(gulp.dest('dist'));
+});
+
 gulp.task("watch", function () {
-  gulp.watch('ts/**/*.ts', ['build']);
+  gulp.watch('ts/**/*.ts', ['dev-build']);
 });
 
 gulp.task('default', ['watch']);
