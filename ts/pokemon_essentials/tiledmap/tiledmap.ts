@@ -38,10 +38,6 @@ namespace PE {
     _priorityTiles: any[];
     _layers: any[];
 
-    // constructor(data){
-    //   // super();
-    // }
-
     initialize(data) {
       this._layers = [];
       this._priorityTiles = [];
