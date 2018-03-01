@@ -96,7 +96,7 @@ namespace PE.Battle {
       for (const battler of $Battle.sides.foe.actives) {
         let fx = Graphics.width - 96;
         let fy = 240
-        this.sprites[battler.index] = new Sprites.Battler(battler.pokemon, Sprites.BattlersFacing.Front);
+        this.sprites[battler.index] = new Sprites.Battler(battler.species, Sprites.BattlersFacing.Front, battler.pokemon.shiny);
         this.sprites[battler.index].x = fx;
         this.sprites[battler.index].y = fy;
         this.sprites[battler.index].scale.x = 2;
@@ -109,7 +109,7 @@ namespace PE.Battle {
       for (const battler of $Battle.sides.player.actives) {
         let x = 96;
         let y = Graphics.height;
-        this.sprites[battler.index] = new Sprites.Battler(battler.pokemon, Sprites.BattlersFacing.Back);
+        this.sprites[battler.index] = new Sprites.Battler(battler.species, Sprites.BattlersFacing.Back, battler.pokemon.shiny);
         this.sprites[battler.index].x = x;
         this.sprites[battler.index].y = y;
         this.sprites[battler.index].scale.x = 3;
@@ -120,10 +120,10 @@ namespace PE.Battle {
       }
 
       let trainer = Math.randomInt(243) + 1;
-      this.sprites['front'] = new Sprites.TrainerFront('BW_'+ trainer.padZero(3));
+      this.sprites['front'] = new Sprites.TrainerFront('BW_' + trainer.padZero(3));
       this.sprites['front'].x = Graphics.width - 96;
       this.sprites['front'].anchor.x = 0.5;
-      this.addChild(this.sprites['front']);      
+      this.addChild(this.sprites['front']);
 
       this.sprites['back'] = new Sprites.TrainerBack();
       this.sprites['back'].y = Graphics.height;

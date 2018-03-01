@@ -66,15 +66,15 @@ namespace PE.Sprites {
 
   export class Battler extends SpriteAnimated {
 
-    constructor(public pokemon: Pokemon.Pokemon, public facing: BattlersFacing) {
+    constructor(public species: string, public facing: BattlersFacing, shiny = false) {
       super();
       this.setFrameRate(15)
       let path = 'img/battlers/';
       if (this.facing === BattlersFacing.Front) path += 'front';
       if (this.facing === BattlersFacing.Back) path += 'back';
-      if (this.pokemon.shiny) path += '-shiny';
+      if (shiny) path += '-shiny';
       path += '/';
-      this.bitmap = ImageManager.loadBitmap(path, pokemon.species.toLowerCase(), undefined, undefined);
+      this.bitmap = ImageManager.loadBitmap(path, this.species.toLowerCase(), undefined, undefined);
       this.bitmap.addLoadListener(this.grenerateFrames.bind(this));
       this.visible = false;
     }

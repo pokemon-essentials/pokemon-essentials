@@ -9,6 +9,7 @@ gulp.task("build", function () {
     .pipe(sourcemaps.init()) // This means sourcemaps will be generated
     .pipe(ts({
       noImplicitAny: false,
+      target: 'es5',
       outFile: 'pokemon_essentials.js'
     }))
     .pipe(uglify()) // You can use other plugins that also support gulp-sourcemaps
@@ -20,6 +21,7 @@ gulp.task("dev-build", function () {
   return gulp.src('ts/**/*.ts')
     .pipe(ts({
       noImplicitAny: false,
+      target: 'es5',
       outFile: 'pokemon_essentials.js'
     }))
     .pipe(gulp.dest('dist'));

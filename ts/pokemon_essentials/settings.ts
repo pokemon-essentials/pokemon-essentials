@@ -1,4 +1,6 @@
-namespace SETTINGS {
+/// <reference path="datadex/pokedex.ts" />
+
+namespace PE.SETTINGS {
   export const SCREEN_WIDTH = 512;
   export const SCREEN_HEIGHT = 384;
   /** The maximum level Pokémon can reach. */
@@ -24,4 +26,7 @@ namespace SETTINGS {
       back: 'trback000'
     }
   ]
+
+  // Intro Scene
+  export const INTRO_SPECIES = Pokedex.PIKACHU;
 }

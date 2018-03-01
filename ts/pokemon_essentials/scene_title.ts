@@ -103,6 +103,7 @@ namespace PE.TitleScenes {
       this._commandWindow = new CustomTitleCommandWindow();
       this._commandWindow.setHandler('battle', this.commandNewGame.bind(this));
       this._commandWindow.setHandler('map', this.commandMap.bind(this));
+      this._commandWindow.setHandler('newgame', this.command_newGame.bind(this));
       this._commandWindow.setHandler('continue', this.commandContinue.bind(this));
       this._commandWindow.setHandler('options', this.commandOptions.bind(this));
       this.addWindow(this._commandWindow);
@@ -136,6 +137,11 @@ namespace PE.TitleScenes {
       SceneManager.push(Scene_Options);
     };
 
+    command_newGame(){
+      this._commandWindow.close();
+      SceneManager.push(Scene_Intro);
+    }
+
     playTitleMusic() {
       // AudioManager.playBgm($dataSystem.titleBgm);
       AudioManager.stopBgs();
@@ -146,6 +152,7 @@ namespace PE.TitleScenes {
   export class CustomTitleCommandWindow extends Window_TitleCommand {
     makeCommandList() {
       this.addCommand(i18n._('Wild Battle'), 'battle');
+      this.addCommand(i18n._('New Game'), 'newgame');
       this.addCommand(i18n._('Map'), 'map');
       this.addCommand(i18n._('Options'), 'options');
     }

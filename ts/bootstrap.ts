@@ -1,11 +1,11 @@
-/// <reference path="rpgmakermv.d/rmmv/rpg_mv.d.ts" />
 /// <reference path="pokemon_essentials/settings.ts" />
 /// <reference path="pokemon_essentials/trainers.ts" />
 
-SceneManager._screenWidth = SETTINGS.SCREEN_WIDTH;
-SceneManager._screenHeight = SETTINGS.SCREEN_HEIGHT;
-SceneManager._boxWidth = SETTINGS.SCREEN_WIDTH;
-SceneManager._boxHeight = SETTINGS.SCREEN_HEIGHT;
+
+SceneManager._screenWidth = PE.SETTINGS.SCREEN_WIDTH;
+SceneManager._screenHeight = PE.SETTINGS.SCREEN_HEIGHT;
+SceneManager._boxWidth = PE.SETTINGS.SCREEN_WIDTH;
+SceneManager._boxHeight = PE.SETTINGS.SCREEN_HEIGHT;
 
 /**
  * Forces to always uses canvas render to avoid WEBGl MAX_TEXTURE_SIZE error.
@@ -17,8 +17,6 @@ SceneManager.preferableRendererType = function () {
 
 
 SceneManager.initNwjs = function () { }
-
-
 /**
  * load Pokémon database files and store in the given constants.
  */
