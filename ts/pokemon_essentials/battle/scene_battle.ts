@@ -119,11 +119,11 @@ namespace PE.Battle {
         this.viewport.addChild(this.sprites[battler.index]);
       }
 
-      let trainer = Math.randomInt(243) + 1;
-      this.sprites['front'] = new Sprites.TrainerFront('BW_' + trainer.padZero(3));
-      this.sprites['front'].x = Graphics.width - 96;
-      this.sprites['front'].anchor.x = 0.5;
-      this.addChild(this.sprites['front']);
+      // let trainer = Math.randomInt(243) + 1;
+      // this.sprites['front'] = new Sprites.TrainerFront('BW_' + trainer.padZero(3));
+      // this.sprites['front'].x = Graphics.width - 96;
+      // this.sprites['front'].anchor.x = 0.5;
+      // this.addChild(this.sprites['front']);
 
       this.sprites['back'] = new Sprites.TrainerBack();
       this.sprites['back'].y = Graphics.height;
@@ -187,10 +187,10 @@ namespace PE.Battle {
       sing.y = y;
       this.viewport.addChild(sing);
     }
+
     setWeather(weather: Weathers) {
       this.layers.weather.setWeather(weather);
     }
-
 
     zoomIn() {
       this.viewport.scale.x = 2;

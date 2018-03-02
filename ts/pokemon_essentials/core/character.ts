@@ -119,7 +119,7 @@ interface Game_Player {
 }
 
 Game_Player.prototype.PE_GetCharacterName = function () {
-  return $gamePlayer.isDashing() ? SETTINGS.GENDERS[$Player.data.gender].dashSprite : SETTINGS.GENDERS[$Player.data.gender].sprite;
+  return $gamePlayer.isDashing() ? PE.SETTINGS.GENDERS[$Player.data.gender].dashSprite : PE.SETTINGS.GENDERS[$Player.data.gender].sprite;
 };
 
 let _alias_updateDashing = Game_Player.prototype.updateDashing;
@@ -176,9 +176,9 @@ Game_Interpreter.prototype.pluginCommand = function (command, args) {
 
   if (command.trim() === "PE_SetPlayerGender") {
     let _gender = parseInt(args[0]) - 1;
-    if (!SETTINGS.GENDERS[_gender]) throw new Error(`there isn't a gender number ${_gender + 1} in the player SETTINGS.GENDERS list`);
+    if (!PE.SETTINGS.GENDERS[_gender]) throw new Error(`there isn't a gender number ${_gender + 1} in the player PE.SETTINGS.GENDERS list`);
     $Player.data.gender = _gender;
-    $Player.data.filename = SETTINGS.GENDERS[$Player.data.gender].sprite;
+    $Player.data.filename = PE.SETTINGS.GENDERS[$Player.data.gender].sprite;
     $gamePlayer.refresh();
   }
 };
