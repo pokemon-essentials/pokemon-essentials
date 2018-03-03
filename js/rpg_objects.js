@@ -1,5 +1,5 @@
 //=============================================================================
-// rpg_objects.js v1.5.0
+// rpg_objects.js v1.4.1 (community-1.2c)
 //=============================================================================
 
 //-----------------------------------------------------------------------------
@@ -6420,7 +6420,6 @@ Game_CharacterBase.prototype.isMapPassable = function(x, y, d) {
     var x2 = $gameMap.roundXWithDirection(x, d);
     var y2 = $gameMap.roundYWithDirection(y, d);
     var d2 = this.reverseDir(d);
-    // return $gameMap.isPassable(x, y, d) && $gameMap.isPassable(x2, y2, d2);
     return $gameMap.isPassable(x, y, d) && $gameMap.isPassable(x2, y2, d2);
 };
 

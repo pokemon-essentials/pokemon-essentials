@@ -1,5 +1,5 @@
 //=============================================================================
-// rpg_managers.js v1.5.0
+// rpg_managers.js v1.4.1 (community-1.2c)
 //=============================================================================
 
 //-----------------------------------------------------------------------------
@@ -756,7 +756,11 @@ StorageManager.localFileDirectoryPath = function() {
     var path = require('path');
 
     var base = path.dirname(process.mainModule.filename);
-    return path.join(base, 'save/');
+    if (this.canMakeWwwSaveDirectory()) {
+        return path.join(base, 'save/');
+    } else {
+        return path.join(path.dirname(base), 'save/');
+    }
 };
 
 StorageManager.localFilePath = function(savefileId) {
@@ -779,6 +783,24 @@ StorageManager.webStorageKey = function(savefileId) {
     } else {
         return 'RPG File%1'.format(savefileId);
     }
+};
+
+// Enigma Virtual Box cannot make www/save directory
+StorageManager.canMakeWwwSaveDirectory = function() {
+    if (this._canMakeWwwSaveDirectory === undefined) {
+        var fs = require('fs');
+        var path = require('path');
+        var base = path.dirname(process.mainModule.filename);
+        var testPath = path.join(base, 'testDirectory/');
+        try {
+            fs.mkdirSync(testPath);
+            fs.rmdirSync(testPath);
+            this._canMakeWwwSaveDirectory = true;
+        } catch (e) {
+            this._canMakeWwwSaveDirectory = false;
+        }
+    }
+    return this._canMakeWwwSaveDirectory;
 };
 
 //-----------------------------------------------------------------------------
@@ -1946,6 +1968,7 @@ SceneManager.onKeyDown = function(event) {
 SceneManager.catchException = function(e) {
     if (e instanceof Error) {
         Graphics.printError(e.name, e.message);
+        Graphics.printStackTrace(e.stack);
         console.error(e.stack);
     } else {
         Graphics.printError('UnknownError', e);

@@ -1,7 +1,35 @@
 //=============================================================================
-// rpg_core.js v1.5.0
+// rpg_core.js v1.4.1 (community-1.2c)
 //=============================================================================
 
+(function() {
+    //patch from triacontane (@triacontane)
+    //This patch clears mapchip atlas which was drawn before.
+
+    var TileRenderer                  = PIXI.WebGLRenderer.__plugins.tile;
+    TileRenderer._clearTexture        = null;
+    var _TileRenderer_initBounds      = TileRenderer.prototype.initBounds;
+    TileRenderer.prototype.initBounds = function() {
+        _TileRenderer_initBounds.apply(this, arguments);
+
+        //create blank canvas to clear texture.
+        var clearTexture           = document.createElement('canvas');
+        clearTexture.width         = 1024;
+        clearTexture.height        = 1024;
+        TileRenderer._clearTexture = clearTexture;
+    };
+
+    PIXI.glCore.GLTexture.prototype._hackSubImage = function(sprite) {
+        this.bind();
+        var gl = this.gl;
+        var x  = sprite.position.x;
+        var y  = sprite.position.y;
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 1);
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, x, y, this.format, this.type, TileRenderer._clearTexture);
+        var baseTex = sprite.texture.baseTexture;
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, x, y, this.format, this.type, baseTex.source);
+    };
+})();
 //-----------------------------------------------------------------------------
 /**
  * This is not a class, but contains some methods that will be added to the
@@ -180,7 +208,9 @@ Utils.RPGMAKER_NAME = 'MV';
  * @type String
  * @final
  */
-Utils.RPGMAKER_VERSION = "1.5.0";
+Utils.RPGMAKER_VERSION = "1.4.1";
+
+Utils.RPGMAKER_ENGINE = "community-1.2c";
 
 /**
  * Checks whether the option is in the query string.
@@ -1715,7 +1745,7 @@ function Graphics() {
     throw new Error('This is a static class');
 }
 
-Graphics._cssFontLoading =  document.fonts && document.fonts.ready;
+Graphics._cssFontLoading =  document.fonts && document.fonts.ready && document.fonts.ready.then;
 Graphics._fontLoaded = null;
 Graphics._videoVolume = 1;
 
@@ -1743,7 +1773,7 @@ Graphics.initialize = function(width, height, type) {
     this._errorPrinter = null;
     this._canvas = null;
     this._video = null;
-    this._videoUnlocked = !Utils.isMobileDevice();
+    this._videoUnlocked = false;
     this._videoLoading = false;
     this._upperCanvas = null;
     this._renderer = null;
@@ -1988,6 +2018,7 @@ Graphics.endLoading = function() {
  */
 Graphics.printLoadingError = function(url) {
     if (this._errorPrinter && !this._errorShowed) {
+        this._updateErrorPrinter();
         this._errorPrinter.innerHTML = this._makeErrorHtml('Loading Error', 'Failed to load: ' + url);
         var button = document.createElement('button');
         button.innerHTML = 'Retry';
@@ -2016,6 +2047,7 @@ Graphics.eraseLoadingError = function() {
     }
 };
 
+// The following code is partly borrowed from triacontane.
 /**
  * Displays the error text to the screen.
  *
@@ -2026,11 +2058,42 @@ Graphics.eraseLoadingError = function() {
  */
 Graphics.printError = function(name, message) {
     this._errorShowed = true;
+    this.hideFps();
     if (this._errorPrinter) {
+        this._updateErrorPrinter();
         this._errorPrinter.innerHTML = this._makeErrorHtml(name, message);
+        this._makeErrorMessage();
     }
     this._applyCanvasFilter();
     this._clearUpperCanvas();
+};
+
+/**
+ * Shows the stacktrace of error.
+ *
+ * @static
+ * @method printStackTrace
+ */
+Graphics.printStackTrace = function(stack) {
+    if (this._errorPrinter) {
+        stack = (stack || '')
+            .replace(/file:.*js\//g, '')
+            .replace(/http:.*js\//g, '')
+            .replace(/https:.*js\//g, '')
+            .replace(/chrome-extension:.*js\//g, '')
+            .replace(/\n/g, '<br>');
+        this._makeStackTrace(decodeURIComponent(stack));
+    }
+};
+
+/**
+ * Sets the error message.
+ *
+ * @static
+ * @method setErrorMessage
+ */
+Graphics.setErrorMessage = function(message) {
+    this._errorMessage = message;
 };
 
 /**
@@ -2380,7 +2443,7 @@ Graphics._updateRealScale = function() {
  */
 Graphics._makeErrorHtml = function(name, message) {
     return ('<font color="yellow"><b>' + name + '</b></font><br>' +
-            '<font color="white">' + message + '</font><br>');
+            '<font color="white">' + decodeURIComponent(message) + '</font><br>');
 };
 
 /**
@@ -2454,12 +2517,47 @@ Graphics._createErrorPrinter = function() {
  */
 Graphics._updateErrorPrinter = function() {
     this._errorPrinter.width = this._width * 0.9;
-    this._errorPrinter.height = 40;
+    this._errorPrinter.height = this._errorShowed ? this._height * 0.9 : 40;
     this._errorPrinter.style.textAlign = 'center';
     this._errorPrinter.style.textShadow = '1px 1px 3px #000';
     this._errorPrinter.style.fontSize = '20px';
     this._errorPrinter.style.zIndex = 99;
+    this._errorPrinter.style.userSelect       = 'text';
+    this._errorPrinter.style.webkitUserSelect = 'text';
+    this._errorPrinter.style.msUserSelect     = 'text';
+    this._errorPrinter.style.mozUserSelect    = 'text';
+    this._errorPrinter.oncontextmenu = null;    // enable context menu
     this._centerElement(this._errorPrinter);
+};
+
+/**
+ * @static
+ * @method _makeErrorMessage
+ * @private
+ */
+Graphics._makeErrorMessage = function() {
+    var mainMessage       = document.createElement('div');
+    var style             = mainMessage.style;
+    style.color           = 'white';
+    style.textAlign       = 'left';
+    style.fontSize        = '18px';
+    mainMessage.innerHTML = '<hr>' + (this._errorMessage || '');
+    this._errorPrinter.appendChild(mainMessage);
+};
+
+/**
+ * @static
+ * @method _makeStackTrace
+ * @private
+ */
+Graphics._makeStackTrace = function(stack) {
+    var stackTrace         = document.createElement('div');
+    var style              = stackTrace.style;
+    style.color            = 'white';
+    style.textAlign        = 'left';
+    style.fontSize         = '18px';
+    stackTrace.innerHTML   = '<br><hr>' + stack + '<hr>';
+    this._errorPrinter.appendChild(stackTrace);
 };
 
 /**
@@ -2804,6 +2902,8 @@ Graphics._isVideoVisible = function() {
 Graphics._setupEventHandlers = function() {
     window.addEventListener('resize', this._onWindowResize.bind(this));
     document.addEventListener('keydown', this._onKeyDown.bind(this));
+    document.addEventListener('keydown', this._onTouchEnd.bind(this));
+    document.addEventListener('mousedown', this._onTouchEnd.bind(this));
     document.addEventListener('touchend', this._onTouchEnd.bind(this));
 };
 
@@ -5490,7 +5590,6 @@ ShaderTilemap.prototype.constructor = ShaderTilemap;
 PIXI.glCore.VertexArrayObject.FORCE_NATIVE = true;
 PIXI.GC_MODES.DEFAULT = PIXI.GC_MODES.AUTO;
 PIXI.tilemap.TileRenderer.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-PIXI.tilemap.TileRenderer.DO_CLEAR = true;
 
 /**
  * Uploads animation state in renderer
@@ -5501,8 +5600,8 @@ PIXI.tilemap.TileRenderer.DO_CLEAR = true;
 ShaderTilemap.prototype._hackRenderer = function(renderer) {
     var af = this.animationFrame % 4;
     if (af==3) af = 1;
-    renderer.plugins.tilemap.tileAnim[0] = af * this._tileWidth;
-    renderer.plugins.tilemap.tileAnim[1] = (this.animationFrame % 3) * this._tileHeight;
+    renderer.plugins.tile.tileAnim[0] = af * this._tileWidth;
+    renderer.plugins.tile.tileAnim[1] = (this.animationFrame % 3) * this._tileHeight;
     return renderer;
 };
 
@@ -5939,23 +6038,6 @@ TilingSprite.prototype._renderCanvas = function(renderer) {
     }
     if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
         this._renderCanvas_PIXI(renderer);
-    }
-};
-
-/**
- * @method _renderWebGL
- * @param {Object} renderer
- * @private
- */
-TilingSprite.prototype._renderWebGL = function(renderer) {
-    if (this._bitmap) {
-        this._bitmap.touch();
-    }
-    if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
-        if (this._bitmap) {
-            this._bitmap.checkDirty();
-        }
-        this._renderWebGL_PIXI(renderer);
     }
 };
 
@@ -7803,16 +7885,19 @@ WebAudio._createMasterGainNode = function() {
  * @private
  */
 WebAudio._setupEventHandlers = function() {
-    document.addEventListener("touchend", function() {
-            var context = WebAudio._context;
-            if (context && context.state === "suspended" && typeof context.resume === "function") {
-                context.resume().then(function() {
-                    WebAudio._onTouchStart();
-                })
-            } else {
+    var resumeHandler = function() {
+        var context = WebAudio._context;
+        if (context && context.state === "suspended" && typeof context.resume === "function") {
+            context.resume().then(function() {
                 WebAudio._onTouchStart();
-            }
-    });
+            })
+        } else {
+            WebAudio._onTouchStart();
+        }
+    };
+    document.addEventListener("keydown", resumeHandler);
+    document.addEventListener("mousedown", resumeHandler);
+    document.addEventListener("touchend", resumeHandler);
     document.addEventListener('touchstart', this._onTouchStart.bind(this));
     document.addEventListener('visibilitychange', this._onVisibilityChange.bind(this));
 };
