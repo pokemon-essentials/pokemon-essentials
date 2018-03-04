@@ -1,5 +1,5 @@
 //=============================================================================
-// rpg_scenes.js v1.5.0
+// rpg_scenes.js v1.6.0
 //=============================================================================
 
 //=============================================================================
@@ -1290,6 +1290,13 @@ Scene_Item.prototype.playSeForItem = function() {
 Scene_Item.prototype.useItem = function() {
     Scene_ItemBase.prototype.useItem.call(this);
     this._itemWindow.redrawCurrentItem();
+};
+
+Scene_Item.prototype.update = function() {
+    Scene_ItemBase.prototype.update.call(this);
+    if (this._categoryWindow.active !== true && this._itemWindow.active !== true && this._actorWindow.active !== true) {
+        this._categoryWindow.activate();
+    }
 };
 
 //-----------------------------------------------------------------------------

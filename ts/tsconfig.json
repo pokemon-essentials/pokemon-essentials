@@ -1,6 +1,0 @@
-{
-    "compilerOptions": {
-        "target": "es5",
-        "outFile": "../js/pokemon_essentials.js"
-    }
-}

@@ -1,5 +1,5 @@
 //=============================================================================
-// rpg_objects.js v1.5.0
+// rpg_objects.js v1.6.0
 //=============================================================================
 
 //-----------------------------------------------------------------------------
@@ -3276,8 +3276,10 @@ Game_Battler.prototype.onAllActionsEnd = function() {
 Game_Battler.prototype.onTurnEnd = function() {
     this.clearResult();
     this.regenerateAll();
-    this.updateStateTurns();
-    this.updateBuffTurns();
+    if (!BattleManager.isForcedTurn()) {
+        this.updateStateTurns();
+        this.updateBuffTurns();
+    }
     this.removeStatesAuto(2);
 };
 
@@ -6420,7 +6422,6 @@ Game_CharacterBase.prototype.isMapPassable = function(x, y, d) {
     var x2 = $gameMap.roundXWithDirection(x, d);
     var y2 = $gameMap.roundYWithDirection(y, d);
     var d2 = this.reverseDir(d);
-    // return $gameMap.isPassable(x, y, d) && $gameMap.isPassable(x2, y2, d2);
     return $gameMap.isPassable(x, y, d) && $gameMap.isPassable(x2, y2, d2);
 };
 
@@ -9338,12 +9339,20 @@ Game_Interpreter.prototype.command413 = function() {
 };
 
 // Break Loop
-Game_Interpreter.prototype.command113 = function() {
+Game_Interpreter.prototype.command113 = function () {
+    var depth = 0;
     while (this._index < this._list.length - 1) {
         this._index++;
         var command = this.currentCommand();
+
+        if (command.code === 112)
+            depth++;
+
         if (command.code === 413 && command.indent < this._indent) {
-            break;
+            if (depth > 0)
+                depth--;
+            else
+                break;
         }
     }
     return true;
@@ -9414,22 +9423,26 @@ Game_Interpreter.prototype.command121 = function() {
 // Control Variables
 Game_Interpreter.prototype.command122 = function() {
     var value = 0;
-    switch (this._params[3]) {  // Operand
-    case 0:  // Constant
-        value = this._params[4];
-        break;
-    case 1:  // Variable
-        value = $gameVariables.value(this._params[4]);
-        break;
-    case 2:  // Random
-        value = this._params[4] + Math.randomInt(this._params[5] - this._params[4] + 1);
-        break;
-    case 3:  // Game Data
-        value = this.gameDataOperand(this._params[4], this._params[5], this._params[6]);
-        break;
-    case 4:  // Script
-        value = eval(this._params[4]);
-        break;
+    switch (this._params[3]) { // Operand
+        case 0: // Constant
+            value = this._params[4];
+            break;
+        case 1: // Variable
+            value = $gameVariables.value(this._params[4]);
+            break;
+        case 2: // Random
+            value = this._params[5] - this._params[4] + 1;
+            for (var i = this._params[0]; i <= this._params[1]; i++) {
+                this.operateVariable(i, this._params[2], this._params[4] + Math.randomInt(value));
+            }
+            return true;
+            break;
+        case 3: // Game Data
+            value = this.gameDataOperand(this._params[4], this._params[5], this._params[6]);
+            break;
+        case 4: // Script
+            value = eval(this._params[4]);
+            break;
     }
     for (var i = this._params[0]; i <= this._params[1]; i++) {
         this.operateVariable(i, this._params[2], value);
