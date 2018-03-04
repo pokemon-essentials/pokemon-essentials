@@ -1,5 +1,5 @@
 //=============================================================================
-// rpg_managers.js v1.4.1 (community-1.2c)
+// rpg_managers.js v1.6.0
 //=============================================================================
 
 //-----------------------------------------------------------------------------
@@ -756,11 +756,7 @@ StorageManager.localFileDirectoryPath = function() {
     var path = require('path');
 
     var base = path.dirname(process.mainModule.filename);
-    if (this.canMakeWwwSaveDirectory()) {
-        return path.join(base, 'save/');
-    } else {
-        return path.join(path.dirname(base), 'save/');
-    }
+    return path.join(base, 'save/');
 };
 
 StorageManager.localFilePath = function(savefileId) {
@@ -783,24 +779,6 @@ StorageManager.webStorageKey = function(savefileId) {
     } else {
         return 'RPG File%1'.format(savefileId);
     }
-};
-
-// Enigma Virtual Box cannot make www/save directory
-StorageManager.canMakeWwwSaveDirectory = function() {
-    if (this._canMakeWwwSaveDirectory === undefined) {
-        var fs = require('fs');
-        var path = require('path');
-        var base = path.dirname(process.mainModule.filename);
-        var testPath = path.join(base, 'testDirectory/');
-        try {
-            fs.mkdirSync(testPath);
-            fs.rmdirSync(testPath);
-            this._canMakeWwwSaveDirectory = true;
-        } catch (e) {
-            this._canMakeWwwSaveDirectory = false;
-        }
-    }
-    return this._canMakeWwwSaveDirectory;
 };
 
 //-----------------------------------------------------------------------------
@@ -1961,6 +1939,11 @@ SceneManager.onKeyDown = function(event) {
                 require('nw.gui').Window.get().showDevTools();
             }
             break;
+	case 123: //F12
+            if (Utils.isNwjs()) {
+                event.preventDefault();
+            }
+            break;
         }
     }
 };
@@ -1968,7 +1951,6 @@ SceneManager.onKeyDown = function(event) {
 SceneManager.catchException = function(e) {
     if (e instanceof Error) {
         Graphics.printError(e.name, e.message);
-        Graphics.printStackTrace(e.stack);
         console.error(e.stack);
     } else {
         Graphics.printError('UnknownError', e);
@@ -2190,6 +2172,7 @@ BattleManager.initMembers = function() {
     this._escapeRatio = 0;
     this._escaped = false;
     this._rewards = {};
+    this._turnForced = false;
 };
 
 BattleManager.isBattleTest = function() {
@@ -2296,7 +2279,7 @@ BattleManager.updateEvent = function() {
                 return this.updateEventMain();
             }
     }
-    return this.checkAbort2();
+    return this.checkAbort();
 };
 
 BattleManager.updateEventMain = function() {
@@ -2479,6 +2462,13 @@ BattleManager.endTurn = function() {
         this._logWindow.displayAutoAffectedStatus(battler);
         this._logWindow.displayRegeneration(battler);
     }, this);
+    if (this.isForcedTurn()) {
+        this._turnForced = false;
+    }
+};
+
+BattleManager.isForcedTurn = function () {
+    return this._turnForced;
 };
 
 BattleManager.updateTurnEnd = function() {
@@ -2609,6 +2599,7 @@ BattleManager.forceAction = function(battler) {
 
 BattleManager.processForcedAction = function() {
     if (this._actionForcedBattler) {
+        this._turnForced = true;
         this._subject = this._actionForcedBattler;
         this._actionForcedBattler = null;
         this.startAction();
@@ -2636,14 +2627,6 @@ BattleManager.checkBattleEnd = function() {
 };
 
 BattleManager.checkAbort = function() {
-    if ($gameParty.isEmpty() || this.isAborting()) {
-        this.processAbort();
-        return true;
-    }
-    return false;
-};
-
-BattleManager.checkAbort2 = function() {
     if ($gameParty.isEmpty() || this.isAborting()) {
         SoundManager.playEscape();
         this._escaped = true;
