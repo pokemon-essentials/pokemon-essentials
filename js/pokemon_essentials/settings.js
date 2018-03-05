@@ -18,7 +18,7 @@ SETTINGS.GENDERS = [
     name: 'Boy',
     sprite: 'dp_hero',
     dashSprite: 'dp_hero_running',
-    back: 'trback000'
+    back: 'dp_back_0'
   },
   {
     name: 'Girl',
@@ -28,4 +28,4 @@ SETTINGS.GENDERS = [
   }
 ];
 // Intro Scene
-SETTINGS.INTRO_SPECIES = PE.Utils.getRandomPropertie(PE.Pokedex);
+SETTINGS.INTRO_SPECIES = Pokedex.PIKACHU;

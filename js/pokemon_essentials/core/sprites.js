@@ -175,7 +175,7 @@ var PE;
                 }
                 if (this.moving)
                     this.x -= 4;
-                if (this.x < -this.width - 64)
+                if (this.x < -this.width - 160)
                     this.moving = false;
                 this.updateAnimation();
             };

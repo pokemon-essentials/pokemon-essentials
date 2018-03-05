@@ -82,7 +82,7 @@ var PE;
       professor.scale.x = 2;
       professor.scale.y = 2;
       this.addChild(professor);
-      var t = new PE.Sprites.Battler(SETTINGS.INTRO_SPECIES, 0 /* Front */ );
+      var t = new PE.Sprites.Battler(PE.Utils.getRandomPropertie(PE.Pokedex), 0 /* Front */ );
       t.x = professor.x;
       t.y = professor.y;
       t.anchor.x = 1;
