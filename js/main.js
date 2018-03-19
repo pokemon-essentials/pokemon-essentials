@@ -19,6 +19,7 @@ const pokemon_essentials = [
   'battle/abilities_effects.js',
   'battle/active_side_field.js',
   'battle/battle_manager.js',
+  'battle/battle_misc.js',
   'battle/battle_ui.js',
   'battle/battler.js',
   'battle/damage_state.js',

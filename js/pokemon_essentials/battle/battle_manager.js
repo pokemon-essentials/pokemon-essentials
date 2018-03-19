@@ -1,4 +1,3 @@
-/// <reference path="../weather.ts" />
 var PE;
 (function (PE) {
     var Battle;
