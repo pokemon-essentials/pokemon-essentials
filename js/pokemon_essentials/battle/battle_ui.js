@@ -13,7 +13,7 @@ PE.Battle.UI.Window_BattleMessage = class Window_BattleMessage extends Window_Me
   }
 };
 
-PE.Battle.UI.CommandButton = class CommandButton extends PE.Sprites.Button {
+PE.Battle.UI.CommandButton = class CommandButton extends PE_Sprite_Button {
   constructor(name, frame, x, y) {
     super(80, 40);
     this.name = name;
@@ -184,7 +184,7 @@ PE.Battle.UI.HPBar = class HPBar extends Sprite {
   }
 };
 
-PE.Battle.UI.MoveButton = class MoveButton extends PE.Sprites.Button {
+PE.Battle.UI.MoveButton = class MoveButton extends PE_Sprite_Button {
   constructor(move, x, y) {
     super(202, 74);
     this.x = x;
@@ -271,7 +271,7 @@ PE.Battle.UI._MovesSelection = class _MovesSelection extends Sprite {
       if (this._moves.length <= 1) return;
       this._moves[PE.Battle.UI.movesInx].deactivate();
       PE.Battle.UI.movesInx++;
-      if (UI.movesInx >= this._moves.length) PE.Battle.UI.movesInx = 0;
+      if (PE.Battle.UI.movesInx >= this._moves.length) PE.Battle.UI.movesInx = 0;
       this._moves[PE.Battle.UI.movesInx].activate();
       SoundManager.playCursor();
       return;
@@ -280,7 +280,7 @@ PE.Battle.UI._MovesSelection = class _MovesSelection extends Sprite {
       if (this._moves.length <= 1) return;
       this._moves[PE.Battle.UI.movesInx].deactivate();
       PE.Battle.UI.movesInx--;
-      if (UI.movesInx < 0) PE.Battle.UI.movesInx = this._moves.length - 1;
+      if (PE.Battle.UI.movesInx < 0) PE.Battle.UI.movesInx = this._moves.length - 1;
       this._moves[PE.Battle.UI.movesInx].activate();
       SoundManager.playCursor();
       return;
@@ -289,7 +289,7 @@ PE.Battle.UI._MovesSelection = class _MovesSelection extends Sprite {
       if (this._moves.length < 2) return;
       this._moves[PE.Battle.UI.movesInx].deactivate();
       PE.Battle.UI.movesInx += 2;
-      if (UI.movesInx >= this._moves.length) PE.Battle.UI.movesInx = Math.abs(this._moves.length - PE.Battle.UI.movesInx);
+      if (PE.Battle.UI.movesInx >= this._moves.length) PE.Battle.UI.movesInx = Math.abs(this._moves.length - PE.Battle.UI.movesInx);
       this._moves[PE.Battle.UI.movesInx].activate();
       SoundManager.playCursor();
       return;
@@ -298,7 +298,7 @@ PE.Battle.UI._MovesSelection = class _MovesSelection extends Sprite {
       if (this._moves.length <= 2) return;
       this._moves[PE.Battle.UI.movesInx].deactivate();
       PE.Battle.UI.movesInx -= 2;
-      if (UI.movesInx < 0) PE.Battle.UI.movesInx = this._moves.length - Math.abs(UI.movesInx);
+      if (PE.Battle.UI.movesInx < 0) PE.Battle.UI.movesInx = this._moves.length - Math.abs(PE.Battle.UI.movesInx);
       this._moves[PE.Battle.UI.movesInx].activate();
       SoundManager.playCursor();
       return;
@@ -361,7 +361,7 @@ PE.Battle.UI.BattleCommands = class BattleCommands extends Sprite {
     if (Input.isTriggered("right")) {
       this.options[PE.Battle.UI.actionsInx].sprite.deactivate();
       PE.Battle.UI.actionsInx++;
-      if (UI.actionsInx >= this.options.length) PE.Battle.UI.actionsInx = 0;
+      if (PE.Battle.UI.actionsInx >= this.options.length) PE.Battle.UI.actionsInx = 0;
       var a = this.options[PE.Battle.UI.actionsInx].sprite;
       a.activate();
       SoundManager.playCursor();
@@ -370,7 +370,7 @@ PE.Battle.UI.BattleCommands = class BattleCommands extends Sprite {
     if (Input.isTriggered("left")) {
       this.options[PE.Battle.UI.actionsInx].sprite.deactivate();
       PE.Battle.UI.actionsInx--;
-      if (UI.actionsInx < 0) PE.Battle.UI.actionsInx = this.options.length - 1;
+      if (PE.Battle.UI.actionsInx < 0) PE.Battle.UI.actionsInx = this.options.length - 1;
       var a = this.options[PE.Battle.UI.actionsInx].sprite;
       a.activate();
       SoundManager.playCursor();
@@ -379,7 +379,7 @@ PE.Battle.UI.BattleCommands = class BattleCommands extends Sprite {
     if (Input.isTriggered("down")) {
       this.options[PE.Battle.UI.actionsInx].sprite.deactivate();
       PE.Battle.UI.actionsInx += 2;
-      if (UI.actionsInx >= this.options.length) PE.Battle.UI.actionsInx -= 4;
+      if (PE.Battle.UI.actionsInx >= this.options.length) PE.Battle.UI.actionsInx -= 4;
       var a = this.options[PE.Battle.UI.actionsInx].sprite;
       a.activate();
       SoundManager.playCursor();
@@ -388,7 +388,7 @@ PE.Battle.UI.BattleCommands = class BattleCommands extends Sprite {
     if (Input.isTriggered("up")) {
       this.options[PE.Battle.UI.actionsInx].sprite.deactivate();
       PE.Battle.UI.actionsInx -= 2;
-      if (UI.actionsInx < 0) PE.Battle.UI.actionsInx += 4;
+      if (PE.Battle.UI.actionsInx < 0) PE.Battle.UI.actionsInx += 4;
       var a = this.options[PE.Battle.UI.actionsInx].sprite;
       a.activate();
       SoundManager.playCursor();

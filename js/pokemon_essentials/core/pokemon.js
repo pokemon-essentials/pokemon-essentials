@@ -187,7 +187,7 @@ PE.Pokemon.getRandomParty = function(length) {
   if (length > 6) length = 6;
   var party = [];
   for (var i = 0; i < length; i++) {
-    party.push(getRandomPokemon());
+    party.push(PE.Pokemon.getRandomPokemon());
   }
   return party;
 };
