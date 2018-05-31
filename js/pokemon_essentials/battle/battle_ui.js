@@ -213,7 +213,7 @@ var PE;
           configurable: true
         });
         return CommandButton;
-      }(PE.Sprites.Button));
+      }(PE_Sprite_Button));
       UI.CommandButton = CommandButton;
       var MoveButton = /** @class */ (function (_super) {
         __extends(MoveButton, _super);
@@ -261,7 +261,7 @@ var PE;
           this.changeFrame(1, this.row);
         };
         return MoveButton;
-      }(PE.Sprites.Button));
+      }(PE_Sprite_Button));
       UI.MoveButton = MoveButton;
       var _MovesSelection = /** @class */ (function (_super) {
         __extends(_MovesSelection, _super);

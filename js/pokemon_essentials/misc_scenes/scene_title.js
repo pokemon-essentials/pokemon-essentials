@@ -82,7 +82,7 @@ var PE;
                 this.addChild(this.sprites['clouds1']);
                 this.sprites['bars'] = new Sprite(ImageManager.loadTitle1('custom_bars'));
                 this.addChild(this.sprites['bars']);
-                this.sprites['start'] = new PE.Sprites.Blinker(20);
+                this.sprites['start'] = new PE_Sprite_Blinker(20);
                 this.sprites['start'].bitmap = ImageManager.loadTitle1('start');
                 this.sprites['start'].y = 362;
                 this.addChild(this.sprites['start']);

@@ -54,6 +54,7 @@ PluginManager.setupPokemonEssentials = function() {
   }
 };
 
+
 PluginManager.setup($plugins);
 PluginManager._path = 'js/pokemon_essentials/';
 var PE = PE || {};
@@ -62,3 +63,5 @@ PluginManager.setupPokemonEssentials();
 window.onload = function() {
   SceneManager.run(Scene_Boot);
 };
+
+

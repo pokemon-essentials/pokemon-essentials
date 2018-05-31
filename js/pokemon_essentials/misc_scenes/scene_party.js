@@ -50,7 +50,7 @@ var PE;
             Scene_Party.prototype.createPanels = function () {
                 for (var _i = 0, _a = this.panels; _i < _a.length; _i++) {
                     var panel = _a[_i];
-                    panel.sprite = new PE.Sprites.Button(224, 96);
+                    panel.sprite = new PE_Sprite_Button(224, 96);
                     panel.sprite.bitmap = ImageManager.loadBitmap('img/pictures/party/', 'panels', undefined, undefined);
                     panel.sprite.x = panel.x;
                     panel.sprite.y = panel.y;
@@ -60,7 +60,7 @@ var PE;
                 for (var index = 0; index < $Player.battlers.length; index++) {
                     var pokemon = $Player.battlers[index];
                     var panel_1 = this.panels[index];
-                    this.sprites[pokemon.name] = new PE.Sprites.PokeIcon(pokemon, panel_1.sprite.x + 4, panel_1.sprite.y + 2);
+                    this.sprites[pokemon.name] = new PE_Sprite_PokeIcon(pokemon, panel_1.sprite.x + 4, panel_1.sprite.y + 2);
                     this.sprites[pokemon.name].scale.x = 2;
                     this.sprites[pokemon.name].scale.y = 2;
                     this.addChild(this.sprites[pokemon.name]);

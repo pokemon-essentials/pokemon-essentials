@@ -68,7 +68,7 @@ PE.Battle.Scene_Battle.prototype.createBackground = function () {
   var fy = 240;
   for (const battler of $Battle.sides.foe.actives) {
 
-    this.sprites[battler.index] = new PE.Sprites.Battler(battler.species, 0 /* Front */, battler.pokemon.shiny);
+    this.sprites[battler.index] = new PE_Sprite_Battler(battler.species, 0 /* Front */, battler.pokemon.shiny);
     this.sprites[battler.index].x = fx;
     this.sprites[battler.index].y = fy;
     this.sprites[battler.index].scale.x = 2;
@@ -81,7 +81,7 @@ PE.Battle.Scene_Battle.prototype.createBackground = function () {
   var py = Graphics.height;
   for (var _b = 0, _c = $Battle.sides.player.actives; _b < _c.length; _b++) {
     var battler = _c[_b];
-    this.sprites[battler.index] = new PE.Sprites.Battler(battler.species, 1 /* Back */, battler.pokemon.shiny);
+    this.sprites[battler.index] = new PE_Sprite_Battler(battler.species, 1 /* Back */, battler.pokemon.shiny);
     this.sprites[battler.index].x = px;
     this.sprites[battler.index].y = py;
     this.sprites[battler.index].scale.x = 3;
