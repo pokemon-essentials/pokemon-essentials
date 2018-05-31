@@ -46,24 +46,24 @@ var PE;
             FAIRY: { NORMAL: 1, FIGHTING: 2, FLYING: 1, POISON: 0.5, GROUND: 1, ROCK: 1, BUG: 1, GHOST: 1, STEEL: 0.5, FIRE: 0.5, WATER: 1, GRASS: 1, ELECTRIC: 1, PSYCHIC: 1, ICE: 1, DRAGON: 2, DARK: 2, FAIRY: 1 },
         };
         var COLORS = {
-            NORMAL: '#c0baa1',
-            GRASS: '#a3d88a',
-            FIRE: '#dfa782',
-            WATER: '#82aadf',
-            FIGHTING: '#df8882',
-            FLYING: '#b3a5bc',
-            POISON: '#cc97c8',
-            GROUND: '#dac887',
-            ROCK: '#ccbe95',
-            BUG: '#cad88a',
-            GHOST: '#b0a1c0',
-            ELECTRIC: '#e7de7a',
-            PSYCHIC: '#df82a1',
-            ICE: '#99c8c7',
-            DRAGON: '#998dd4',
-            DARK: '#5e5954',
-            STEEL: '#b1b1b1',
-            FAIRY: '#d59bbd'
+            NORMAL: '#807870',
+            GRASS: '#588040',
+            FIRE: '#8f4815',
+            WATER: '#0669b2',
+            FIGHTING: '#9c4c17',
+            FLYING: '#705898',
+            POISON: '#483850',
+            GROUND: '#b16100',
+            ROCK: '#886830',
+            BUG: '#789010',
+            GHOST: '#655089',
+            ELECTRIC: '#b8a038',
+            PSYCHIC: '#906060',
+            ICE: '#9090a0',
+            DRAGON: '#483890',
+            DARK: '#484038',
+            STEEL: '#7a7883',
+            FAIRY: '#c76482'
         };
         function TypeChart(type) {
             return TYPE_CHART[type];

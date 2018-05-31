@@ -52,9 +52,9 @@ PE.Battle.Scene_Battle.prototype.createSpriteset = function () {
 
 PE.Battle.Scene_Battle.prototype.createBackground = function () {
   this.layers['bg'] = new Sprite();
-  this.layers['bg'].bitmap = ImageManager.loadBitmap('img/battlebacks/', 'bg-forest');
+  this.layers['bg'].bitmap = ImageManager.loadBitmap('img/battlebacks/', 'bg-earthycave');
   this.layers['bg'].x = Graphics.width / 2;
-  this.layers['bg'].y = Graphics.height + 80;
+  this.layers['bg'].y = Graphics.height;
   this.layers['bg'].anchor.x = 0.5;
   this.layers['bg'].anchor.y = 1;
   this._spriteset.addChild(this.layers['bg']);
@@ -64,7 +64,7 @@ PE.Battle.Scene_Battle.prototype.createBackground = function () {
 
 
 
-  var fx = Graphics.width - 96;
+  var fx = Graphics.width - 160;
   var fy = 240;
   for (const battler of $Battle.sides.foe.actives) {
 
@@ -77,8 +77,8 @@ PE.Battle.Scene_Battle.prototype.createBackground = function () {
     this.sprites[battler.index].anchor.y = 1;
     this._spriteset.addChild(this.sprites[battler.index]);
   }
-  var px = 96;
-  var py = Graphics.height;
+  var px = 192;
+  var py = Graphics.height - 64;
   for (var _b = 0, _c = $Battle.sides.player.actives; _b < _c.length; _b++) {
     var battler = _c[_b];
     this.sprites[battler.index] = new PE_Sprite_Battler(battler.species, 1 /* Back */, battler.pokemon.shiny);
@@ -120,7 +120,7 @@ PE.Battle.Scene_Battle.prototype.createUI = function () {
   }
   var msg = i18n._('What will %1 do?', $Battle.battlers[$Battle.currentInx].name);
   this.hud = new Sprite(new Bitmap(300, 32));
-  this.hud.bitmap.fontSize = 20;
+  this.hud.bitmap.fontSize = 24;
   this.hud.bitmap.drawText(msg, 0, 0, 300, 32, 'right');
   this.hud.x = Graphics.width - 8;
   this.hud.y = Graphics.height;
