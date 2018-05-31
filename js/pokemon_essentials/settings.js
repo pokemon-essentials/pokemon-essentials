@@ -3,8 +3,10 @@
  */
 let SETTINGS = {};
 
-SETTINGS.SCREEN_WIDTH = 512;
-SETTINGS.SCREEN_HEIGHT = 384;
+// SETTINGS.SCREEN_WIDTH = 512;
+// SETTINGS.SCREEN_HEIGHT = 384;
+SETTINGS.SCREEN_WIDTH = 640;
+SETTINGS.SCREEN_HEIGHT = 480;
 /** The maximum level Pokémon can reach. */
 SETTINGS.MAXIMUM_LEVEL = 100;
 /** The odds of a newly generated Pokémon being shiny (out of 65536). */
@@ -15,16 +17,16 @@ SETTINGS.DEFAULT_FONT_SIZE = 24;
 SETTINGS.GENDERS = [
   null,
   {
-    name: 'Boy',
-    sprite: 'dp_hero',
-    dashSprite: 'dp_hero_running',
-    back: 'dp_back_0'
+    name: "Boy",
+    sprite: "dp_hero",
+    dashSprite: "dp_hero_running",
+    back: "dp_back_0"
   },
   {
-    name: 'Girl',
-    sprite: 'dp_heroine',
-    dashSprite: 'dp_heroine_running',
-    back: 'trback000'
+    name: "Girl",
+    sprite: "dp_heroine",
+    dashSprite: "dp_heroine_running",
+    back: "trback000"
   }
 ];
 // Intro Scene
