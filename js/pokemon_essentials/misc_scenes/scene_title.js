@@ -26,7 +26,8 @@ class CustomScene extends Scene_Base {
   update() {
     super.update();
     if ((Input.isTriggered("ok") || TouchInput.isTriggered()) && !this.isBusy()) {
-      StartPressed = true;
+      // StartPressed = true;
+      this.test.start();
     }
     if ((Input.isTriggered("cancel") || TouchInput.isCancelled()) && !this.isBusy()) {
       StartPressed = false;
@@ -105,6 +106,10 @@ class CustomScene extends Scene_Base {
     this._pokelogo.y = 24;
     this._pokelogo.anchor.x = 0.5;
     this.addChild(this._pokelogo);
+
+
+    this.test = new PE_Transition_Base("battle1", 35)
+    this.addChild(this.test)
   }
 
   createCommandWindow() {
