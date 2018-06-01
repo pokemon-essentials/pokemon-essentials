@@ -19,7 +19,7 @@ PE.Environment = Object.freeze({
   Space: "Space",
 });
 
-const Environments = {
+const Enviroments = {
   /** Grass  */
   None: "None",
   Grass: "Grass",

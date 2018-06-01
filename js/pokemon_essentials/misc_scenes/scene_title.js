@@ -26,8 +26,8 @@ class CustomScene extends Scene_Base {
   update() {
     super.update();
     if ((Input.isTriggered("ok") || TouchInput.isTriggered()) && !this.isBusy()) {
-      // StartPressed = true;
-      this.test.start();
+      StartPressed = true;
+      // this.test.start();
     }
     if ((Input.isTriggered("cancel") || TouchInput.isCancelled()) && !this.isBusy()) {
       StartPressed = false;
