@@ -15,7 +15,7 @@ PE.Battle.UI.Window_BattleMessage = class Window_BattleMessage extends Window_Me
 
 PE.Battle.UI.CommandButton = class CommandButton extends PE_Sprite_Button {
   constructor(name, frame, x, y) {
-    super(80, 40);
+    super(96, 48);
     this.name = name;
     this.frame = frame;
     this.x = x;
@@ -23,11 +23,11 @@ PE.Battle.UI.CommandButton = class CommandButton extends PE_Sprite_Button {
     this._active = false;
     this.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'battle_buttons');
     this.changeFrame(0, this.frame);
-    this._text = new Sprite(new Bitmap(80, 40));
+    this._text = new Sprite(new Bitmap(96, 48));
     this._text.bitmap.fontSize = 24;
     this._text.bitmap.outlineWidth = 4;
     this._text.bitmap.outlineColor = 'rgba(0,0,0, 0.3)';
-    this._text.bitmap.drawText(this.name, 0, 8, 80, 24, 'center');
+    this._text.bitmap.drawText(this.name, 0, 0, 96, 48, 'center');
     this._text.x = 0;
     this._text.y = 0;
     this.addChild(this._text);
@@ -340,15 +340,15 @@ PE.Battle.UI._MovesSelection = class _MovesSelection extends Sprite {
 PE.Battle.UI.BattleCommands = class BattleCommands extends Sprite {
   constructor(x, y) {
     super();
-    this.x = Graphics.width - 192;
-    this.y = Graphics.height - 128;
+    this.x = Graphics.width - 200;
+    this.y = Graphics.height - 136;
     var startX = 0;
     var startY = 0;
     this.options = [
       {name: 'FIGTH', frame: 0, x: startX, y: startY, action: this.openMovesSelection},
-      {name: 'PARTY', frame: 1, x: startX + 96, y: startY, action: this.openParty},
-      {name: 'BAG', frame: 2, x: startX, y: startY + 48, action: this.openBag},
-      {name: 'RUN', frame: 3, x: startX + 96, y: startY + 48, action: this.run}
+      {name: 'PARTY', frame: 1, x: startX + 100, y: startY, action: this.openParty},
+      {name: 'BAG', frame: 2, x: startX, y: startY + 54, action: this.openBag},
+      {name: 'RUN', frame: 3, x: startX + 100, y: startY + 54, action: this.run}
     ];
     this.createBackground();
     this.createButtons();
