@@ -69,33 +69,30 @@ namespace PE.Battle {
     }
 
     createBackground() {
-      this.layers['bg'] = new Sprite();
-      this.layers['bg'].bitmap = ImageManager.loadBitmap('img/battlebacks/', 'bg-forest', undefined, undefined);
-      this.layers['bg'].x = Graphics.width / 2;
-      this.layers['bg'].y = Graphics.height + 80;
-      this.layers['bg'].anchor.x = 0.5;
-      this.layers['bg'].anchor.y = 1;
-      this.viewport.addChild(this.layers['bg']);
+      this.layers["bg"] = new Sprite();
+      this.layers["bg"].bitmap = ImageManager.loadBitmap("img/battlebacks/", "bg-forest", undefined, undefined);
+      this.layers["bg"].x = Graphics.width / 2;
+      this.layers["bg"].y = Graphics.height;
+      this.layers["bg"].anchor.x = 0.5;
+      this.layers["bg"].anchor.y = 1;
+      this.viewport.addChild(this.layers["bg"]);
 
-      this.layers['bg2'] = new Sprite();
-      this.viewport.addChild(this.layers['bg2']);
-
-
+      this.layers["bg2"] = new Sprite();
+      this.viewport.addChild(this.layers["bg2"]);
     }
 
     createMessageWindow() {
       this.message = new UI.Window_BattleMessage();
       this.addWindow(this.message);
-      this.message.subWindows().forEach(function (window) {
+      this.message.subWindows().forEach(function(window) {
         this.addWindow(window);
       }, this);
     }
 
     createBattlers() {
-
       for (const battler of $Battle.sides.foe.actives) {
         let fx = Graphics.width - 96;
-        let fy = 240
+        let fy = 240;
         this.sprites[battler.index] = new Sprites.Battler(battler.pokemon, Sprites.BattlersFacing.Front);
         this.sprites[battler.index].x = fx;
         this.sprites[battler.index].y = fy;
@@ -120,19 +117,18 @@ namespace PE.Battle {
       }
 
       let trainer = Math.randomInt(243) + 1;
-      this.sprites['front'] = new Sprites.TrainerFront('BW_'+ trainer.padZero(3));
-      this.sprites['front'].x = Graphics.width - 96;
-      this.sprites['front'].anchor.x = 0.5;
-      this.addChild(this.sprites['front']);      
+      this.sprites["front"] = new Sprites.TrainerFront("BW_" + trainer.padZero(3));
+      this.sprites["front"].x = Graphics.width - 96;
+      this.sprites["front"].anchor.x = 0.5;
+      this.addChild(this.sprites["front"]);
 
-      this.sprites['back'] = new Sprites.TrainerBack();
-      this.sprites['back'].y = Graphics.height;
-      this.sprites['back'].anchor.y = 1;
-      this.addChild(this.sprites['back']);
+      this.sprites["back"] = new Sprites.TrainerBack();
+      this.sprites["back"].y = Graphics.height;
+      this.sprites["back"].anchor.y = 1;
+      this.addChild(this.sprites["back"]);
 
-      $Battle.push(() => this.sprites['back'].start(), this);
+      $Battle.push(() => this.sprites["back"].start(), this);
     }
-
 
     createUI() {
       this.layers.weather = new Weathers.WeatherLayer();
@@ -158,14 +154,10 @@ namespace PE.Battle {
         this.viewport.addChild(this.movesSelection);
       }
 
-
-
-
-
-      let msg = i18n._('What will %1 do?', $Battle.battlers[$Battle.currentInx].name);
+      let msg = i18n._("What will %1 do?", $Battle.battlers[$Battle.currentInx].name);
       this.hud = new Sprite(new Bitmap(300, 32));
-      this.hud.bitmap.fontSize = 20;
-      this.hud.bitmap.drawText(msg, 0, 0, 300, 32, 'right');
+      this.hud.bitmap.fontSize = 24;
+      this.hud.bitmap.drawText(msg, 0, 0, 300, 32, "right");
       this.hud.x = Graphics.width - 8;
       this.hud.y = Graphics.height;
       this.hud.anchor.x = 1;
@@ -173,15 +165,16 @@ namespace PE.Battle {
       this.hud.visible = false;
       this.viewport.addChild(this.hud);
 
-
       // this.zoomIn();
     }
-
 
     showAbilityIndicator(ability: string, foeSide: boolean) {
       let x = 0;
       let y = 192;
-      if (foeSide) { x = Graphics.width - 224; y = 96; }
+      if (foeSide) {
+        x = Graphics.width - 224;
+        y = 96;
+      }
       let sing = new UI.AbilityIndicator(ability);
       sing.x = x;
       sing.y = y;
@@ -190,7 +183,6 @@ namespace PE.Battle {
     setWeather(weather: Weathers) {
       this.layers.weather.setWeather(weather);
     }
-
 
     zoomIn() {
       this.viewport.scale.x = 2;

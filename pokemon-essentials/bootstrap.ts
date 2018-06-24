@@ -25,7 +25,22 @@ function setup() {
     return "canvas";
   };
 
-  SceneManager.initNwjs = function() {};
+  SceneManager.initNwjs = function() {
+    if (Utils.isNwjs()) {
+      var gui = require("nw.gui");
+      var win = gui.Window.get();
+      if (process.platform === "darwin" && !win.menu) {
+        var menubar = new gui.Menu({ type: "menubar" });
+        var option = { hideEdit: true, hideWindow: true };
+        menubar.createMacBuiltin("Game", option);
+        win.menu = menubar;
+      }
+    }
+    var gui = require("nw.gui");
+    var win = gui.Window.get();
+    win.width = SETTINGS.SCREEN_WIDTH;
+    win.height = SETTINGS.SCREEN_HEIGHT;
+  };
 
   SceneManager.onKeyDown = function(event) {};
 

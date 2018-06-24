@@ -1,8 +1,6 @@
 namespace PE.Battle.UI {
-
   export let actionsInx = 0;
   export let movesInx = 0;
-
 
   export class Window_BattleMessage extends Window_Message {
     constructor() {
@@ -10,14 +8,13 @@ namespace PE.Battle.UI {
     }
     frameskin: any;
     loadFrameSkin() {
-      this.frameskin = ImageManager.loadSystem('battle_message_skin');
+      this.frameskin = ImageManager.loadSystem("battle_message_skin");
     }
 
     normalColor() {
       return "#ffffff";
-    };
+    }
   }
-
 
   export class AbilityIndicator extends Sprite {
     ticks: number;
@@ -25,8 +22,8 @@ namespace PE.Battle.UI {
       super(new Bitmap(224, 32));
       this.bitmap.outlineWidth = 3;
       this.bitmap.fontSize = 20;
-      this.bitmap.fillAll('rgba(0,0,0,0.7)');
-      this.bitmap.drawText(Abilities.name(ability), 0, 0, 224, 32, 'center');
+      this.bitmap.fillAll("rgba(0,0,0,0.7)");
+      this.bitmap.drawText(Abilities.name(ability), 0, 0, 224, 32, "center");
       this.ticks = 0;
     }
 
@@ -66,66 +63,62 @@ namespace PE.Battle.UI {
 
     create() {
       this.box = new Sprite();
-      this.box.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'hp_box', undefined, undefined);
+      this.box.bitmap = ImageManager.loadBitmap("img/pictures/Battle/", "hp_box");
       this.box.x = this._x;
       this.box.y = this._y;
       this.addChild(this.box);
-
       this.bar = new Sprite();
-      this.bar.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'hp_bar', undefined, undefined);
+      this.bar.bitmap = ImageManager.loadBitmap("img/pictures/Battle/", "hp_bar");
       this.bar.x = this._x;
       this.bar.y = this._y;
       this.addChild(this.bar);
-
       this.text = new Sprite(new Bitmap(Graphics.width, Graphics.height));
       this.text.x = 0;
       this.text.y = 0;
-
-      this.text.bitmap.fontSize = 24;
-      this.text.bitmap.outlineWidth = 4;
+      this.text.bitmap.fontSize = 28;
+      // this.text.bitmap.outlineWidth = 4;
       this.text.bitmap.textColor = "#fff";
-      this.text.bitmap.drawText(this.pokemon.nickname, this._x, this._y - 26, Graphics.width, 24, 'left');
-
+      this.text.bitmap.drawText(this.pokemon.nickname, this._x, this._y - 30, Graphics.width, 24, "left");
       this.text.bitmap.fontSize = 18;
       this.text.bitmap.textColor = "#ff0";
-      let w1 = this.text.bitmap.measureTextWidth(`Lv. ${this.pokemon.level}`);
-      this.text.bitmap.drawText('Lv. ', this._x + (192 - w1), this._y - 24, Graphics.width, 24, 'left');
+      this.text.bitmap.shadowColor = "#cccc00";
+      var w1 = this.text.bitmap.measureTextWidth("Lv. " + this.pokemon.level);
+      this.text.bitmap.drawText("Lv. ", this._x + (192 - w1), this._y - 24, Graphics.width, 24, "left");
       this.text.bitmap.textColor = "#fff";
-      let w2 = this.text.bitmap.measureTextWidth(`${this.pokemon.level}`);
-      this.text.bitmap.drawText(`${this.pokemon.level}`, this._x + (192 - w2), this._y - 24, Graphics.width, 24, 'left');
+      this.text.bitmap.shadowColor = DEFAULT_SHADOW_COLOR;
+      var w2 = this.text.bitmap.measureTextWidth("" + this.pokemon.level);
+      this.text.bitmap.drawText("" + this.pokemon.level, this._x + (192 - w2), this._y - 24, Graphics.width, 24, "left");
       if (this.pokemon.gender !== "N") {
         if (this.pokemon.gender === "M") {
-          let w3 = this.text.bitmap.measureTextWidth('♂ ');
+          var w3 = this.text.bitmap.measureTextWidth("♂ ");
           this.text.bitmap.textColor = "#00bdf7";
-          this.text.bitmap.drawText('♂', this._x + (192 - w1 - w3), this._y - 24, Graphics.width, 24, 'left');
+          this.text.bitmap.shadowColor = "#0097c5";
+          this.text.bitmap.drawText("♂", this._x + (192 - w1 - w3), this._y - 24, Graphics.width, 24, "left");
         } else {
-          let w3 = this.text.bitmap.measureTextWidth('♀ ');
+          var w3 = this.text.bitmap.measureTextWidth("♀ ");
           this.text.bitmap.textColor = "#ff3142";
-          this.text.bitmap.drawText('♀', this._x + (192 - w1 - w3), this._y - 24, Graphics.width, 24, 'left');
+          this.text.bitmap.shadowColor = "#f30014";
+          this.text.bitmap.drawText("♀", this._x + (192 - w1 - w3), this._y - 24, Graphics.width, 24, "left");
         }
       }
-
       if (!this.foe) {
         this.expbox = new Sprite();
-        this.expbox.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'exp_box', undefined, undefined);
+        this.expbox.bitmap = ImageManager.loadBitmap("img/pictures/Battle/", "exp_box");
         this.expbox.x = this._x;
         this.expbox.y = this.box.y + 26;
         this.addChild(this.expbox);
-
         this.expbar = new Sprite();
-        this.expbar.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'exp_bar', undefined, undefined);
+        this.expbar.bitmap = ImageManager.loadBitmap("img/pictures/Battle/", "exp_bar");
         this.expbar.x = this._x;
         this.expbar.y = this.box.y + 26;
         this.expbar.setFrame(0, 0, 62, 8);
         this.addChild(this.expbar);
-
         this.indicator = new Sprite(new Bitmap(Graphics.height, Graphics.width));
         this.indicator.bitmap.textColor = "#fff";
-        this.indicator.bitmap.fontSize = 18;
-        this.indicator.bitmap.drawText(`${this.pokemon.hp}/${this.pokemon.hp}`, this._x + 32, this.box.y + 8, 200, 24, 'left');
+        this.indicator.bitmap.fontSize = 20;
+        this.indicator.bitmap.drawText(this.pokemon.hp + "/" + this.pokemon.hp, this._x + 32, this.box.y + 8, 200, 24, "left");
         this.addChild(this.indicator);
       }
-
       this.addChild(this.text);
     }
 
@@ -143,7 +136,7 @@ namespace PE.Battle.UI {
       this.__damage--;
       if (this.indicator) {
         this.indicator.bitmap.clear();
-        this.indicator.bitmap.drawText(`${this.currentHP}/${this.pokemon.totalhp}`, this._x + 32, this.box.y + 8, 200, 24, 'left');
+        this.indicator.bitmap.drawText(`${this.currentHP}/${this.pokemon.totalhp}`, this._x + 32, this.box.y + 8, 200, 24, "left");
       }
       // 192 is original the bar width
       let width = Math.max(0, (192 * this.currentHP) / this.pokemon.totalhp);
@@ -152,7 +145,7 @@ namespace PE.Battle.UI {
         this.__damage = 0;
       }
       if (this.__damage === 0) {
-        this.complete()
+        this.complete();
       }
     }
 
@@ -162,7 +155,6 @@ namespace PE.Battle.UI {
     onComplete(callback) {
       // this.completeCallbacks.push(callback);
     }
-
 
     complete() {
       $Battle.waitMode = WaitMode.None;
@@ -183,98 +175,75 @@ namespace PE.Battle.UI {
     private _active: boolean;
     private _text: Sprite;
     constructor(public name: string, public frame: number, public x: number, public y: number) {
-      super(80, 40);
+      super(96, 48);
       this._active = false;
-      this.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'battle_buttons', undefined, undefined);
-      this.changeFrame(1, this.frame);
-
-      this._text = new Sprite(new Bitmap(80, 40));
+      this.bitmap = ImageManager.loadBitmap("img/pictures/Battle/", "battle_buttons");
+      this.changeFrame(0, this.frame);
+      this._text = new Sprite(new Bitmap(96, 48));
       this._text.bitmap.fontSize = 24;
       this._text.bitmap.outlineWidth = 4;
       this._text.bitmap.outlineColor = "rgba(0,0,0, 0.3)";
-      this._text.bitmap.drawText(this.name, 0, 8, 80, 24, 'center');
+      this._text.bitmap.drawText(this.name, 0, 0, 96, 48, "center");
       this._text.x = 0;
       this._text.y = 0;
-      this._text.visible = false;
-      this._text.opacity = 200;
       this.addChild(this._text);
+      this.deactivate();
+    }
+    activate() {
+      this.setBlendColor([0, 0, 0, 0]);
+      this._text.setBlendColor([0, 0, 0, 0]);
     }
 
-    set active(_active) {
-      this._active = _active;
-      if (_active) {
-        this.changeFrame(0, this.frame);
-      } else {
-        this.changeFrame(1, this.frame);
-      }
-      this._text.visible = this._active;
+    deactivate() {
+      this.setBlendColor([0, 0, 0, 155]);
+      this._text.setBlendColor([0, 0, 0, 155]);
     }
   }
 
   export class MoveButton extends Sprites.Button {
-    activeText: Sprite;
-    idletext: Sprite;
+    private _text: Sprite;
     row: number;
     _active: boolean;
-    constructor(move, public x: number, public y: number) {
-      super(192, 64);
+    constructor(move: any, public x: number, public y: number) {
+      super(202, 74);
+
       this._active = false;
-
-      // this.frame = frame;
-      // this.name = name;
-      // this.startY = y;
-
-      this.row = parseInt(Types[move.type]);
-      this.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'moves_buttons', undefined, undefined);
-      this.changeFrame(1, this.row);
-
-
-      this.idletext = new Sprite(new Bitmap(192, 64));
-      this.idletext.bitmap.fontSize = 18;
-      this.idletext.bitmap.outlineWidth = 4;
-      this.idletext.bitmap.outlineColor = "rgba(0,0,0, 0.3)";
-      this.idletext.bitmap.drawText(move.name, 0, 20, 192, 20, 'center');
-      this.idletext.x = 0;
-      this.idletext.y = 0;
-      this.addChild(this.idletext);
-
-      this.activeText = new Sprite(new Bitmap(192, 64));
-      this.activeText.x = 0;
-      this.activeText.y = 0;
-      this.activeText.bitmap.outlineWidth = 4;
-      this.activeText.bitmap.outlineColor = Types.color(move.type);
-      this.activeText.bitmap.fontSize = 18;
-      this.activeText.bitmap.drawText(move.name, 14, 10, 164, 20, 'center');
-      this.activeText.bitmap.fontSize = 14;
-      this.activeText.bitmap.drawText(move.type, 14, 36, 192, 20, 'left');
-      this.activeText.bitmap.drawText(`PP ${move.pp}/${move.pp}`, 0, 36, 178, 20, 'right');
-      this.activeText.visible = false;
-      this.addChild(this.activeText);
-    }
-
-    activate() {
-      this.idletext.visible = false;
-      this.activeText.visible = true;
+      this.row = parseInt(PE.Types[move.type]);
+      this.bitmap = ImageManager.loadBitmap("img/pictures/Battle/", "moves_buttons");
       this.changeFrame(0, this.row);
+      this._text = new Sprite(new Bitmap(192, 64));
+      this._text.x = 0;
+      this._text.y = 0;
+      this._text.bitmap.outlineWidth = 4;
+      this._text.bitmap.outlineColor = PE.Types.color(move.type);
+      this._text.bitmap.fontSize = 20;
+      this._text.bitmap.drawText(move.name, 4, 4, 194, 32, "center");
+      this._text.bitmap.fontSize = 20;
+      this._text.bitmap.drawText("PP " + move.pp + "/" + move.pp, 112, 38, 192, 32, "left");
+      this.addChild(this._text);
+      this.setBlendColor([0, 0, 0, 155]);
+      this._text.setBlendColor([0, 0, 0, 155]);
     }
-
+    activate() {
+      this.setBlendColor([0, 0, 0, 0]);
+      this._text.setBlendColor([0, 0, 0, 0]);
+    }
     deactivate() {
-      this.idletext.visible = true;
-      this.activeText.visible = false;
-      this.changeFrame(1, this.row);
+      this.setBlendColor([0, 0, 0, 155]);
+      this._text.setBlendColor([0, 0, 0, 155]);
     }
   }
-
 
   export class _MovesSelection extends Sprite {
     _moves: any;
     _backButton: Sprite;
     _bg: Sprite;
-    _pos: { x: number; y: number; }[];
+    _pos: { x: number; y: number }[];
     constructor(public _pokemon: Battler) {
       super();
-      let x = Graphics.width - 392, y = Graphics.height - 120;
-      this._pos = [{ x: x, y: y }, { x: x + 196, y: y }, { x: x, y: y + 52 }, { x: x + 196, y: y + 52 }];
+      var x = Graphics.width - 412;
+      var y = Graphics.height - 156;
+      this._pos = [{ x: x, y: y }, { x: x + 206, y: y }, { x: x, y: y + 78 }, { x: x + 206, y: y + 78 }];
       this._moves = [];
       this.createBackground();
       this.createButtons();
@@ -290,7 +259,7 @@ namespace PE.Battle.UI {
       // this.addChild(this._bg);
 
       this._backButton = new Sprite();
-      this._backButton.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'back_button', undefined, undefined);
+      this._backButton.bitmap = ImageManager.loadBitmap("img/pictures/Battle/", "back_button", undefined, undefined);
       this._backButton.x = 0;
       this._backButton.y = Graphics.height - 4;
       this._backButton.anchor.y = 1;
@@ -299,7 +268,7 @@ namespace PE.Battle.UI {
       let backtext = new Sprite(new Bitmap(64, 40));
       backtext.bitmap.fontSize = 20;
       backtext.bitmap.outlineWidth = 4;
-      backtext.bitmap.drawText(i18n._('BACK'), 8, 10, 64, 20, 'left');
+      backtext.bitmap.drawText(i18n._("BACK"), 8, 10, 64, 20, "left");
       backtext.x = 0;
       backtext.y = Graphics.height - 4;
       backtext.anchor.y = 1;
@@ -320,12 +289,12 @@ namespace PE.Battle.UI {
     updateInput() {
       if (!this.visible) this.visible = true;
 
-      if (Input.isTriggered('cancel')) {
+      if (Input.isTriggered("cancel")) {
         $Battle.changePhase(Battle.Phase.ActionSelection);
         this.visible = false;
       }
 
-      if (Input.isTriggered('right')) {
+      if (Input.isTriggered("right")) {
         if (this._moves.length <= 1) return;
         this._moves[movesInx].deactivate();
         movesInx++;
@@ -335,7 +304,7 @@ namespace PE.Battle.UI {
         return;
       }
 
-      if (Input.isTriggered('left')) {
+      if (Input.isTriggered("left")) {
         if (this._moves.length <= 1) return;
         this._moves[movesInx].deactivate();
         movesInx--;
@@ -345,7 +314,7 @@ namespace PE.Battle.UI {
         return;
       }
 
-      if (Input.isTriggered('down')) {
+      if (Input.isTriggered("down")) {
         if (this._moves.length < 2) return;
         this._moves[movesInx].deactivate();
         movesInx += 2;
@@ -355,7 +324,7 @@ namespace PE.Battle.UI {
         return;
       }
 
-      if (Input.isTriggered('up')) {
+      if (Input.isTriggered("up")) {
         if (this._moves.length <= 2) return;
         this._moves[movesInx].deactivate();
         movesInx -= 2;
@@ -365,7 +334,7 @@ namespace PE.Battle.UI {
         return;
       }
 
-      if (Input.isTriggered('ok')) {
+      if (Input.isTriggered("ok")) {
         this.visible = false;
         let move = this._pokemon.moveset[movesInx];
         $Battle.choose(move, $Battle.sides.foe.actives[0]);
@@ -375,37 +344,22 @@ namespace PE.Battle.UI {
     }
   }
 
-
-
   export class BattleCommands extends Sprite {
     _bg: Sprite;
     options: { name: string; frame: number; x: number; y: number; sprite?: CommandButton; action: any }[];
     constructor(public x: number, public y: number) {
       super();
-      let startX = 0;
-      let startY = 0;
+      this.x = Graphics.width - 200;
+      this.y = Graphics.height - 136;
+      var startX = 0;
+      var startY = 0;
       this.options = [
-        { name: 'FIGTH', frame: 0, x: startX, y: startY, action: this.openMovesSelection },
-        { name: 'PARTY', frame: 1, x: startX + 84, y: startY, action: this.openParty },
-        { name: 'BAG', frame: 2, x: startX, y: startY + 32, action: this.openBag },
-        { name: 'RUN', frame: 3, x: startX + 84, y: startY + 32, action: this.run }
+        { name: "FIGTH", frame: 0, x: startX, y: startY, action: this.openMovesSelection },
+        { name: "PARTY", frame: 1, x: startX + 100, y: startY, action: this.openParty },
+        { name: "BAG", frame: 2, x: startX, y: startY + 54, action: this.openBag },
+        { name: "RUN", frame: 3, x: startX + 100, y: startY + 54, action: this.run }
       ];
-      this.createBackground();
       this.createButtons();
-      // this.initialX = x;
-      // this.initialY = y;
-
-      // this.destX = x;
-      // this.destY = y;
-      // this.speed = 3;
-    }
-
-    createBackground() {
-      // this._bg = new Sprite();
-      // this._bg.bitmap = ImageManager.loadBitmap('img/pictures/Battle/', 'command_overlay', undefined, undefined);
-      // this._bg.x = 40;
-      // this._bg.y = 20;
-      // this.addChild(this._bg);
     }
 
     createButtons() {
@@ -413,49 +367,49 @@ namespace PE.Battle.UI {
         option.sprite = new CommandButton(option.name, option.frame, option.x, option.y);
         this.addChild(option.sprite);
       }
-      this.options[actionsInx].sprite.active = true;
+      this.options[actionsInx].sprite.activate();
     }
 
     updateInput() {
       if (!this.visible) this.visible = true;
       // if (this.isBusy()) return;
 
-      if (Input.isTriggered('right')) {
-        this.options[actionsInx].sprite.active = false;
+      if (Input.isTriggered("right")) {
+        this.options[actionsInx].sprite.deactivate();
         actionsInx++;
         if (actionsInx >= this.options.length) actionsInx = 0;
-        this.options[actionsInx].sprite.active = true;
+        this.options[actionsInx].sprite.activate();
         SoundManager.playCursor();
         return;
       }
 
-      if (Input.isTriggered('left')) {
-        this.options[actionsInx].sprite.active = false;
+      if (Input.isTriggered("left")) {
+        this.options[actionsInx].sprite.deactivate();
         actionsInx--;
         if (actionsInx < 0) actionsInx = this.options.length - 1;
-        this.options[actionsInx].sprite.active = true;
+        this.options[actionsInx].sprite.activate();
         SoundManager.playCursor();
         return;
       }
-      if (Input.isTriggered('down')) {
-        this.options[actionsInx].sprite.active = false;
+      if (Input.isTriggered("down")) {
+        this.options[actionsInx].sprite.deactivate();
         actionsInx += 2;
         if (actionsInx >= this.options.length) actionsInx -= 4;
-        this.options[actionsInx].sprite.active = true;
+        this.options[actionsInx].sprite.activate();
         SoundManager.playCursor();
         return;
       }
-      if (Input.isTriggered('up')) {
-        this.options[actionsInx].sprite.active = false;
+      if (Input.isTriggered("up")) {
+        this.options[actionsInx].sprite.deactivate();
         actionsInx -= 2;
         if (actionsInx < 0) actionsInx += 4;
-        this.options[actionsInx].sprite.active = true;
+        this.options[actionsInx].sprite.activate();
         SoundManager.playCursor();
         return;
       }
 
-      if (Input.isTriggered('ok')) {
-        this.options[actionsInx].action()
+      if (Input.isTriggered("ok")) {
+        this.options[actionsInx].action();
         this.visible = false;
       }
     }
@@ -466,15 +420,10 @@ namespace PE.Battle.UI {
     openParty() {
       SceneManager.push(PE.Party.Scene_Party);
     }
-    openBag() { }
+    openBag() {}
     run() {
       $Battle.terminate();
       SceneManager.goto(PE.TitleScenes.CustomScene);
     }
-
   }
-
-
 }
-
-

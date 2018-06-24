@@ -1,6 +1,6 @@
 namespace SETTINGS {
-  export const SCREEN_WIDTH = 512;
-  export const SCREEN_HEIGHT = 384;
+  export const SCREEN_WIDTH = 640;
+  export const SCREEN_HEIGHT = 480;
   /** The maximum level Pokémon can reach. */
   export const MAXIMUM_LEVEL = 100;
   /** The odds of a newly generated Pokémon being shiny (out of 65536). */
@@ -12,16 +12,16 @@ namespace SETTINGS {
   export const GENDERS = [
     null, // to init the gender count on 1
     {
-      name: 'Boy',
-      sprite: 'dp_hero',
-      dashSprite: 'dp_hero_running',
-      back: 'trback000'
+      name: "Boy",
+      sprite: "dp_hero",
+      dashSprite: "dp_hero_running",
+      back: "trback000"
     },
     {
-      name: 'Girl',
-      sprite: 'dp_heroine',
-      dashSprite: 'dp_heroine_running',
-      back: 'trback000'
+      name: "Girl",
+      sprite: "dp_heroine",
+      dashSprite: "dp_heroine_running",
+      back: "trback000"
     }
-  ]
+  ];
 }
