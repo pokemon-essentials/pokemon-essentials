@@ -91,7 +91,7 @@ namespace PE.Battle {
 
     createBattlers() {
       for (const battler of $Battle.sides.foe.actives) {
-        let fx = Graphics.width - 96;
+        let fx = Graphics.width - 128;
         let fy = 240;
         this.sprites[battler.index] = new Sprites.Battler(battler.pokemon, Sprites.BattlersFacing.Front);
         this.sprites[battler.index].x = fx;
@@ -104,8 +104,8 @@ namespace PE.Battle {
       }
 
       for (const battler of $Battle.sides.player.actives) {
-        let x = 96;
-        let y = Graphics.height;
+        let x = 128;
+        let y = Graphics.height - 64;
         this.sprites[battler.index] = new Sprites.Battler(battler.pokemon, Sprites.BattlersFacing.Back);
         this.sprites[battler.index].x = x;
         this.sprites[battler.index].y = y;
@@ -116,18 +116,18 @@ namespace PE.Battle {
         this.viewport.addChild(this.sprites[battler.index]);
       }
 
-      let trainer = Math.randomInt(243) + 1;
-      this.sprites["front"] = new Sprites.TrainerFront("BW_" + trainer.padZero(3));
-      this.sprites["front"].x = Graphics.width - 96;
-      this.sprites["front"].anchor.x = 0.5;
-      this.addChild(this.sprites["front"]);
+      // let trainer = Math.randomInt(243) + 1;
+      // this.sprites["front"] = new Sprites.TrainerFront("BW_" + trainer.padZero(3));
+      // this.sprites["front"].x = Graphics.width - 96;
+      // this.sprites["front"].anchor.x = 0.5;
+      // this.addChild(this.sprites["front"]);
 
-      this.sprites["back"] = new Sprites.TrainerBack();
-      this.sprites["back"].y = Graphics.height;
-      this.sprites["back"].anchor.y = 1;
-      this.addChild(this.sprites["back"]);
+      // this.sprites["back"] = new Sprites.TrainerBack();
+      // this.sprites["back"].y = Graphics.height;
+      // this.sprites["back"].anchor.y = 1;
+      // this.addChild(this.sprites["back"]);
 
-      $Battle.push(() => this.sprites["back"].start(), this);
+      // $Battle.push(() => this.sprites["back"].start(), this);
     }
 
     createUI() {
@@ -149,7 +149,6 @@ namespace PE.Battle {
         this.partyBar = new UI.HPBar(battler, 16, Graphics.height - 64, false);
         this.partyBar.visible = false;
         this.viewport.addChild(this.partyBar);
-
         this.movesSelection = new UI._MovesSelection(battler);
         this.viewport.addChild(this.movesSelection);
       }

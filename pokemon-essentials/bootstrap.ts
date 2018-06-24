@@ -42,7 +42,24 @@ function setup() {
     win.height = SETTINGS.SCREEN_HEIGHT;
   };
 
-  SceneManager.onKeyDown = function(event) {};
+  SceneManager.onKeyDown = function(event) {
+    if (!event.ctrlKey && !event.altKey) {
+      switch (event.keyCode) {
+        case 116: // F5
+          if (Utils.isNwjs()) {
+            location.reload();
+          }
+          break;
+        case 123: // F8
+          if (Utils.isNwjs() && Utils.isOptionValid("test")) {
+            require("nw.gui")
+              .Window.get()
+              .showDevTools();
+          }
+          break;
+      }
+    }
+  };
 
   /**
    * load Pokémon database files and store in the given constants.
