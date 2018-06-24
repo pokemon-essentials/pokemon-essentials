@@ -1,9 +1,11 @@
 {
   "name": "pokemon-essentials",
-  "main": "index.html",
+  "main": "project/index.html",
   "version": "0.0.1",
   "devDependencies": {
+    "event-stream": "^3.3.4",
     "gulp": "^3.9.1",
+    "gulp-inject": "^4.3.2",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-typescript": "^4.0.1",
     "gulp-uglify": "^3.0.0",

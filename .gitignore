@@ -2,8 +2,7 @@
 node_modules/
 dist/
 save/
-js/pokemon_essentials.js
-img/battlers
-img/icons
-img/characters/trainers
+project/img/battlers
+project/img/icons
+project/img/characters/trainers
 package-lock.json
