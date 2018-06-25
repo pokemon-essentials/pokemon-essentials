@@ -3,16 +3,45 @@
 namespace PE.Battle {
   const CHARACTERS_PER_LINE = 40;
 
-  interface IBattleEvent { name: string, params: any[] };
+  interface IBattleEvent {
+    name: string;
+    params: any[];
+  }
 
-  export const enum Phase { None, Init, ActionSelection, MoveSelection, Animation };
-  export const enum WaitMode { None, Animation, AbilitySing };
-  export const enum ActionChoices { UseMove, UseItem, Switch };
+  export const enum Phase {
+    None,
+    Init,
+    ActionSelection,
+    MoveSelection,
+    Animation
+  }
+  export const enum WaitMode {
+    None,
+    Animation,
+    AbilitySing
+  }
+  export const enum ActionChoices {
+    UseMove,
+    UseItem,
+    Switch
+  }
 
-  export const enum Enviroments { None, TallGrass, Cave, StillWater, Building, Plain, Sand, Rock, LongGrass, PondWater, SeaWater, UnderWater };
+  export const enum Enviroments {
+    None,
+    TallGrass,
+    Cave,
+    StillWater,
+    Building,
+    Plain,
+    Sand,
+    Rock,
+    LongGrass,
+    PondWater,
+    SeaWater,
+    UnderWater
+  }
 
   export abstract class Manager {
-
     static scene: Scene_Battle;
     /** Whether the player can escape or not */
     static canEscape: boolean;
@@ -21,10 +50,10 @@ namespace PE.Battle {
     /** Opponents Pokémon Trainers*/
     static opponents: Trainers.Trainer[];
 
-    static trainers: { player: Trainers.Trainer[], foe: Trainers.Trainer[] }
+    static trainers: {player: Trainers.Trainer[]; foe: Trainers.Trainer[]};
     /**  The initial order of Pokémon in the player's party.*/
     static partyOrder = [];
-    static sides: { player: ActiveSide, foe: ActiveSide };
+    static sides: {player: ActiveSide; foe: ActiveSide};
     static field: ActiveField;
     static enviroment: Enviroments;
     static weather: Weathers;
@@ -39,7 +68,6 @@ namespace PE.Battle {
     static extraMoney;
     /** Whether Happy Hour's effect applies */
     static doubleMoney;
-
 
     static currentInx: number;
     /** All the Pokémon of all Trainers used deternime it's unique index */
@@ -56,14 +84,13 @@ namespace PE.Battle {
 
     static started = false;
 
-
     static setup(opponets: Trainers.Trainer[], allies: Trainers.Trainer[]) {
       allies.unshift($Player);
-      this.trainers = { player: allies, foe: opponets };
+      this.trainers = {player: allies, foe: opponets};
       this.player = $Player;
       this.opponents = opponets;
       this.field = new ActiveField();
-      this.sides = { player: new ActiveSide(), foe: new ActiveSide() };
+      this.sides = {player: new ActiveSide(), foe: new ActiveSide()};
       this.actives = [];
       this.battlers = [];
       for (const trainer of allies) {
@@ -158,14 +185,18 @@ namespace PE.Battle {
     static canShowCommands(index: number) {
       let pokemon = this.battlers[index];
       if (pokemon.isFainted()) return false;
-      if (pokemon.effects.TwoTurnAttack > 0 || pokemon.effects.HyperBeam > 0 ||
-        pokemon.effects.Rollout > 0 || pokemon.effects.Outrage > 0 ||
-        pokemon.effects.Uproar > 0 || pokemon.effects.Bide > 0) {
+      if (
+        pokemon.effects.TwoTurnAttack > 0 ||
+        pokemon.effects.HyperBeam > 0 ||
+        pokemon.effects.Rollout > 0 ||
+        pokemon.effects.Outrage > 0 ||
+        pokemon.effects.Uproar > 0 ||
+        pokemon.effects.Bide > 0
+      ) {
         return false;
       }
       return true;
     }
-
 
     static canShowMovesSelection(index: number) {
       let pokemon = this.battlers[index];
@@ -188,16 +219,15 @@ namespace PE.Battle {
       }
       if (pokemon.hasItem('ASSAULTVEST') && move.isStatus()) {
         if (showMessages) {
-          let msg = "The effects of the %1 prevent status moves from being used!";
+          let msg = 'The effects of the %1 prevent status moves from being used!';
           this.showMessage(i18n._(msg, Items.name(pokemon.item)));
         }
         return false;
       }
-      if (pokemon.hasItemIn(['CHOICEBAND', 'CHOICESPECS', 'CHOICESCARF']) &&
-        pokemon.effects.ChoiceBand !== undefined) {
+      if (pokemon.hasItemIn(['CHOICEBAND', 'CHOICESPECS', 'CHOICESCARF']) && pokemon.effects.ChoiceBand !== undefined) {
         if (move.id !== pokemon.effects.ChoiceBand) {
           if (showMessages) {
-            let msg = "%1 allows the use of only %2!";
+            let msg = '%1 allows the use of only %2!';
             this.showMessage(i18n._(msg, Items.name(pokemon.item), move.name));
           }
           return false;
@@ -212,27 +242,25 @@ namespace PE.Battle {
         }
       }
       if (pokemon.effects.Taunt > 0 && move.basePower <= 0) {
-        if (showMessages)
-          this.showMessage(i18n._("%1 can't use %2 after the taunt!", pokemon.name, move.name))
+        if (showMessages) this.showMessage(i18n._("%1 can't use %2 after the taunt!", pokemon.name, move.name));
         return false;
       }
       if (pokemon.effects.Torment && move.id === this.lastMoveUsed) {
         if (showMessages) {
           let msg = "%1 can't use the same move twice in a row due to the torment!";
-          this.showMessage(i18n._(msg, pokemon.name, move.name))
+          this.showMessage(i18n._(msg, pokemon.name, move.name));
         }
         return false;
       }
       if (pokemon.effects.DisableMove === move.id && sleeptalk) {
-        if (showMessages)
-          this.showMessage(i18n._("%1's %2 is disabled!", pokemon.name, move.name))
+        if (showMessages) this.showMessage(i18n._("%1's %2 is disabled!", pokemon.name, move.name));
         return false;
       }
       // if (move.id === "BELCH" && pokemon.belch) {
-      if (move.id === "BELCH") {
+      if (move.id === 'BELCH') {
         if (showMessages) {
           let msg = "%1 hasn't eaten any held berry, so it can't possibly belch!";
-          this.showMessage(i18n._(msg, pokemon.name, move.name))
+          this.showMessage(i18n._(msg, pokemon.name, move.name));
         }
         return false;
       }
@@ -241,7 +269,6 @@ namespace PE.Battle {
       }
       return true;
     }
-
 
     //endregion
     //==================================================================================================================
@@ -255,14 +282,13 @@ namespace PE.Battle {
         this.choices[pokemon.index] = undefined;
         return;
       }
-      if (pokemon.effects.Encore &&
-        this.canChooseMove(pokemon.index, pokemon.effects.EncoreMoveId, false)) {
+      if (pokemon.effects.Encore && this.canChooseMove(pokemon.index, pokemon.effects.EncoreMoveId, false)) {
         console.log(`[Auto choosing Encore move] ${pokemon.effects.EncoreMoveId}`);
         this.choices = {
           action: ActionChoices.UseMove,
           move: pokemon.effects.EncoreMoveId,
           target: pokemon.sides.foe.actives[0]
-        }
+        };
       }
     }
     static getPriority() {
@@ -273,7 +299,7 @@ namespace PE.Battle {
         speeds.push(pokemon.speed);
         priorityQueue.push(pokemon.index);
         if (this.choices[pokemon.index] && this.choices[pokemon.index].action === ActionChoices.UseMove) {
-          mPriorities.push(this.choices[pokemon.index].move.priority)
+          mPriorities.push(this.choices[pokemon.index].move.priority);
         }
       }
       // order the speeds, mPriorities and priority arrays (bubble sort) by speeds
@@ -289,7 +315,7 @@ namespace PE.Battle {
             priorityQueue[i] = priorityQueue[i + 1];
             priorityQueue[i + 1] = aux2;
             let aux3 = mPriorities[i];
-            mPriorities[i] = mPriorities[i + 1]
+            mPriorities[i] = mPriorities[i + 1];
             mPriorities[i + 1] = aux3;
             swapped = true;
           }
@@ -302,7 +328,7 @@ namespace PE.Battle {
         for (var i = 0; i < mPriorities.length - 1; i++) {
           if (mPriorities[i] < mPriorities[i + 1]) {
             let aux = mPriorities[i];
-            mPriorities[i] = mPriorities[i + 1]
+            mPriorities[i] = mPriorities[i + 1];
             mPriorities[i + 1] = aux;
             let aux2 = priorityQueue[i];
             priorityQueue[i] = priorityQueue[i + 1];
@@ -318,9 +344,7 @@ namespace PE.Battle {
 
     //==================================================================================================================
     // Switching Pokémon.
-    static canSwitchLax() {
-
-    }
+    static canSwitchLax() {}
 
     static canSwitch(currIndex, switchingIndex, showMessages, ignoreMeanLook = false) {
       // let currPokemon =
@@ -328,23 +352,26 @@ namespace PE.Battle {
     }
 
     static switchIn(index: number) {
-      this.choices[this.currentInx] = ({
+      this.choices[this.currentInx] = {
         action: ActionChoices.Switch,
         index: index
-      })
+      };
       this.runActions();
     }
     //==================================================================================================================
 
     static start() {
-      console.log("Battle Start");
+      console.log('Battle Start');
       $Battle.showPausedMessage(i18n._('A wild %1 has apeared!', this.trainers.foe[0].party[0].name));
       $Battle.showMessage(i18n._('Go %1!', this.trainers.player[0].party[0].name));
       let priority = this.getPriority();
       for (const index of priority) {
-        Abilities.OnSwitchInEffects(this.battlers[index], true);
+        let pokemon = this.battlers[index];
+        if (ABILITIES_EFFECTS[pokemon.ability] && ABILITIES_EFFECTS[pokemon.ability].onSwitchIn) {
+          ABILITIES_EFFECTS[pokemon.ability].onSwitchIn(pokemon);
+        }
       }
-      this.push(() => this.started = true);
+      this.push(() => (this.started = true));
     }
 
     static update() {
@@ -357,7 +384,7 @@ namespace PE.Battle {
     }
 
     static push(method, scope: any = this) {
-      this._queue.push({ method: method, scope: scope });
+      this._queue.push({method: method, scope: scope});
     }
 
     static pop() {
@@ -368,7 +395,7 @@ namespace PE.Battle {
 
     static terminate() {
       this.clear();
-      console.log("Battle End");
+      console.log('Battle End');
     }
 
     static clear() {
@@ -386,7 +413,7 @@ namespace PE.Battle {
       this.push(() => {
         while (msg.length > CHARACTERS_PER_LINE) {
           let line = msg.substring(0, CHARACTERS_PER_LINE);
-          let truncateIndex = Math.min(line.length, line.lastIndexOf(" "));
+          let truncateIndex = Math.min(line.length, line.lastIndexOf(' '));
           line = line.substring(0, truncateIndex);
           $gameMessage.add(line + '\\n');
           msg = msg.substring(truncateIndex + 1);
@@ -400,7 +427,7 @@ namespace PE.Battle {
       this.push(() => {
         while (msg.length > CHARACTERS_PER_LINE) {
           let line = msg.substring(0, CHARACTERS_PER_LINE);
-          let truncateIndex = Math.min(line.length, line.lastIndexOf(" "));
+          let truncateIndex = Math.min(line.length, line.lastIndexOf(' '));
           line = line.substring(0, truncateIndex + 1);
           $gameMessage.add(line + '\\n');
           msg = msg.substring(truncateIndex + 1);
@@ -410,17 +437,16 @@ namespace PE.Battle {
     }
 
     static changePhase(phase: Phase) {
-      console.log(phase)
-      this.push(() => this.phase = phase);
+      console.log(phase);
+      this.push(() => (this.phase = phase));
     }
-
 
     static runActions() {
       this.turncount++;
       console.log(`Turn #${this.turncount}`);
       for (const battler of this.actives) {
         if (this.choices[battler.index]) continue;
-        this.choices[battler.index] = (DummySelection(battler));
+        this.choices[battler.index] = DummySelection(battler);
       }
 
       let priority = this.getPriority();
@@ -436,7 +462,6 @@ namespace PE.Battle {
         }
       }
 
-
       // use moves
       for (const index of priority) {
         let user = this.battlers[index];
@@ -450,7 +475,7 @@ namespace PE.Battle {
           let d = this.getDamage(user, target, choice.move);
           if (d > 0) {
             // target.damage(d)
-            this.push(() => target.damage(d));;
+            this.push(() => target.damage(d));
             // console.log(`Damage: ${d}`);
             // console.log(`${target.name} HP: ${target.totalhp} --> ${target.hp}`);
           }
@@ -463,10 +488,10 @@ namespace PE.Battle {
       // http://bulbapedia.bulbagarden.net/wiki/Damage
       let atk = 0;
       let def = 0;
-      if (move.category == "SPECIAL") {
+      if (move.category == 'SPECIAL') {
         atk = source.spatk;
-        def = target.spdef
-      } else if (move.category == "PHYSICAL") {
+        def = target.spdef;
+      } else if (move.category == 'PHYSICAL') {
         atk = source.attack;
         def = target.defense;
       } else {
@@ -497,19 +522,17 @@ namespace PE.Battle {
       }
       random = Math.random() * (1 - 0.81) + 0.81;
       let modifier = critical * random * stab * effectiveness;
-      let damage = ((((((2 * source.level) / 5) + 2) * move.basePower * (atk / def)) / 50) + 2) * modifier;
+      let damage = ((((2 * source.level) / 5 + 2) * move.basePower * (atk / def)) / 50 + 2) * modifier;
       return Math.floor(damage);
     }
-
 
     static choose(move, target) {
       this.choices[this.actives[this.currentInx].index] = {
         action: ActionChoices.UseMove,
         move: move,
         target: 0
-      }
+      };
     }
-
 
     static showAbilityIndicator(pokemon: Battler) {
       let ability = pokemon.ability;
@@ -543,7 +566,7 @@ namespace PE.Battle {
     }
 
     static nextPickupUse(): string {
-      throw Error('not implemented')
+      throw Error('not implemented');
     }
 
     static recoverHPAnimation(index: number) {
@@ -553,13 +576,10 @@ namespace PE.Battle {
         this.phase = Phase.Animation;
       });
     }
-
-
   }
 }
 
 const $Battle = PE.Battle.Manager;
-
 
 function DummySelection(battler: PE.Battle.Battler) {
   return {

@@ -6,9 +6,9 @@ var tsProject = ts.createProject("tsconfig.json");
 var es = require("event-stream");
 var inject = require("gulp-inject");
 
-gulp.task("dev-build", function() {
+gulp.task("dev-build", function () {
   var tsfiles = gulp
-    .src(["pokemon-essentials/**/*.ts", "bootstrap.ts"])
+    .src(["pokemon-essentials/datadex/*.ts", "pokemon-essentials/**/*.ts", "bootstrap.ts"])
     .pipe(sourcemaps.init())
     .pipe(
       tsProject({
@@ -19,11 +19,13 @@ gulp.task("dev-build", function() {
     .pipe(gulp.dest("./dist"));
   gulp
     .src("./project/index.html")
-    .pipe(inject(es.merge(tsfiles), { relative: true }))
+    .pipe(inject(es.merge(tsfiles), {
+      relative: true
+    }))
     .pipe(gulp.dest("./project"));
 });
 
-gulp.task("watch", function() {
+gulp.task("watch", function () {
   gulp.watch("pokemon-essentials/**/*.ts", ["dev-build"]);
 });
 

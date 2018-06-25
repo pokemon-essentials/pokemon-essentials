@@ -1,35 +1,36 @@
 namespace PE.Battle.Moves {
-  export function isOHKOMove(moveid: string) {
-
-  }
+  export function isOHKOMove(moveid: string) {}
 
   export enum MoveFlags {
-    Protect = "protect",
-    Mirror = "mirror",
-    Heal = "heal",
-    Contact = "contact",
-    Snatch = "snatch",
-    Bullet = "bullet",
-    Distance = "distance",
-    Authentic = "authentic",
-    Mystery = "mystery",
-    Reflectable = "reflectable",
-    Pulse = "pulse",
-    Bite = "bite",
-    Recharge = "recharge",
-    Nonsky = "nonsky",
-    Sound = "sound",
-    Charge = "charge",
-    Gravity = "gravity",
-    Punch = "punch",
-    rost = "rost",
-    Powder = "powder",
-    Dance = "dance"
+    Protect = 'protect',
+    Mirror = 'mirror',
+    Heal = 'heal',
+    Contact = 'contact',
+    Snatch = 'snatch',
+    Bullet = 'bullet',
+    Distance = 'distance',
+    Authentic = 'authentic',
+    Mystery = 'mystery',
+    Reflectable = 'reflectable',
+    Pulse = 'pulse',
+    Bite = 'bite',
+    Recharge = 'recharge',
+    Nonsky = 'nonsky',
+    Sound = 'sound',
+    Charge = 'charge',
+    Gravity = 'gravity',
+    Punch = 'punch',
+    rost = 'rost',
+    Powder = 'powder',
+    Dance = 'dance'
   }
 
-  export enum Categories { Special, Physical, Status }
+  export enum Categories {
+    Special,
+    Physical,
+    Status
+  }
   export class Move {
-
     num: number;
     /**Move's accuracy, true if never must fail e.g z move*/
     accuracy: number | boolean;
@@ -51,7 +52,6 @@ namespace PE.Battle.Moves {
     isZ: string;
     /**For Aerilate, Pixilate, Refrigerate */
     powerBoost: boolean;
-
 
     constructor(public id: Movedex | string) {
       if (!$PE_MOVES[id]) throw Error(`Error 404: Move name ${id} not found!`);
@@ -171,8 +171,7 @@ namespace PE.Battle.Moves {
       return Battle.Abilities.moveHitTypeImmunity(this, attacker, opponent);
     }
 
-    pbTypeModifier(){}
-
+    pbTypeModifier() {}
 
     //==================================================================================================================
   }
