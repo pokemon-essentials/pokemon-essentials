@@ -57,7 +57,9 @@ cd your-path-to-pokemon-essentials
 nw .
 ```
 
+## Discord Server
 
+https://discord.gg/eFPUx6m
 
 ## License
 
