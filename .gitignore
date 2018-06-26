@@ -2,6 +2,7 @@
 node_modules/
 dist/
 save/
+project/index.html
 project/img/battlers
 project/img/icons
 project/img/characters/trainers
