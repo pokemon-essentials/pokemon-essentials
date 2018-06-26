@@ -147,7 +147,7 @@ namespace PE.Battle {
     nickname: string;
     totalhp: number;
 
-    ability: string;
+    ability: Abilitydex;
     damageState: DamageState;
     effects: BattlerEffects;
     forme: any;
