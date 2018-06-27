@@ -1,5 +1,5 @@
 namespace PE {
-  RegisterAbilityEffects(Abilitydex.PRIMORDIALSEA, {
+  Abilities.RegisterEffects(Abilitydex.PRIMORDIALSEA, {
     onSwitchIn: function(pokemon) {
       if ($Battle.weather === Weathers.HeavyRain) return;
       $Battle.setWeather(Weathers.HeavyRain, -1);
@@ -10,7 +10,7 @@ namespace PE {
     }
   });
 
-  RegisterAbilityEffects(Abilitydex.DESOLATELAND, {
+  Abilities.RegisterEffects(Abilitydex.DESOLATELAND, {
     onSwitchIn: function(pokemon) {
       if ($Battle.weather === Weathers.HarshSun) return;
       $Battle.setWeather(Weathers.HarshSun, -1);
@@ -21,7 +21,7 @@ namespace PE {
     }
   });
 
-  RegisterAbilityEffects(Abilitydex.DELTASTREAM, {
+  Abilities.RegisterEffects(Abilitydex.DELTASTREAM, {
     onSwitchIn: function(pokemon) {
       if ($Battle.weather === Weathers.StrongWinds) return;
       $Battle.setWeather(Weathers.StrongWinds, -1);
@@ -32,7 +32,7 @@ namespace PE {
     }
   });
 
-  RegisterAbilityEffects(Abilitydex.DRIZZLE, {
+  Abilities.RegisterEffects(Abilitydex.DRIZZLE, {
     onSwitchIn: function(pokemon) {
       if ($Battle.weather in PrimalWeathers || $Battle.weather === Weathers.RainDance || $Battle.weatherDuration < 0) return;
       let duration = pokemon.hasItem("DAMPROCK") ? 8 : 5;
@@ -43,7 +43,7 @@ namespace PE {
     }
   });
 
-  RegisterAbilityEffects(Abilitydex.DROUGHT, {
+  Abilities.RegisterEffects(Abilitydex.DROUGHT, {
     onSwitchIn: function(pokemon) {
       if ($Battle.weather in PrimalWeathers || $Battle.weather === Weathers.SunnyDay || $Battle.weatherDuration < 0) return;
       console.log("llegue aqui");
@@ -56,7 +56,7 @@ namespace PE {
     }
   });
 
-  RegisterAbilityEffects(Abilitydex.SANDSTREAM, {
+  Abilities.RegisterEffects(Abilitydex.SANDSTREAM, {
     onSwitchIn: function(pokemon) {
       if ($Battle.weather in PrimalWeathers || $Battle.weather === Weathers.SandStorm || $Battle.weatherDuration < 0) return;
       let duration = pokemon.hasItem("SMOOTHROCK") ? 8 : 5;
@@ -68,7 +68,7 @@ namespace PE {
     }
   });
 
-  RegisterAbilityEffects(Abilitydex.SNOWWARNING, {
+  Abilities.RegisterEffects(Abilitydex.SNOWWARNING, {
     onSwitchIn: function(pokemon) {
       if ($Battle.weather in PrimalWeathers || $Battle.weather === Weathers.Hail || $Battle.weatherDuration < 0) return;
       let duration = pokemon.hasItem("ICYROCK") ? 8 : 5;
@@ -79,7 +79,7 @@ namespace PE {
     }
   });
 
-  RegisterAbilitiesEffects([Abilitydex.AIRLOCK, Abilitydex.CLOUDNINE], {
+  Abilities.RegisterEffects([Abilitydex.AIRLOCK, Abilitydex.CLOUDNINE], {
     onSwitchIn: function(pokemon) {
       $Battle.clearWeather();
       $Battle.showAbilitySign(pokemon);
@@ -88,7 +88,7 @@ namespace PE {
     }
   });
 
-  RegisterAbilityEffects(Abilitydex.INTIMIDATE, {
+  Abilities.RegisterEffects(Abilitydex.INTIMIDATE, {
     onSwitchIn: function(pokemon) {
       for (const battler of $Battle.actives) {
         if (pokemon.isOpposing(battler.index) && !battler.hasAbility(Abilitydex.FULLMETALBODY)) {
@@ -100,14 +100,14 @@ namespace PE {
     }
   });
 
-  RegisterAbilityEffects(Abilitydex.FULLMETALBODY, {
+  Abilities.RegisterEffects(Abilitydex.FULLMETALBODY, {
     // onBoost: function(target, source) {
     //   if (source && source === target) return;
     //   if (target.stages[stat] < 0) target.stages[stat] === 0;
     // }
   });
 
-  RegisterAbilityEffects(Abilitydex.SWIFTSWIM, {
+  Abilities.RegisterEffects(Abilitydex.SWIFTSWIM, {
     // modifyStat: function(stat, acc) {
     //   if (stat !== Stats.Speed) return acc;
     //   if ($Battle.weather !== Weathers.HeavyRain && $Battle.weather === Weathers.RainDance) return acc;

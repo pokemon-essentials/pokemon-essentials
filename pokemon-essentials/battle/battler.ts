@@ -442,7 +442,7 @@ namespace PE.Battle {
       let speed = this._speed;
       speed = Math.floor(speed * STAGE_MULT[this.stages.Speed]);
       let mod = 1;
-      if (ExistAbilityEffect(this.ability, "modifyStat")) mod = GetAbilityAffect(this.ability).modifyStat(Stats.Speed, mod, this);
+      mod = Abilities.Effects('modifyStat', this, mod);
       mod = Battle.Items.SpeedStatEffects(this, mod);
       if (this.sides.own.effects.Tailwind > 0) mod *= 2;
       if (this.sides.own.effects.Swamp) mod = Math.round(mod / 2);

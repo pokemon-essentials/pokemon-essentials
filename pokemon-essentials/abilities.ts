@@ -12,24 +12,7 @@ namespace PE {
      * @param acc stats modify accumulate by other factors
      * @param pokmeon
      */
-    modifyStat?(pokmeon: Battle.Battler, acc: number, ): number;
-  }
-
-  export function RegisterAbilityEffects(ability: Abilitydex, effects: IAbilitiesEffects) {
-    ABILITIES_EFFECTS[ability] = effects;
-  }
-  export function RegisterAbilitiesEffects(abilities: Abilitydex[], effects: IAbilitiesEffects) {
-    for (const ability of abilities) {
-      ABILITIES_EFFECTS[ability] = effects;
-    }
-  }
-
-  export function ExistAbilityEffect(ability: Abilitydex, effect: string) {
-    return ABILITIES_EFFECTS[ability] && ABILITIES_EFFECTS[ability][effect];
-  }
-
-  export function GetAbilityAffect(ability: Abilitydex): IAbilitiesEffects {
-    return ABILITIES_EFFECTS[ability];
+    modifyStat?(pokmeon: Battle.Battler, acc: number): number;
   }
 }
 
@@ -41,6 +24,16 @@ namespace PE.Abilities {
   export function Effects(effect: string, pokemon: Battle.Battler, ...args) {
     if (ABILITIES_EFFECTS[pokemon.ability] && ABILITIES_EFFECTS[pokemon.ability][effect]) {
       return ABILITIES_EFFECTS[pokemon.ability][effect](pokemon, ...args);
+    }
+  }
+
+  export function RegisterEffects(ability: Abilitydex | Abilitydex[], effects: IAbilitiesEffects) {
+    if (Array.isArray(ability)) {
+      for (const a of ability) {
+        ABILITIES_EFFECTS[a] = effects;
+      }
+    } else {
+      ABILITIES_EFFECTS[ability] = effects;
     }
   }
 }
