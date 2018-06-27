@@ -34,8 +34,9 @@ namespace PE {
 
   Abilities.RegisterEffects(Abilitydex.DRIZZLE, {
     onSwitchIn: function(pokemon) {
-      if ($Battle.weather in PrimalWeathers || $Battle.weather === Weathers.RainDance || $Battle.weatherDuration < 0) return;
-      let duration = pokemon.hasItem("DAMPROCK") ? 8 : 5;
+      if ($Battle.weather in PrimalWeathers || $Battle.weather === Weathers.RainDance || $Battle.weatherDuration < 0)
+        return;
+      let duration = pokemon.hasItem(Itemdex.DampRock) ? 8 : 5;
       $Battle.setWeather(Weathers.RainDance, duration);
       $Battle.showAbilitySign(pokemon);
       $Battle.showMessage(i18n._("%1's %2 made it rain!", pokemon.name, Abilities.getName(pokemon.ability)));
@@ -45,9 +46,10 @@ namespace PE {
 
   Abilities.RegisterEffects(Abilitydex.DROUGHT, {
     onSwitchIn: function(pokemon) {
-      if ($Battle.weather in PrimalWeathers || $Battle.weather === Weathers.SunnyDay || $Battle.weatherDuration < 0) return;
-      console.log("llegue aqui");
-      let duration = pokemon.hasItem("HEATROCK") ? 8 : 5;
+      if ($Battle.weather in PrimalWeathers || $Battle.weather === Weathers.SunnyDay || $Battle.weatherDuration < 0)
+        return;
+      console.log('llegue aqui');
+      let duration = pokemon.hasItem(Itemdex.HeatRock) ? 8 : 5;
       $Battle.setWeather(Weathers.SunnyDay, duration);
       $Battle.showAbilitySign(pokemon);
       let msg = "%1's %2 intensified the sun's rays!";
@@ -58,8 +60,9 @@ namespace PE {
 
   Abilities.RegisterEffects(Abilitydex.SANDSTREAM, {
     onSwitchIn: function(pokemon) {
-      if ($Battle.weather in PrimalWeathers || $Battle.weather === Weathers.SandStorm || $Battle.weatherDuration < 0) return;
-      let duration = pokemon.hasItem("SMOOTHROCK") ? 8 : 5;
+      if ($Battle.weather in PrimalWeathers || $Battle.weather === Weathers.SandStorm || $Battle.weatherDuration < 0)
+        return;
+      let duration = pokemon.hasItem(Itemdex.SmoothRock) ? 8 : 5;
       $Battle.setWeather(Weathers.SandStorm, duration);
       $Battle.showAbilitySign(pokemon);
       let msg = "%1's %2 whipped up a sandstorm!";
@@ -71,7 +74,7 @@ namespace PE {
   Abilities.RegisterEffects(Abilitydex.SNOWWARNING, {
     onSwitchIn: function(pokemon) {
       if ($Battle.weather in PrimalWeathers || $Battle.weather === Weathers.Hail || $Battle.weatherDuration < 0) return;
-      let duration = pokemon.hasItem("ICYROCK") ? 8 : 5;
+      let duration = pokemon.hasItem(Itemdex.IcyRock) ? 8 : 5;
       $Battle.setWeather(Weathers.Hail, duration);
       $Battle.showAbilitySign(pokemon);
       $Battle.showMessage(i18n._("%1's %2 made it hail!", pokemon.name, Abilities.getName(pokemon.ability)));
@@ -81,10 +84,10 @@ namespace PE {
 
   Abilities.RegisterEffects([Abilitydex.AIRLOCK, Abilitydex.CLOUDNINE], {
     onSwitchIn: function(pokemon) {
+      $Battle.showMessage(i18n._('%1 has %2', pokemon.name, Abilities.getName(pokemon.ability)));
       $Battle.clearWeather();
       $Battle.showAbilitySign(pokemon);
-      $Battle.showMessage(i18n._("%1 has %2", pokemon.name, Abilities.getName(pokemon.ability)));
-      $Battle.showMessage(i18n._("The effects of the weather disappeared."));
+      $Battle.showMessage(i18n._('The effects of the weather disappeared.'));
     }
   });
 
@@ -113,5 +116,62 @@ namespace PE {
     //   if ($Battle.weather !== Weathers.HeavyRain && $Battle.weather === Weathers.RainDance) return acc;
     //   return acc * 2;
     // }
+  });
+
+  Abilities.RegisterEffects(Abilitydex.PRESSURE, {
+    onSwitchIn: function(pokemon) {
+      $Battle.showAbilitySign(pokemon);
+      $Battle.showMessage(i18n._('%1 is exerting its pressure!', pokemon.name));
+    }
+  });
+
+  Abilities.RegisterEffects(Abilitydex.MOLDBREAKER, {
+    onSwitchIn: function(pokemon) {
+      $Battle.showAbilitySign(pokemon);
+      $Battle.showMessage(i18n._('%1 breaks the mold!', pokemon.name));
+    }
+  });
+
+  Abilities.RegisterEffects(Abilitydex.TURBOBLAZE, {
+    onSwitchIn: function(pokemon) {
+      $Battle.showAbilitySign(pokemon);
+      $Battle.showMessage(i18n._('%1 is radiating a blazing aura!', pokemon.name));
+    }
+  });
+
+  Abilities.RegisterEffects(Abilitydex.TERAVOLT, {
+    onSwitchIn: function(pokemon) {
+      $Battle.showAbilitySign(pokemon);
+      $Battle.showMessage(i18n._('%1 is radiating a bursting aura!', pokemon.name));
+    }
+  });
+
+  Abilities.RegisterEffects(Abilitydex.DARKAURA, {
+    onSwitchIn: function(pokemon) {
+      $Battle.showAbilitySign(pokemon);
+      $Battle.showMessage(i18n._('%1 is radiating a dark aura!', pokemon.name));
+    }
+  });
+
+  Abilities.RegisterEffects(Abilitydex.FAIRYAURA, {
+    onSwitchIn: function(pokemon) {
+      $Battle.showAbilitySign(pokemon);
+      $Battle.showMessage(i18n._('%1 is radiating a fairy aura!', pokemon.name));
+    }
+  });
+
+  Abilities.RegisterEffects(Abilitydex.AURABREAK, {
+    onSwitchIn: function(pokemon) {
+      $Battle.showAbilitySign(pokemon);
+      $Battle.showMessage(i18n._("%1 reversed all other Pokémon's auras!", pokemon.name));
+    }
+  });
+
+  Abilities.RegisterEffects(Abilitydex.SLOWSTART, {
+    onSwitchIn: function(pokemon) {
+      $Battle.showAbilitySign(pokemon);
+      var msg = "%1 can't get it going because of its %2!";
+      $Battle.showMessage(i18n._(msg, pokemon.name, Abilities.getName(pokemon.ability)));
+    }
   });
 }
