@@ -1,5 +1,3 @@
-/// <reference path="../weather.ts" />
-
 namespace PE.Battle {
   const CHARACTERS_PER_LINE = 40;
 
@@ -18,7 +16,7 @@ namespace PE.Battle {
   export const enum WaitMode {
     None,
     Animation,
-    AbilitySing
+    AbilitySign
   }
   export const enum ActionChoices {
     UseMove,
@@ -50,10 +48,10 @@ namespace PE.Battle {
     /** Opponents Pokémon Trainers*/
     static opponents: Trainers.Trainer[];
 
-    static trainers: {player: Trainers.Trainer[]; foe: Trainers.Trainer[]};
+    static trainers: { player: Trainers.Trainer[]; foe: Trainers.Trainer[] };
     /**  The initial order of Pokémon in the player's party.*/
     static partyOrder = [];
-    static sides: {player: ActiveSide; foe: ActiveSide};
+    static sides: { player: ActiveSide; foe: ActiveSide };
     static field: ActiveField;
     static enviroment: Enviroments;
     static weather: Weathers;
@@ -86,11 +84,11 @@ namespace PE.Battle {
 
     static setup(opponets: Trainers.Trainer[], allies: Trainers.Trainer[]) {
       allies.unshift($Player);
-      this.trainers = {player: allies, foe: opponets};
+      this.trainers = { player: allies, foe: opponets };
       this.player = $Player;
       this.opponents = opponets;
       this.field = new ActiveField();
-      this.sides = {player: new ActiveSide(), foe: new ActiveSide()};
+      this.sides = { player: new ActiveSide(), foe: new ActiveSide() };
       this.actives = [];
       this.battlers = [];
       for (const trainer of allies) {
@@ -164,11 +162,11 @@ namespace PE.Battle {
     }
 
     static isUnlosableItem(pokemon: Battler, item) {
-      throw Error('Not Implemented');
+      throw Error("Not Implemented");
     }
 
     static canChooseNonActive(...args) {
-      throw Error('Not Implemented');
+      throw Error("Not Implemented");
     }
 
     static checkGlobalAbility(ability: Abilitydex) {
@@ -217,17 +215,17 @@ namespace PE.Battle {
         if (showMessages) this.showMessage(i18n._("There's no PP left for this move!"));
         return false;
       }
-      if (pokemon.hasItem('ASSAULTVEST') && move.isStatus()) {
+      if (pokemon.hasItem("ASSAULTVEST") && move.isStatus()) {
         if (showMessages) {
-          let msg = 'The effects of the %1 prevent status moves from being used!';
+          let msg = "The effects of the %1 prevent status moves from being used!";
           this.showMessage(i18n._(msg, Items.name(pokemon.item)));
         }
         return false;
       }
-      if (pokemon.hasItemIn(['CHOICEBAND', 'CHOICESPECS', 'CHOICESCARF']) && pokemon.effects.ChoiceBand !== undefined) {
+      if (pokemon.hasItemIn(["CHOICEBAND", "CHOICESPECS", "CHOICESCARF"]) && pokemon.effects.ChoiceBand !== undefined) {
         if (move.id !== pokemon.effects.ChoiceBand) {
           if (showMessages) {
-            let msg = '%1 allows the use of only %2!';
+            let msg = "%1 allows the use of only %2!";
             this.showMessage(i18n._(msg, Items.name(pokemon.item), move.name));
           }
           return false;
@@ -257,7 +255,7 @@ namespace PE.Battle {
         return false;
       }
       // if (move.id === "BELCH" && pokemon.belch) {
-      if (move.id === 'BELCH') {
+      if (move.id === "BELCH") {
         if (showMessages) {
           let msg = "%1 hasn't eaten any held berry, so it can't possibly belch!";
           this.showMessage(i18n._(msg, pokemon.name, move.name));
@@ -361,15 +359,13 @@ namespace PE.Battle {
     //==================================================================================================================
 
     static start() {
-      console.log('Battle Start');
-      $Battle.showPausedMessage(i18n._('A wild %1 has apeared!', this.trainers.foe[0].party[0].name));
-      $Battle.showMessage(i18n._('Go %1!', this.trainers.player[0].party[0].name));
+      console.log("Battle Start");
+      $Battle.showPausedMessage(i18n._("A wild %1 has apeared!", this.trainers.foe[0].party[0].name));
+      $Battle.showMessage(i18n._("Go %1!", this.trainers.player[0].party[0].name));
       let priority = this.getPriority();
       for (const index of priority) {
         let pokemon = this.battlers[index];
-        if (ABILITIES_EFFECTS[pokemon.ability] && ABILITIES_EFFECTS[pokemon.ability].onSwitchIn) {
-          ABILITIES_EFFECTS[pokemon.ability].onSwitchIn(pokemon);
-        }
+        Abilities.Effects("onSwitchIn", pokemon);
       }
       this.push(() => (this.started = true));
     }
@@ -384,7 +380,7 @@ namespace PE.Battle {
     }
 
     static push(method, scope: any = this) {
-      this._queue.push({method: method, scope: scope});
+      this._queue.push({ method: method, scope: scope });
     }
 
     static pop() {
@@ -395,7 +391,7 @@ namespace PE.Battle {
 
     static terminate() {
       this.clear();
-      console.log('Battle End');
+      console.log("Battle End");
     }
 
     static clear() {
@@ -413,12 +409,12 @@ namespace PE.Battle {
       this.push(() => {
         while (msg.length > CHARACTERS_PER_LINE) {
           let line = msg.substring(0, CHARACTERS_PER_LINE);
-          let truncateIndex = Math.min(line.length, line.lastIndexOf(' '));
+          let truncateIndex = Math.min(line.length, line.lastIndexOf(" "));
           line = line.substring(0, truncateIndex);
-          $gameMessage.add(line + '\\n');
+          $gameMessage.add(line + "\\n");
           msg = msg.substring(truncateIndex + 1);
         }
-        $gameMessage.add(msg + '\\|\\^');
+        $gameMessage.add(msg + "\\|\\^");
       });
     }
 
@@ -427,9 +423,9 @@ namespace PE.Battle {
       this.push(() => {
         while (msg.length > CHARACTERS_PER_LINE) {
           let line = msg.substring(0, CHARACTERS_PER_LINE);
-          let truncateIndex = Math.min(line.length, line.lastIndexOf(' '));
+          let truncateIndex = Math.min(line.length, line.lastIndexOf(" "));
           line = line.substring(0, truncateIndex + 1);
-          $gameMessage.add(line + '\\n');
+          $gameMessage.add(line + "\\n");
           msg = msg.substring(truncateIndex + 1);
         }
         $gameMessage.add(msg);
@@ -458,7 +454,7 @@ namespace PE.Battle {
           let enter = this.battlers[choice.index];
           this.actives[this.currentInx] = enter;
           out.sides.own.actives[this.currentInx] = enter;
-          Abilities.OnSwitchInEffects(enter, true);
+          Abilities.Effects("onSwitchIn", enter);
         }
       }
 
@@ -471,7 +467,7 @@ namespace PE.Battle {
         if (choice.action === ActionChoices.UseMove) {
           console.log(`${user.name} Speed: ${user.speed}`);
           console.log(`${user.name} used ${choice.move.name}, move priority: ${choice.move.priority}`);
-          this.showMessage(i18n._('%1 used %2', user.name, choice.move.name));
+          this.showMessage(i18n._("%1 used %2", user.name, choice.move.name));
           let d = this.getDamage(user, target, choice.move);
           if (d > 0) {
             // target.damage(d)
@@ -488,10 +484,10 @@ namespace PE.Battle {
       // http://bulbapedia.bulbagarden.net/wiki/Damage
       let atk = 0;
       let def = 0;
-      if (move.category == 'SPECIAL') {
+      if (move.category == "SPECIAL") {
         atk = source.spatk;
         def = target.spdef;
-      } else if (move.category == 'PHYSICAL') {
+      } else if (move.category == "PHYSICAL") {
         atk = source.attack;
         def = target.defense;
       } else {
@@ -534,12 +530,12 @@ namespace PE.Battle {
       };
     }
 
-    static showAbilityIndicator(pokemon: Battler) {
+    static showAbilitySign(pokemon: Battler) {
       let ability = pokemon.ability;
       this.push(() => {
         let foe = this.isOpposing(pokemon.index);
         this.scene.showAbilityIndicator(ability, foe);
-        this.waitMode = WaitMode.AbilitySing;
+        this.waitMode = WaitMode.AbilitySign;
       });
     }
 
@@ -566,7 +562,7 @@ namespace PE.Battle {
     }
 
     static nextPickupUse(): string {
-      throw Error('not implemented');
+      throw Error("not implemented");
     }
 
     static recoverHPAnimation(index: number) {

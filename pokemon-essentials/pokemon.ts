@@ -31,14 +31,14 @@ namespace PE.Pokemon {
     pokedex = "";
     genderRatio = { M: .5, F: .5 };
   }
-  
+
   export class Pokemon extends PokemonData {
     exp: number;
     itemRecycle: string;
     itemInitial: string;
     statusCount: number;
     status: Statuses;
-    ability: string;
+    ability: Abilitydex;
     abilityInx: number;
     evs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
     fainted = false;

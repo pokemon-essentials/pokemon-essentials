@@ -23,7 +23,7 @@ namespace PE.Battle.UI {
       this.bitmap.outlineWidth = 3;
       this.bitmap.fontSize = 20;
       this.bitmap.fillAll("rgba(0,0,0,0.7)");
-      this.bitmap.drawText(Abilities.name(ability), 0, 0, 224, 32, "center");
+      this.bitmap.drawText(Abilities.getName(ability), 0, 0, 224, 32, "center");
       this.ticks = 0;
     }
 
