@@ -43,11 +43,11 @@ Once you have setup the development environment follow the following steps to in
 
 ### Run and Build
 
-There are some gulp task defined to build the project. All the **.ts** files in the ts directory will be traspiled and concatenated into a single output **.js** file in the dist directory.
+There are some gulp task defined to build the project. All the **.ts** files in the ts directory will be traspiled into ES2015 javascript files in the dist folder and all the generated .js files will be injected into the project/index.html to run the game.
 
-use ``` gulp dev-build ``` to build the minified file.
+use ``` gulp dev-build ``` to build generate the .js files.
 
-use ``` gulp watch ``` to build a the **.js** file and watch for changes.
+use ``` gulp watch ``` to build generate the .js files and watch for changes to rebuild.
 
 #### Run
 locate command line in the root directory of the project where is the package.json file and run ```nw .```
@@ -59,7 +59,7 @@ nw .
 
 ## Discord Server
 
-https://discord.gg/eFPUx6m
+For any question or futher information, please contact me in the discord server https://discord.gg/eFPUx6m
 
 ## License
 
