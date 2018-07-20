@@ -124,16 +124,17 @@ namespace PE.Battle.UI {
 
     update() {
       super.update();
-      if (this.animate && this.__damage > 0) this.updateDamage();
+      // if (this.animate && this.__damage > 0) this.updateDamage();
     }
 
     damage(hp) {
-      this.__damage = hp;
+      // this.__damage = hp;
+      this.currentHP -= hp;
+      if (this.currentHP <= 0) this.currentHP = 0;
+      this.updateDamage();
     }
 
     updateDamage() {
-      this.currentHP--;
-      this.__damage--;
       if (this.indicator) {
         this.indicator.bitmap.clear();
         this.indicator.bitmap.drawText(`${this.currentHP}/${this.pokemon.totalhp}`, this._x + 32, this.box.y + 8, 200, 24, "left");
@@ -141,12 +142,6 @@ namespace PE.Battle.UI {
       // 192 is original the bar width
       let width = Math.max(0, (192 * this.currentHP) / this.pokemon.totalhp);
       this.bar.setFrame(0, 0, width, 24);
-      if (this.currentHP === 0) {
-        this.__damage = 0;
-      }
-      if (this.__damage === 0) {
-        this.complete();
-      }
     }
 
     start() {

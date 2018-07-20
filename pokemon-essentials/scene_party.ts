@@ -168,9 +168,9 @@ namespace PE.Party {
 
 
     SwitchIn() {
-      if ($Battle.canSwitch($Battle.currentInx, $Player.battlers[this.inx].index, false)) {
+      // if ($Battle.canSwitch($Battle.currentInx, $Player.battlers[this.inx].index, false)) {
         $Battle.switchIn($Player.battlers[this.inx].index);
-      }
+      // }
       // let aux = $Player.party[0];
       // $Player.party[0] = $Player.party[this.inx];
       // $Player.party[this.inx] = aux;

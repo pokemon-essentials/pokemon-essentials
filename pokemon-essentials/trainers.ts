@@ -1,5 +1,4 @@
 namespace PE.Trainers {
-
   export interface TrainerData {
     name: string;
     party: Pokemon.Pokemon[];
@@ -31,9 +30,6 @@ namespace PE.Trainers {
     get leader() {
       return this.data.party[0];
     }
-
-
-
   }
 
   export class Player extends Trainer {
@@ -45,13 +41,14 @@ namespace PE.Trainers {
   export class NPCTrainer extends Trainer {
     constructor(party: Pokemon.Pokemon[]) {
       super();
-      if (party.length === 0) throw Error('Trainer must have at least one Pokémon in party');
+      if (party.length === 0) throw Error("Trainer must have at least one Pokémon in party");
       this.data = { name: "", party: party };
     }
   }
 
   export function RandomTrainer() {
     let length = Math.randomInt(5) + 1;
+    // let length = 1;
     let party = [];
     for (let i = 0; i < length; i++) {
       party.push(Pokemon.getRandomPokemon());

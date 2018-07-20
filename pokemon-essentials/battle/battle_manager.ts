@@ -7,11 +7,11 @@ namespace PE.Battle {
   }
 
   export const enum Phase {
-    None,
-    Init,
-    ActionSelection,
-    MoveSelection,
-    Animation
+    None = "None",
+    Init = "Init",
+    ActionSelection = "ActionSelection",
+    MoveSelection = "MoveSelection",
+    Animation = "Animation"
   }
   export const enum WaitMode {
     None,
@@ -161,134 +161,9 @@ namespace PE.Battle {
       return false;
     }
 
-    static isUnlosableItem(pokemon: Battler, item) {
-      throw Error("Not Implemented");
-    }
-
-    static canChooseNonActive(...args) {
-      throw Error("Not Implemented");
-    }
-
-    static checkGlobalAbility(ability: Abilitydex) {
-      for (const battler of this.actives) {
-        if (battler.hasAbility(ability)) return battler;
-      }
-      return undefined;
-    }
-    //endregion
-    //==================================================================================================================
-
-    //==================================================================================================================
-    //region Check whether actions can be taken
-    static canShowCommands(index: number) {
-      let pokemon = this.battlers[index];
-      if (pokemon.isFainted()) return false;
-      if (
-        pokemon.effects.TwoTurnAttack > 0 ||
-        pokemon.effects.HyperBeam > 0 ||
-        pokemon.effects.Rollout > 0 ||
-        pokemon.effects.Outrage > 0 ||
-        pokemon.effects.Uproar > 0 ||
-        pokemon.effects.Bide > 0
-      ) {
-        return false;
-      }
-      return true;
-    }
-
-    static canShowMovesSelection(index: number) {
-      let pokemon = this.battlers[index];
-      if (!this.canShowCommands(index)) return false;
-      let found = false;
-      for (const move of pokemon.moveset) {
-        if (this.canChooseMove(index, move, false)) found = true;
-      }
-      if (!found) return false;
-      if (pokemon.effects.Encore) return false;
-      return true;
-    }
-
-    static canChooseMove(index, move, showMessages, sleeptalk = false) {
-      let pokemon = this.battlers[index];
-      if (!move) return;
-      if (move.pp <= 0 && move.totalpp > 0 && sleeptalk) {
-        if (showMessages) this.showMessage(i18n._("There's no PP left for this move!"));
-        return false;
-      }
-      if (pokemon.hasItem("ASSAULTVEST") && move.isStatus()) {
-        if (showMessages) {
-          let msg = "The effects of the %1 prevent status moves from being used!";
-          this.showMessage(i18n._(msg, Items.name(pokemon.item)));
-        }
-        return false;
-      }
-      if (pokemon.hasItemIn(["CHOICEBAND", "CHOICESPECS", "CHOICESCARF"]) && pokemon.effects.ChoiceBand !== undefined) {
-        if (move.id !== pokemon.effects.ChoiceBand) {
-          if (showMessages) {
-            let msg = "%1 allows the use of only %2!";
-            this.showMessage(i18n._(msg, Items.name(pokemon.item), move.name));
-          }
-          return false;
-        }
-      }
-      if (pokemon.effects.Imprison) {
-        for (const battler of this.sides.foe.actives) {
-          if (battler.hasMove(move.id)) {
-            this.showMessage(i18n._("%1 can't use the sealed %2!", pokemon.name, move.name));
-            return false;
-          }
-        }
-      }
-      if (pokemon.effects.Taunt > 0 && move.basePower <= 0) {
-        if (showMessages) this.showMessage(i18n._("%1 can't use %2 after the taunt!", pokemon.name, move.name));
-        return false;
-      }
-      if (pokemon.effects.Torment && move.id === this.lastMoveUsed) {
-        if (showMessages) {
-          let msg = "%1 can't use the same move twice in a row due to the torment!";
-          this.showMessage(i18n._(msg, pokemon.name, move.name));
-        }
-        return false;
-      }
-      if (pokemon.effects.DisableMove === move.id && sleeptalk) {
-        if (showMessages) this.showMessage(i18n._("%1's %2 is disabled!", pokemon.name, move.name));
-        return false;
-      }
-      // if (move.id === "BELCH" && pokemon.belch) {
-      if (move.id === "BELCH") {
-        if (showMessages) {
-          let msg = "%1 hasn't eaten any held berry, so it can't possibly belch!";
-          this.showMessage(i18n._(msg, pokemon.name, move.name));
-        }
-        return false;
-      }
-      if (pokemon.effects.Encore > 0 && pokemon.effects.EncoreMoveId !== move.index) {
-        return false;
-      }
-      return true;
-    }
-
-    //endregion
-    //==================================================================================================================
-
     //------------------------------------------------------------------------------------------------------------------
     //region Attacking
 
-    static autoChooseMove(index, showMessages = true) {
-      let pokemon = this.battlers[index];
-      if (pokemon.isFainted()) {
-        this.choices[pokemon.index] = undefined;
-        return;
-      }
-      if (pokemon.effects.Encore && this.canChooseMove(pokemon.index, pokemon.effects.EncoreMoveId, false)) {
-        console.log(`[Auto choosing Encore move] ${pokemon.effects.EncoreMoveId}`);
-        this.choices = {
-          action: ActionChoices.UseMove,
-          move: pokemon.effects.EncoreMoveId,
-          target: pokemon.sides.foe.actives[0]
-        };
-      }
-    }
     static getPriority() {
       let speeds = [];
       let mPriorities = [];
@@ -337,24 +212,14 @@ namespace PE.Battle {
       } while (swapped);
       return priorityQueue;
     }
-    //endregion
-    //------------------------------------------------------------------------------------------------------------------
-
-    //==================================================================================================================
-    // Switching Pokémon.
-    static canSwitchLax() {}
-
-    static canSwitch(currIndex, switchingIndex, showMessages, ignoreMeanLook = false) {
-      // let currPokemon =
-      return true;
-    }
 
     static switchIn(index: number) {
       this.choices[this.currentInx] = {
         action: ActionChoices.Switch,
         index: index
       };
-      this.runActions();
+
+      // this.runActions();
     }
     //==================================================================================================================
 
@@ -405,6 +270,7 @@ namespace PE.Battle {
     }
 
     static showMessage(msg: string) {
+      return;
       msg = Utils.capitalize(msg);
       this.push(() => {
         while (msg.length > CHARACTERS_PER_LINE) {
@@ -419,6 +285,7 @@ namespace PE.Battle {
     }
 
     static showPausedMessage(msg: string) {
+      return;
       msg = Utils.capitalize(msg);
       this.push(() => {
         while (msg.length > CHARACTERS_PER_LINE) {
@@ -433,7 +300,7 @@ namespace PE.Battle {
     }
 
     static changePhase(phase: Phase) {
-      console.log(phase);
+      console.log("Battle Phase: " + phase);
       this.push(() => (this.phase = phase));
     }
 
@@ -467,16 +334,28 @@ namespace PE.Battle {
         if (choice.action === ActionChoices.UseMove) {
           console.log(`${user.name} Speed: ${user.speed}`);
           console.log(`${user.name} used ${choice.move.name}, move priority: ${choice.move.priority}`);
-          this.showMessage(i18n._("%1 used %2", user.name, choice.move.name));
           let d = this.getDamage(user, target, choice.move);
           if (d > 0) {
-            // target.damage(d)
-            this.push(() => target.damage(d));
-            // console.log(`Damage: ${d}`);
-            // console.log(`${target.name} HP: ${target.totalhp} --> ${target.hp}`);
+            // this.push(() => target.damage(d));
+            console.log(`Damage: ${d}`);
+            console.log(`${target.name} HP: ${target.totalhp} --> ${target.hp}`);
+            target.damage(d);
           }
+          this.showMessage(i18n._("%1 used %2", user.name, choice.move.name));
         }
       }
+
+      // check faint
+      for (const b of this.actives) {
+        if (b.isFainted() && this.isOpposing(b.index)) {
+          if (b.sides.own.isAnyUnfainted()) {
+            let index = IAselectNextPokemon(b.index);
+            this.switchIn(index);
+          }
+          this.terminate();
+        }
+      }
+
       this.changePhase(Phase.ActionSelection);
     }
 
@@ -583,4 +462,13 @@ function DummySelection(battler: PE.Battle.Battler) {
     move: battler.moveset[0],
     target: 0
   };
+}
+
+function IAselectNextPokemon(index) {
+  for (const pokeindex of $Battle.sides.foe.battlers) {
+    if (index === pokeindex) continue;
+    let pokemon = $Battle.battlers[pokeindex];
+    if (!pokemon.isFainted()) return index;
+  }
+  return;
 }

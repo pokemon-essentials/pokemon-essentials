@@ -1,32 +1,31 @@
 namespace PE.Battle {
   interface SideEffects {
-    CraftyShield?: boolean,
-    EchoedVoiceCounter?: number,
-    EchoedVoiceUsed?: boolean,
-    LastRoundFainted?: number,
-    LightScreen?: number,
-    LuckyChant?: number,
-    MatBlock?: boolean,
-    Mist?: number,
-    QuickGuard?: boolean,
-    Rainbow?: number,
-    Reflect?: number,
-    Round?: number,
-    Safeguard?: number,
-    SeaOfFire?: number,
-    Spikes?: number,
-    StealthRock?: boolean,
-    StickyWeb?: boolean,
-    Swamp?: number,
+    CraftyShield?: boolean;
+    EchoedVoiceCounter?: number;
+    EchoedVoiceUsed?: boolean;
+    LastRoundFainted?: number;
+    LightScreen?: number;
+    LuckyChant?: number;
+    MatBlock?: boolean;
+    Mist?: number;
+    QuickGuard?: boolean;
+    Rainbow?: number;
+    Reflect?: number;
+    Round?: number;
+    Safeguard?: number;
+    SeaOfFire?: number;
+    Spikes?: number;
+    StealthRock?: boolean;
+    StickyWeb?: boolean;
+    Swamp?: number;
     /** Tail wind effets turn count */
-    Tailwind?: number,
-    ToxicSpikes?: number,
-    WideGuard?: boolean
-
+    Tailwind?: number;
+    ToxicSpikes?: number;
+    WideGuard?: boolean;
   }
 
   export class ActiveSide {
-    battlers: number[];
+    battlers: Battler[];
     /** The indexes of active Pokémon in Battle of this side */
     actives: Battler[];
 
@@ -57,23 +56,30 @@ namespace PE.Battle {
       this.effects.ToxicSpikes = 0;
       this.effects.WideGuard = false;
     }
+
+    isAnyUnfainted() {
+      for (const pokeindex of this.battlers) {
+        if (!$Battle.battlers[pokeindex].isFainted()) return true;
+      }
+      return false;
+    }
   }
 
   interface FieldEffects {
-    Electrify?: boolean,
-    ElectricTerrain?: number,
-    FairyLock?: number,
-    FusionBolt?: boolean,
-    FusionFlare?: boolean,
-    GrassyTerrain?: number,
-    Gravity?: number,
-    IonDeluge?: boolean,
-    MagicRoom?: number,
-    MistyTerrain?: number,
-    MudSportField?: number,
-    TrickRoom?: number,
-    WaterSportField?: number,
-    WonderRoom?: number,
+    Electrify?: boolean;
+    ElectricTerrain?: number;
+    FairyLock?: number;
+    FusionBolt?: boolean;
+    FusionFlare?: boolean;
+    GrassyTerrain?: number;
+    Gravity?: number;
+    IonDeluge?: boolean;
+    MagicRoom?: number;
+    MistyTerrain?: number;
+    MudSportField?: number;
+    TrickRoom?: number;
+    WaterSportField?: number;
+    WonderRoom?: number;
   }
 
   export class ActiveField {

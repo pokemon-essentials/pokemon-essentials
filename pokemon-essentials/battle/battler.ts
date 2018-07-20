@@ -442,11 +442,11 @@ namespace PE.Battle {
       let speed = this._speed;
       speed = Math.floor(speed * STAGE_MULT[this.stages.Speed]);
       let mod = 1;
-      mod = Abilities.Effects('modifyStat', this, mod);
-      mod = Battle.Items.SpeedStatEffects(this, mod);
-      if (this.sides.own.effects.Tailwind > 0) mod *= 2;
-      if (this.sides.own.effects.Swamp) mod = Math.round(mod / 2);
-      if (this.status === Statuses.Paralysis && !this.hasAbility(Abilitydex.QUICKFEET)) mod = Math.round(mod / 4);
+      // mod = Abilities.Effects('modifyStat', this, mod);
+      // mod = Battle.Items.SpeedStatEffects(this, mod);
+      // if (this.sides.own.effects.Tailwind > 0) mod *= 2;
+      // if (this.sides.own.effects.Swamp) mod = Math.round(mod / 2);
+      // if (this.status === Statuses.Paralysis && !this.hasAbility(Abilitydex.QUICKFEET)) mod = Math.round(mod / 4);
       speed = Math.round(speed * mod);
       return Math.max(1, speed);
     }
@@ -454,7 +454,7 @@ namespace PE.Battle {
     damage(amt) {
       this._hp -= amt;
       this.hpbar.damage(amt);
-      $Battle.recoverHPAnimation(this.index);
+      // $Battle.recoverHPAnimation(this.index);
       if (this._hp <= 0) {
         this._hp = 0;
         this.faint();
@@ -819,7 +819,13 @@ namespace PE.Battle {
         (this.hasAbility(Abilitydex.LEAFGUARD) && ($Battle.weather === Weathers.SunnyDay || $Battle.weather === Weathers.HarshSun))
       ) {
         $Battle.showMessage(
-          i18n._("%1's %2 prevents %3's %4 from working!", this.name, Abilities.getName(this.ability), opponent.name, Abilities.getName(opponent.ability))
+          i18n._(
+            "%1's %2 prevents %3's %4 from working!",
+            this.name,
+            Abilities.getName(this.ability),
+            opponent.name,
+            Abilities.getName(opponent.ability)
+          )
         );
         return false;
       }
@@ -1364,7 +1370,9 @@ namespace PE.Battle {
         }
         if (this.partner.hasAbility(Abilitydex.FLOWERVEIL) && this.hasType("GRASS")) {
           let msg = "%1's %2 prevented %3's %4 from working!";
-          $Battle.showMessage(i18n._(msg, this.partner.name, Abilities.getName(this.partner.ability), opponent.name, Abilities.getName(opponent.ability)));
+          $Battle.showMessage(
+            i18n._(msg, this.partner.name, Abilities.getName(this.partner.ability), opponent.name, Abilities.getName(opponent.ability))
+          );
           return false;
         }
       }
@@ -1423,6 +1431,19 @@ namespace PE.Battle {
       //     pbBerryCureCheck
       //   end
       // end
+    }
+
+    selectAction() {
+      if (Utils.chance(30)) return ActionChoices.Switch;
+      return ActionChoices.UseMove;
+    }
+
+    action(battle) {
+      return new Promise((resolve, reject) => {
+        // console.log(`${this.species} - Level: ${this.level} - Speed: ${this.speed}`);
+        // console.log(`${this.species} used ${this.moveset[0].name}`);
+        resolve();
+      });
     }
   }
 }
