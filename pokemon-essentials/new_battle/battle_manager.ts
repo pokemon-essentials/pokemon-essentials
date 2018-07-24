@@ -15,10 +15,10 @@ enum InputPhases {
 }
 
 enum BattleActionType {
-  UseMove = "UseMove",
-  UseItem = "UseItem",
-  Switch = "Switch",
-  Run = "Run"
+  UseMove,
+  UseItem,
+  Switch,
+  Run
 }
 
 interface IBattleAction {
@@ -194,7 +194,6 @@ class Battle_Manager {
     // this._subject.sides.own.switchBattlers(this._subject.slotIndex, partyIndex);
     let change = this._subject.sides.own.nextUnfaited(this._subject.partyIndex);
     this._subject.sides.own.switchBattlers(this._subject.slotIndex, change.partyIndex);
-    console.log(`> ${this._subject.name} switch to ${change.name}`);
   }
 
   useMove(move: PE.Battle.Moves.Move, target) {
@@ -203,8 +202,11 @@ class Battle_Manager {
     this._subject.sides.foe.slots[target].damage(damage);
   }
 
-  getPriority(a, b) {
-    if (a.speed - b.speed) {
+  getPriority(a: Battle_Battler, b: Battle_Battler) {
+    if (b.getAction().type - a.getAction().type) {
+      return b.getAction().type - a.getAction().type;
+    }
+    if (b.speed - a.speed) {
       return b.speed - a.speed;
     }
     return Math.random() - 0.5;
@@ -264,7 +266,7 @@ class Battle_Manager {
         action = {
           targets: [0],
           type: BattleActionType.UseMove,
-          move: battler.moveset[0]
+          move: battler.getFirstDamageMove()
         };
       }
       battler.setAction(action);

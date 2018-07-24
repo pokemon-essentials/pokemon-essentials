@@ -4,7 +4,7 @@ class NewBattle_Scene extends Scene_Base {
     super();
     let p1 = [];
     let p2 = [];
-    for (let index = 0; index < 2; index++) {
+    for (let index = 0; index < 6; index++) {
       p1.push(PE.Pokemon.getRandomPokemon(100));
       p2.push(PE.Pokemon.getRandomPokemon(100));
     }

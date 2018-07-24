@@ -21,12 +21,19 @@ class Battle_Battler {
   }
 
   damage(damage) {
-    console.log(`~ damge ${damage} HP  ${this.pekemon.hp} --> ${this.pekemon.hp - damage} `);
+    console.log(`~ damage ${damage} ${this.name} HP  ${this.pekemon.hp} --> ${this.pekemon.hp - damage} `);
     this.pekemon.hp -= damage;
     if (this.pekemon.hp <= 0) {
-      console.log(`${this.species} fainted`);
+      console.log(`~ ${this.name} fainted`);
       this.pekemon.hp = 0;
     }
+  }
+
+  getFirstDamageMove() {
+    for (const move of this.moveset) {
+      if (move.basePower > 0) return move;
+    }
+    return this.moveset[0];
   }
 
   setAction(action: IBattleAction) {
