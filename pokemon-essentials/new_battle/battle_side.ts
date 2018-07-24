@@ -13,7 +13,7 @@ class Battle_Side {
   }
 
   switchBattlers(slotIndex, partyIndex) {
-    console.log(`> ${this.slots[slotIndex].name} switch to ${this.party[partyIndex].name}`);
+    console.log(`> ${this.slots[slotIndex].species} switch to ${this.party[partyIndex].species}`);
     this.slots[slotIndex].slotIndex = undefined;
     this.slots[slotIndex] = this.party[partyIndex];
     this.slots[slotIndex].slotIndex = slotIndex;

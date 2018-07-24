@@ -41,13 +41,14 @@ class Battle_Manager {
   private _currentAction: IBattleAction = undefined;
 
   public phase: Battle_Phase | InputPhases = undefined;
+  turn: number;
   constructor(public p1: PE.Pokemon.Pokemon[], public p2: PE.Pokemon.Pokemon[]) {
     console.log("Player Pokemons");
     console.log("==========================================================");
-    console.log(p1.map(p => p.name));
+    console.log(p1.map(p => p.species));
     console.log("Foe Pokemons");
     console.log("==========================================================");
-    console.log(p2.map(p => p.name));
+    console.log(p2.map(p => p.species));
     this.sides = { player: new Battle_Side(), foe: new Battle_Side() };
     for (const pokemon of this.p1) {
       let battler = new Battle_Battler(pokemon);
@@ -63,6 +64,7 @@ class Battle_Manager {
       battler.sides.foe = this.sides.player;
       this.sides.foe.party.push(battler);
     }
+    this.turn = 0;
   }
 
   get actives() {
@@ -111,6 +113,9 @@ class Battle_Manager {
   }
 
   startTurn() {
+    +this.turn++;
+    console.log("----------------------------------------------------------");
+    console.log(`# Turn ${this.turn}`);
     this.makeTurnOrder();
     this.changePhase(Battle_Phase.Turn);
   }
@@ -153,9 +158,6 @@ class Battle_Manager {
     battlers = battlers.concat(this.actives);
     battlers.sort((a, b) => this.getPriority(a, b));
     this._actionsQueue = battlers;
-    let out = [];
-    battlers.map(b => out.push({ species: b.species, speed: b.speed, move: b.moveset[0].name }));
-    console.table(out);
   }
 
   startAction(action) {
@@ -197,9 +199,10 @@ class Battle_Manager {
   }
 
   useMove(move: PE.Battle.Moves.Move, target) {
-    console.log(`> ${this._subject.name} used move ${move.name} --> ${this._subject.sides.foe.slots[target].name}`);
-    let damage = move.basePower;
-    this._subject.sides.foe.slots[target].damage(damage);
+    console.log(`> ${this._subject.species} used move ${move.name} --> ${this._subject.sides.foe.slots[target].species}`);
+    let foe = this._subject.sides.foe.slots[target];
+    let damage = this.calculateDamage(this._subject, foe, move);
+    foe.damage(damage);
   }
 
   getPriority(a: Battle_Battler, b: Battle_Battler) {
@@ -238,12 +241,12 @@ class Battle_Manager {
   }
 
   processVictory() {
-    console.log("victory");
+    console.log("# VICTORY");
     console.log("==========================================================");
     this.changePhase(Battle_Phase.BatledEnd);
   }
   processDefead() {
-    console.log("defeat");
+    console.log("# DEFEAT");
     console.log("==========================================================");
     this.changePhase(Battle_Phase.BatledEnd);
   }
@@ -271,5 +274,46 @@ class Battle_Manager {
       }
       battler.setAction(action);
     }
+  }
+
+  calculateDamage(source: Battle_Battler, target: Battle_Battler, move: PE.Battle.Moves.Move) {
+    // http://bulbapedia.bulbagarden.net/wiki/Damage
+    let atk = 0;
+    let def = 0;
+    if (move.category == PE.Battle.Moves.Categories.Special) {
+      atk = source.spatk;
+      def = target.spdef;
+    } else if (move.category == PE.Battle.Moves.Categories.Physical) {
+      atk = source.attack;
+      def = target.defense;
+    } else {
+      return 0;
+    }
+    let effectiveness = PE.Types.effectiveness(move.type, target.types);
+    let msg = null;
+    if (effectiveness <= 0.5) {
+      msg = `It's not very effective...`;
+    } else if (effectiveness >= 2) {
+      msg = `It's super effective!`;
+    } else if (effectiveness == 0) {
+      msg = `It doesn't affect ${target.species}`;
+    }
+    if (msg) {
+      console.log("~ " + msg);
+    }
+
+    let stab = source.hasType(move.type) ? 1.5 : 1;
+    let critical = 1;
+    let random = Math.random() * 100;
+    if (random < 0.0625) {
+      critical = 1.5;
+      console.log("~ critical hit!");
+      // PE_BattleControl.push('showMessage', "critical hit");
+    }
+    random = Math.random() * (1 - 0.81) + 0.81;
+    let modifier = critical * random * stab * effectiveness;
+    let power = move.basePower;
+    let damage = ((((2 * source.level) / 5 + 2) * power * (atk / def)) / 50 + 2) * modifier;
+    return Math.floor(damage);
   }
 }

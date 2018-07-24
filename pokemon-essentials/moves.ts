@@ -2,33 +2,33 @@ namespace PE.Battle.Moves {
   export function isOHKOMove(moveid: string) {}
 
   export enum MoveFlags {
-    Protect = 'protect',
-    Mirror = 'mirror',
-    Heal = 'heal',
-    Contact = 'contact',
-    Snatch = 'snatch',
-    Bullet = 'bullet',
-    Distance = 'distance',
-    Authentic = 'authentic',
-    Mystery = 'mystery',
-    Reflectable = 'reflectable',
-    Pulse = 'pulse',
-    Bite = 'bite',
-    Recharge = 'recharge',
-    Nonsky = 'nonsky',
-    Sound = 'sound',
-    Charge = 'charge',
-    Gravity = 'gravity',
-    Punch = 'punch',
-    rost = 'rost',
-    Powder = 'powder',
-    Dance = 'dance'
+    Protect = "protect",
+    Mirror = "mirror",
+    Heal = "heal",
+    Contact = "contact",
+    Snatch = "snatch",
+    Bullet = "bullet",
+    Distance = "distance",
+    Authentic = "authentic",
+    Mystery = "mystery",
+    Reflectable = "reflectable",
+    Pulse = "pulse",
+    Bite = "bite",
+    Recharge = "recharge",
+    Nonsky = "nonsky",
+    Sound = "sound",
+    Charge = "charge",
+    Gravity = "gravity",
+    Punch = "punch",
+    rost = "rost",
+    Powder = "powder",
+    Dance = "dance"
   }
 
   export enum Categories {
-    Special,
-    Physical,
-    Status
+    Special = "SPECIAL",
+    Physical = "PHYSICAL",
+    Status = "STATUS"
   }
   export class Move {
     num: number;

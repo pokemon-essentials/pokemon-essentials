@@ -6,26 +6,50 @@ class Battle_Battler {
   partyIndex: number;
   species: string;
   name: string;
-  constructor(public pekemon: PE.Pokemon.Pokemon) {
-    this.moveset = this.pekemon.moveset;
-    this.species = this.pekemon.species;
-    this.name = this.pekemon.name;
+  types: string[];
+  level: number;
+  constructor(public pokemon: PE.Pokemon.Pokemon) {
+    this.moveset = this.pokemon.moveset;
+    this.species = this.pokemon.species;
+    this.name = this.pokemon.name;
+    this.types = this.pokemon.types;
+    this.level = this.pokemon.level;
   }
 
+  get attack() {
+    return this.pokemon.stats.atk;
+  }
+
+  get defense() {
+    return this.pokemon.stats.def;
+  }
+  get spatk() {
+    return this.pokemon.stats.spa;
+  }
+  get spdef() {
+    return this.pokemon.stats.spd;
+  }
   get speed() {
-    return this.pekemon.stats.spe;
+    return this.pokemon.stats.spe;
+  }
+
+  hasType(type) {
+    for (const t of this.types) {
+      if (t === type) return true;
+    }
+    return false;
   }
 
   isFainted() {
-    return this.pekemon.hp <= 0;
+    return this.pokemon.hp <= 0;
   }
 
   damage(damage) {
-    console.log(`~ damage ${damage} ${this.name} HP  ${this.pekemon.hp} --> ${this.pekemon.hp - damage} `);
-    this.pekemon.hp -= damage;
-    if (this.pekemon.hp <= 0) {
-      console.log(`~ ${this.name} fainted`);
-      this.pekemon.hp = 0;
+    console.log(`~ damage ${damage} ${this.species} HP  ${this.pokemon.hp} --> ${this.pokemon.hp - damage} `);
+    this.pokemon.hp -= damage;
+    if (this.pokemon.hp <= 0) {
+      console.log(`~ ${this.species} fainted`);
+      this.pokemon.hp = 0;
     }
   }
 
