@@ -185,13 +185,15 @@ namespace PE.Battle.UI {
       this.deactivate();
     }
     activate() {
-      this.setBlendColor([0, 0, 0, 0]);
-      this._text.setBlendColor([0, 0, 0, 0]);
+      // this.setBlendColor([0, 0, 0, 0]);
+      // this._text.setBlendColor([0, 0, 0, 0]);
+      this.changeFrame(1, this.frame);
     }
 
     deactivate() {
-      this.setBlendColor([0, 0, 0, 155]);
-      this._text.setBlendColor([0, 0, 0, 155]);
+      // this.setBlendColor([0, 0, 0, 155]);
+      // this._text.setBlendColor([0, 0, 0, 155]);
+      this.changeFrame(0, this.frame);
     }
   }
 

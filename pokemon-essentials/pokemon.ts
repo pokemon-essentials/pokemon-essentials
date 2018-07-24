@@ -1,5 +1,4 @@
 namespace PE.Pokemon {
-
   const MAX_EVS = 508;
   const MAX_EVS_STATS = 252;
 
@@ -29,7 +28,7 @@ namespace PE.Pokemon {
     gender = null;
     otherFormes = null;
     pokedex = "";
-    genderRatio = { M: .5, F: .5 };
+    genderRatio = { M: 0.5, F: 0.5 };
   }
 
   export class Pokemon extends PokemonData {
@@ -44,8 +43,12 @@ namespace PE.Pokemon {
     fainted = false;
     hp: number;
     ivs = {
-      hp: Math.randomInt(30) + 1, atk: Math.randomInt(30) + 1, def: Math.randomInt(30) + 1,
-      spa: Math.randomInt(30) + 1, spd: Math.randomInt(30) + 1, spe: Math.randomInt(30) + 1
+      hp: Math.randomInt(30) + 1,
+      atk: Math.randomInt(30) + 1,
+      def: Math.randomInt(30) + 1,
+      spa: Math.randomInt(30) + 1,
+      spd: Math.randomInt(30) + 1,
+      spe: Math.randomInt(30) + 1
     };
     moveset: Battle.Moves.Move[];
     pokerus = Math.randomInt(65356) < SETTINGS.POKERUS_CHANCE;
@@ -63,8 +66,16 @@ namespace PE.Pokemon {
      * @param ivs Pokémon IVs
      * @param evs Pokémon Evs
      */
-    constructor(public species: string, public level: number, public item?: string, moves?: Movedex[],
-      ability?: Abilitydex, nature?: Natures, ivs?: number[], evs?: number[]) {
+    constructor(
+      public species: string,
+      public level: number,
+      public item?: string,
+      moves?: Movedex[],
+      ability?: Abilitydex,
+      nature?: Natures,
+      ivs?: number[],
+      evs?: number[]
+    ) {
       super();
       if (!this.species || !this.level) throw Error("Species and Level are required to create a Pokemon");
 
@@ -102,7 +113,6 @@ namespace PE.Pokemon {
        */
       this.hp = this.stats.hp;
 
-
       this.abilityInx = Math.round(Math.random());
       this.ability = this.abilities[this.abilityInx] || this.abilities[0];
       if (ability) this.ability = ability;
@@ -138,18 +148,22 @@ namespace PE.Pokemon {
     }
 
     generateStatsByLevel() {
-      this.stats.hp = Math.floor(((((2 * this.baseStats.hp) + this.ivs.hp + (this.evs.hp / 4)) * this.level) / 100)
-        + this.level + 10);
-      this.stats.atk = Math.floor(Math.floor((((((2 * this.baseStats.atk) + this.ivs.atk + (this.evs.atk / 4))
-        * this.level) / 100) + 5)) * Natures.stats(this.nature).atk);
-      this.stats.def = Math.floor(Math.floor((((((2 * this.baseStats.def) + this.ivs.def + (this.evs.def / 4))
-        * this.level) / 100) + 5)) * Natures.stats(this.nature).def);
-      this.stats.spa = Math.floor(Math.floor((((((2 * this.baseStats.spa) + this.ivs.spa + (this.evs.spa / 4))
-        * this.level) / 100) + 5)) * Natures.stats(this.nature).spa);
-      this.stats.spd = Math.floor(Math.floor((((((2 * this.baseStats.spd) + this.ivs.spd + (this.evs.spd / 4))
-        * this.level) / 100) + 5)) * Natures.stats(this.nature).spd);
-      this.stats.spe = Math.floor(Math.floor((((((2 * this.baseStats.spe) + this.ivs.spe + (this.evs.spe / 4)) * this.level) / 100) + 5))
-        * Natures.stats(this.nature).spe);
+      this.stats.hp = Math.floor(((2 * this.baseStats.hp + this.ivs.hp + this.evs.hp / 4) * this.level) / 100 + this.level + 10);
+      this.stats.atk = Math.floor(
+        Math.floor(((2 * this.baseStats.atk + this.ivs.atk + this.evs.atk / 4) * this.level) / 100 + 5) * Natures.stats(this.nature).atk
+      );
+      this.stats.def = Math.floor(
+        Math.floor(((2 * this.baseStats.def + this.ivs.def + this.evs.def / 4) * this.level) / 100 + 5) * Natures.stats(this.nature).def
+      );
+      this.stats.spa = Math.floor(
+        Math.floor(((2 * this.baseStats.spa + this.ivs.spa + this.evs.spa / 4) * this.level) / 100 + 5) * Natures.stats(this.nature).spa
+      );
+      this.stats.spd = Math.floor(
+        Math.floor(((2 * this.baseStats.spd + this.ivs.spd + this.evs.spd / 4) * this.level) / 100 + 5) * Natures.stats(this.nature).spd
+      );
+      this.stats.spe = Math.floor(
+        Math.floor(((2 * this.baseStats.spe + this.ivs.spe + this.evs.spe / 4) * this.level) / 100 + 5) * Natures.stats(this.nature).spe
+      );
     }
 
     getMoveset(moves: string[]) {
@@ -157,7 +171,7 @@ namespace PE.Pokemon {
         moves = [];
         for (var level in this.learnset.levelup) {
           if (parseInt(level) <= this.level) {
-            moves = moves.concat(this.learnset.levelup[level])
+            moves = moves.concat(this.learnset.levelup[level]);
           } else {
             break;
           }
@@ -185,14 +199,12 @@ namespace PE.Pokemon {
       }
     }
 
-    levelUp() {
-
-    }
+    levelUp() {}
   }
 
-  export function getRandomPokemon() {
+  export function getRandomPokemon(level?: number) {
     var inx = Math.randomInt(Object.keys($PE_POKEDEX).length);
-    var level = Math.randomInt(SETTINGS.MAXIMUM_LEVEL) + 1;
+    level = level || Math.randomInt(SETTINGS.MAXIMUM_LEVEL) + 1;
     var species = Object.keys($PE_POKEDEX)[inx];
     return new Pokemon(species, level);
   }

@@ -35,11 +35,9 @@ function setup() {
         menubar.createMacBuiltin("Game", option);
         win.menu = menubar;
       }
+      win.width = SETTINGS.SCREEN_WIDTH;
+      win.height = SETTINGS.SCREEN_HEIGHT;
     }
-    var gui = require("nw.gui");
-    var win = gui.Window.get();
-    win.width = SETTINGS.SCREEN_WIDTH;
-    win.height = SETTINGS.SCREEN_HEIGHT;
   };
 
   SceneManager.onKeyDown = function(event) {
