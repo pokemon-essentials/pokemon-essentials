@@ -1,17 +1,17 @@
 enum Battle_Phase {
-  Start = "Start",
-  Input = "Input",
-  Turn = "Turn",
-  Action = "Action",
-  BatledEnd = "BatledEnd"
+  Start = 'Start',
+  Input = 'Input',
+  Turn = 'Turn',
+  Action = 'Action',
+  BatledEnd = 'BatledEnd'
 }
 
 enum InputPhases {
-  Action = "Action",
-  Move = "Move",
-  Item = "Item",
-  Party = "Party",
-  PartySwitchFainted = "PartySwitchFainted"
+  Action = 'Action',
+  Move = 'Move',
+  Item = 'Item',
+  Party = 'Party',
+  PartySwitchFainted = 'PartySwitchFainted'
 }
 
 enum BattleActionType {
@@ -31,7 +31,7 @@ interface IBattleAction {
 }
 
 class Battle_Manager {
-  sides: { player: Battle_Side; foe: Battle_Side };
+  sides: {player: Battle_Side; foe: Battle_Side};
 
   private _actionsQueue: Battle_Battler[] = [];
   private _battlers: Battle_Battler[] = [];
@@ -43,13 +43,13 @@ class Battle_Manager {
   public phase: Battle_Phase | InputPhases = undefined;
   turn: number;
   constructor(public p1: PE.Pokemon.Pokemon[], public p2: PE.Pokemon.Pokemon[]) {
-    console.log("Player Pokemons");
-    console.log("==========================================================");
+    console.log('Player Pokemons');
+    console.log('==========================================================');
     console.log(p1.map(p => p.species));
-    console.log("Foe Pokemons");
-    console.log("==========================================================");
+    console.log('Foe Pokemons');
+    console.log('==========================================================');
     console.log(p2.map(p => p.species));
-    this.sides = { player: new Battle_Side(), foe: new Battle_Side() };
+    this.sides = {player: new Battle_Side(), foe: new Battle_Side()};
     for (const pokemon of this.p1) {
       let battler = new Battle_Battler(pokemon);
       battler.partyIndex = this.sides.player.party.length;
@@ -114,7 +114,7 @@ class Battle_Manager {
 
   startTurn() {
     +this.turn++;
-    console.log("----------------------------------------------------------");
+    console.log('----------------------------------------------------------');
     console.log(`# Turn ${this.turn}`);
     this.makeTurnOrder();
     this.changePhase(Battle_Phase.Turn);
@@ -141,6 +141,7 @@ class Battle_Manager {
       this._subject = this.getNextSubject();
     }
   }
+
   endTurn() {
     this.checkFaints();
     this.checkBattleEnd();
@@ -196,10 +197,13 @@ class Battle_Manager {
     // this._subject.sides.own.switchBattlers(this._subject.slotIndex, partyIndex);
     let change = this._subject.sides.own.nextUnfaited(this._subject.partyIndex);
     this._subject.sides.own.switchBattlers(this._subject.slotIndex, change.partyIndex);
+    EventManager.emit('SWITCH_BATTLERS', change);
   }
 
   useMove(move: PE.Battle.Moves.Move, target) {
-    console.log(`> ${this._subject.species} used move ${move.name} --> ${this._subject.sides.foe.slots[target].species}`);
+    console.log(
+      `> ${this._subject.species} used move ${move.name} --> ${this._subject.sides.foe.slots[target].species}`
+    );
     let foe = this._subject.sides.foe.slots[target];
     let damage = this.calculateDamage(this._subject, foe, move);
     foe.damage(damage);
@@ -241,13 +245,13 @@ class Battle_Manager {
   }
 
   processVictory() {
-    console.log("# VICTORY");
-    console.log("==========================================================");
+    console.log('# VICTORY');
+    console.log('==========================================================');
     this.changePhase(Battle_Phase.BatledEnd);
   }
   processDefead() {
-    console.log("# DEFEAT");
-    console.log("==========================================================");
+    console.log('# DEFEAT');
+    console.log('==========================================================');
     this.changePhase(Battle_Phase.BatledEnd);
   }
 
@@ -299,7 +303,7 @@ class Battle_Manager {
       msg = `It doesn't affect ${target.species}`;
     }
     if (msg) {
-      console.log("~ " + msg);
+      console.log('~ ' + msg);
     }
 
     let stab = source.hasType(move.type) ? 1.5 : 1;
@@ -307,7 +311,7 @@ class Battle_Manager {
     let random = Math.random() * 100;
     if (random < 0.0625) {
       critical = 1.5;
-      console.log("~ critical hit!");
+      console.log('~ critical hit!');
       // PE_BattleControl.push('showMessage', "critical hit");
     }
     random = Math.random() * (1 - 0.81) + 0.81;
