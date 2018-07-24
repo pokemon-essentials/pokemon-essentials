@@ -17,6 +17,7 @@ class Battle_Side {
     this.slots[slotIndex].slotIndex = undefined;
     this.slots[slotIndex] = this.party[partyIndex];
     this.slots[slotIndex].slotIndex = slotIndex;
+    EventManager.emit('SWITCH_BATTLERS', this.slots[slotIndex]);
   }
 
   areAllFainted() {

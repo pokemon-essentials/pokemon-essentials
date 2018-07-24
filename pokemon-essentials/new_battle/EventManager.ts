@@ -1,16 +1,16 @@
 class EventManager {
-  static callbacks = {};
+  static subscriptions = {};
 
-  static on(event, callback) {
-    if (this.callbacks[event]) {
-      this.callbacks[event].push(callback);
+  static on(event, callback, scope?) {
+    if (this.subscriptions[event]) {
+      this.subscriptions[event].push({callback, scope});
     } else {
-      this.callbacks[event] = [callback];
+      this.subscriptions[event] = [{callback, scope}];
     }
   }
 
   static emit(event, ...args) {
-    if (!this.callbacks[event]) return console.log('No subscriptions for event ' + event);
-    this.callbacks[event].forEach(callback => callback(...args));
+    if (!this.subscriptions[event]) return console.log('No subscriptions for event ' + event);
+    this.subscriptions[event].forEach(subscription => subscription.callback.call(subscription.scope, ...args));
   }
 }
