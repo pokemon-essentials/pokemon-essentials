@@ -89,7 +89,7 @@ class Battle_Manager {
     }
   }
 
-  startBattle() {    
+  startBattle() {
     this.changePhase(Battle_Phase.Start);
     this.switchInStartBattlers();
     this.showStartMessages();
@@ -196,7 +196,7 @@ class Battle_Manager {
   switchBattlers(partyIndex) {
     // this._subject.sides.own.switchBattlers(this._subject.slotIndex, partyIndex);
     let change = this._subject.sides.own.nextUnfaited(this._subject.partyIndex);
-    this._subject.sides.own.switchBattlers(this._subject.slotIndex, change.partyIndex);    
+    this._subject.sides.own.switchBattlers(this._subject.slotIndex, change.partyIndex);
   }
 
   useMove(move: PE.Battle.Moves.Move, target) {

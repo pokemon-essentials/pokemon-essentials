@@ -1,6 +1,10 @@
 {
   "name": "pokemon-essentials",
   "main": "project/index.html",
+  "scripts": {
+    "build": "gulp dev-build",
+    "watch": "gulp watch"
+  },
   "window": {
     "height": 480,
     "width:": 640
