@@ -1,6 +1,6 @@
 class Battle_Battler {
   private _action: IBattleAction = undefined;
-  sides: { own: Battle_Side; foe: Battle_Side } = { own: undefined, foe: undefined };
+  sides: {own: Battle_Side; foe: Battle_Side} = {own: undefined, foe: undefined};
   moveset: PE.Battle.Moves.Move[];
   slotIndex: number;
   partyIndex: number;
@@ -8,6 +8,8 @@ class Battle_Battler {
   name: string;
   types: string[];
   level: number;
+
+  guid = PE.Utils.guid();
   constructor(public pokemon: PE.Pokemon.Pokemon) {
     this.moveset = this.pokemon.moveset;
     this.species = this.pokemon.species;

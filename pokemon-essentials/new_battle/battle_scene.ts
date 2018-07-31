@@ -1,7 +1,7 @@
 class NewBattle_Scene extends Scene_Base {
   battle: Battle_Manager;
   viewport: Sprite;
-  sprites: Sprite;
+  sprites: {};
   layers: {bg: Sprite} = {bg: undefined};
   message: PE.Battle.UI.Window_BattleMessage;
 
@@ -33,7 +33,7 @@ class NewBattle_Scene extends Scene_Base {
     this.layers.bg.anchor.y = 1;
     this.viewport.addChild(this.layers.bg);
 
-    this.sprites = new Sprite();
+    this.sprites = {};
   }
 
   createMessageWindow() {
@@ -47,33 +47,35 @@ class NewBattle_Scene extends Scene_Base {
 
   createBattlers() {
     for (const battler of this.battle.sides.foe.actives) {
+      if (this.sprites[battler.guid]) continue;
       let fx = Graphics.width - 128;
       let fy = 240;
-      let bsprite = new PE.Sprites.Battler(battler.pokemon, PE.Sprites.BattlersFacing.Front);
-      bsprite.x = fx;
-      bsprite.y = fy;
-      bsprite.scale.x = 2;
-      bsprite.scale.y = 2;
-      bsprite.anchor.x = 0.5;
-      bsprite.anchor.y = 1;
-      this.sprites.addChild(bsprite);
+      this.sprites[battler.guid] = new PE.Sprites.Battler(battler.pokemon, PE.Sprites.BattlersFacing.Front);
+      this.sprites[battler.guid].x = fx;
+      this.sprites[battler.guid].y = fy;
+      this.sprites[battler.guid].scale.x = 2;
+      this.sprites[battler.guid].scale.y = 2;
+      this.sprites[battler.guid].anchor.x = 0.5;
+      this.sprites[battler.guid].anchor.y = 1;
+      this.viewport.addChild(this.sprites[battler.guid]);
     }
 
     for (const battler of this.battle.sides.player.actives) {
+      if (this.sprites[battler.guid]) continue;
       let x = 128;
       let y = Graphics.height - 64;
       let index = battler.name + '_' + battler.slotIndex;
-      let bsprite = new PE.Sprites.Battler(battler.pokemon, PE.Sprites.BattlersFacing.Back);
-      bsprite.x = x;
-      bsprite.y = y;
-      bsprite.scale.x = 3;
-      bsprite.scale.y = 3;
-      bsprite.anchor.x = 0.5;
-      bsprite.anchor.y = 1;
-      this.sprites.addChild(bsprite);
+      this.sprites[battler.guid] = new PE.Sprites.Battler(battler.pokemon, PE.Sprites.BattlersFacing.Back);
+      this.sprites[battler.guid].x = x;
+      this.sprites[battler.guid].y = y;
+      this.sprites[battler.guid].scale.x = 3;
+      this.sprites[battler.guid].scale.y = 3;
+      this.sprites[battler.guid].anchor.x = 0.5;
+      this.sprites[battler.guid].anchor.y = 1;
+      this.viewport.addChild(this.sprites[battler.guid]);
     }
 
-    this.viewport.addChild(this.sprites);
+    // this.viewport.addChild(this.sprites);
 
     // let trainer = Math.randomInt(243) + 1;
     // this.sprites["front"] = new Sprites.TrainerFront("BW_" + trainer.padZero(3));
@@ -108,9 +110,10 @@ class NewBattle_Scene extends Scene_Base {
     this.battle.endActionsSelection();
   }
 
-  switchBattlers(battler) {
-    this.sprites.bitmap = new Bitmap(Graphics.width, Graphics.height);
-    // this.viewport.removeChild(this.sprites);
+  switchBattlers(out: Battle_Battler, enter: Battle_Battler) {
+    // this.sprites.bitmap = new Bitmap(Graphics.width, Graphics.height);
+    this.viewport.removeChild(this.sprites[out.guid]);
+    delete this.sprites[out.guid];
     this.createBattlers();
   }
 }
