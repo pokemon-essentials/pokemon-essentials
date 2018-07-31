@@ -3,6 +3,7 @@ class NewBattle_Scene extends Scene_Base {
   viewport: Sprite;
   sprites: Sprite;
   layers: {bg: Sprite} = {bg: undefined};
+  message: PE.Battle.UI.Window_BattleMessage;
 
   constructor() {
     super();
@@ -20,6 +21,7 @@ class NewBattle_Scene extends Scene_Base {
     this.viewport = new Sprite(new Bitmap(Graphics.width, Graphics.height));
     this.addChild(this.viewport);
     this.createBackground();
+    this.createMessageWindow();
   }
 
   createBackground() {
@@ -32,6 +34,15 @@ class NewBattle_Scene extends Scene_Base {
     this.viewport.addChild(this.layers.bg);
 
     this.sprites = new Sprite();
+  }
+
+  createMessageWindow() {
+    this.createWindowLayer();
+    this.message = new PE.Battle.UI.Window_BattleMessage();
+    this.addWindow(this.message);
+    this.message.subWindows().forEach(function(window) {
+      this.addWindow(window);
+    }, this);
   }
 
   createBattlers() {
@@ -85,6 +96,7 @@ class NewBattle_Scene extends Scene_Base {
   }
 
   update() {
+    super.update();
     if (Input.isTriggered('ok')) {
       this.endActionsSelection();
       return;

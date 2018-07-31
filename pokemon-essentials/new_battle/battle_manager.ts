@@ -1,3 +1,5 @@
+const CHARACTERS_PER_LINE = 60;
+
 enum Battle_Phase {
   Start = 'Start',
   Input = 'Input',
@@ -45,10 +47,10 @@ class Battle_Manager {
   constructor(public p1: PE.Pokemon.Pokemon[], public p2: PE.Pokemon.Pokemon[]) {
     console.log('Player Pokemons');
     console.log('==========================================================');
-    console.log(p1.map(p => p.species));
+    console.log(p1.map(p => p.name));
     console.log('Foe Pokemons');
     console.log('==========================================================');
-    console.log(p2.map(p => p.species));
+    console.log(p2.map(p => p.name));
     this.sides = {player: new Battle_Side(), foe: new Battle_Side()};
     for (const pokemon of this.p1) {
       let battler = new Battle_Battler(pokemon);
@@ -200,9 +202,8 @@ class Battle_Manager {
   }
 
   useMove(move: PE.Battle.Moves.Move, target) {
-    console.log(
-      `> ${this._subject.species} used move ${move.name} --> ${this._subject.sides.foe.slots[target].species}`
-    );
+    console.log(`> ${this._subject.species} used ${move.name} --> ${this._subject.sides.foe.slots[target].species}`);
+    this.showMessage(`${this._subject.name} used  ${move.name}!`);
     let foe = this._subject.sides.foe.slots[target];
     let damage = this.calculateDamage(this._subject, foe, move);
     foe.damage(damage);
@@ -246,11 +247,13 @@ class Battle_Manager {
   processVictory() {
     console.log('# VICTORY');
     console.log('==========================================================');
+    this.showMessage('Visctory');
     this.changePhase(Battle_Phase.BatledEnd);
   }
   processDefead() {
     console.log('# DEFEAT');
     console.log('==========================================================');
+    this.showMessage('defeat');
     this.changePhase(Battle_Phase.BatledEnd);
   }
 
@@ -299,18 +302,20 @@ class Battle_Manager {
     } else if (effectiveness >= 2) {
       msg = `It's super effective!`;
     } else if (effectiveness == 0) {
-      msg = `It doesn't affect ${target.species}`;
+      msg = `It doesn't affect ${target.name}`;
     }
     if (msg) {
       console.log('~ ' + msg);
+      this.showMessage(msg);
     }
 
     let stab = source.hasType(move.type) ? 1.5 : 1;
     let critical = 1;
     let random = Math.random() * 100;
-    if (random < 0.0625) {
+    if (PE.Utils.chance(6.25)) {
       critical = 1.5;
       console.log('~ critical hit!');
+      this.showMessage('critical hit!');
       // PE_BattleControl.push('showMessage', "critical hit");
     }
     random = Math.random() * (1 - 0.81) + 0.81;
@@ -318,5 +323,29 @@ class Battle_Manager {
     let power = move.basePower;
     let damage = ((((2 * source.level) / 5 + 2) * power * (atk / def)) / 50 + 2) * modifier;
     return Math.floor(damage);
+  }
+
+  showMessage(msg: string) {
+    msg = PE.Utils.capitalize(msg);
+    while (msg.length > CHARACTERS_PER_LINE) {
+      let line = msg.substring(0, CHARACTERS_PER_LINE);
+      let truncateIndex = Math.min(line.length, line.lastIndexOf(' '));
+      line = line.substring(0, truncateIndex);
+      $gameMessage.add(line + '\\n');
+      msg = msg.substring(truncateIndex + 1);
+    }
+    $gameMessage.add(msg + '\\|\\^');
+  }
+
+  showPausedMessage(msg: string) {
+    msg = PE.Utils.capitalize(msg);
+    while (msg.length > CHARACTERS_PER_LINE) {
+      let line = msg.substring(0, CHARACTERS_PER_LINE);
+      let truncateIndex = Math.min(line.length, line.lastIndexOf(' '));
+      line = line.substring(0, truncateIndex + 1);
+      $gameMessage.add(line + '\\n');
+      msg = msg.substring(truncateIndex + 1);
+    }
+    $gameMessage.add(msg);
   }
 }
