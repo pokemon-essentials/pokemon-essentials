@@ -2,7 +2,7 @@ class NewBattle_Scene extends Scene_Base {
   battle: Battle_Manager;
   viewport: Sprite;
   sprites: {};
-  layers: {bg: Sprite} = {bg: undefined};
+  layers: { bg: Sprite } = { bg: undefined };
   message: PE.Battle.UI.Window_BattleMessage;
 
   constructor() {
@@ -13,7 +13,7 @@ class NewBattle_Scene extends Scene_Base {
       p1.push(PE.Pokemon.getRandomPokemon(100));
       p2.push(PE.Pokemon.getRandomPokemon(100));
     }
-    this.battle = new Battle_Manager(p1, p2);
+    $BattleManager.init(p1, p2);
   }
 
   create() {
@@ -26,7 +26,7 @@ class NewBattle_Scene extends Scene_Base {
 
   createBackground() {
     this.layers.bg = new Sprite(new Bitmap(Graphics.width, Graphics.height));
-    this.layers.bg.bitmap = ImageManager.loadBitmap('img/battlebacks/', 'bg-forest');
+    this.layers.bg.bitmap = ImageManager.loadBitmap("img/battlebacks/", "bg-forest");
     this.layers.bg.x = Graphics.width / 2;
     this.layers.bg.y = Graphics.height;
     this.layers.bg.anchor.x = 0.5;
@@ -46,7 +46,7 @@ class NewBattle_Scene extends Scene_Base {
   }
 
   createBattlers() {
-    for (const battler of this.battle.sides.foe.actives) {
+    for (const battler of $BattleManager.sides.foe.actives) {
       if (this.sprites[battler.guid]) continue;
       let fx = Graphics.width - 128;
       let fy = 240;
@@ -60,11 +60,11 @@ class NewBattle_Scene extends Scene_Base {
       this.viewport.addChild(this.sprites[battler.guid]);
     }
 
-    for (const battler of this.battle.sides.player.actives) {
+    for (const battler of $BattleManager.sides.player.actives) {
       if (this.sprites[battler.guid]) continue;
       let x = 128;
       let y = Graphics.height - 64;
-      let index = battler.name + '_' + battler.slotIndex;
+      let index = battler.name + "_" + battler.slotIndex;
       this.sprites[battler.guid] = new PE.Sprites.Battler(battler.pokemon, PE.Sprites.BattlersFacing.Back);
       this.sprites[battler.guid].x = x;
       this.sprites[battler.guid].y = y;
@@ -92,22 +92,23 @@ class NewBattle_Scene extends Scene_Base {
   }
 
   start() {
-    EventManager.on('SWITCH_BATTLERS', this.switchBattlers, this);
-    this.battle.startBattle();
+    EventManager.on("SWITCH_BATTLERS", this.switchBattlers, this);
+    $BattleManager.startBattle();
     this.createBattlers();
   }
 
   update() {
     super.update();
-    if (Input.isTriggered('ok')) {
+    if (BattleEventQueue.isBusy()) return;
+    if (Input.isTriggered("ok")) {
       this.endActionsSelection();
       return;
     }
-    this.battle.update();
+    $BattleManager.update();
   }
 
   endActionsSelection() {
-    this.battle.endActionsSelection();
+    $BattleManager.endActionsSelection();
   }
 
   switchBattlers(out: Battle_Battler, enter: Battle_Battler) {

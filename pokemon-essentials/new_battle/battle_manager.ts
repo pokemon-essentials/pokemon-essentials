@@ -1,19 +1,19 @@
 const CHARACTERS_PER_LINE = 60;
 
 enum Battle_Phase {
-  Start = 'Start',
-  Input = 'Input',
-  Turn = 'Turn',
-  Action = 'Action',
-  BatledEnd = 'BatledEnd'
+  Start = "Start",
+  Input = "Input",
+  Turn = "Turn",
+  Action = "Action",
+  BatledEnd = "BatledEnd"
 }
 
 enum InputPhases {
-  Action = 'Action',
-  Move = 'Move',
-  Item = 'Item',
-  Party = 'Party',
-  PartySwitchFainted = 'PartySwitchFainted'
+  Action = "Action",
+  Move = "Move",
+  Item = "Item",
+  Party = "Party",
+  PartySwitchFainted = "PartySwitchFainted"
 }
 
 enum BattleActionType {
@@ -33,33 +33,33 @@ interface IBattleAction {
 }
 
 class Battle_Manager {
-  sides: {player: Battle_Side; foe: Battle_Side};
-
-  private _actionsQueue: Battle_Battler[] = [];
-  private _battlers: Battle_Battler[] = [];
-  private _actives: Battle_Battler[] = [];
+  private static _actionsQueue: Battle_Battler[] = [];
+  private static _battlers: Battle_Battler[] = [];
+  private static _actives: Battle_Battler[] = [];
   /** The current active battler performing his selected action */
-  private _subject: Battle_Battler = undefined;
-  private _currentAction: IBattleAction = undefined;
+  private static _subject: Battle_Battler = undefined;
+  private static _currentAction: IBattleAction = undefined;
 
-  public phase: Battle_Phase | InputPhases = undefined;
-  turn: number;
-  constructor(public p1: PE.Pokemon.Pokemon[], public p2: PE.Pokemon.Pokemon[]) {
-    console.log('Player Pokemons');
-    console.log('==========================================================');
+  static sides: { player: Battle_Side; foe: Battle_Side };
+
+  public static phase: Battle_Phase | InputPhases = undefined;
+  static turn: number;
+  static init(p1: PE.Pokemon.Pokemon[], p2: PE.Pokemon.Pokemon[]) {
+    console.log("Player Pokemons");
+    console.log("==========================================================");
     console.log(p1.map(p => p.name));
-    console.log('Foe Pokemons');
-    console.log('==========================================================');
+    console.log("Foe Pokemons");
+    console.log("==========================================================");
     console.log(p2.map(p => p.name));
-    this.sides = {player: new Battle_Side(), foe: new Battle_Side()};
-    for (const pokemon of this.p1) {
+    this.sides = { player: new Battle_Side(), foe: new Battle_Side() };
+    for (const pokemon of p1) {
       let battler = new Battle_Battler(pokemon);
       battler.partyIndex = this.sides.player.party.length;
       battler.sides.own = this.sides.player;
       battler.sides.foe = this.sides.foe;
       this.sides.player.party.push(battler);
     }
-    for (const pokemon of this.p2) {
+    for (const pokemon of p2) {
       let battler = new Battle_Battler(pokemon);
       battler.partyIndex = this.sides.foe.party.length;
       battler.sides.own = this.sides.foe;
@@ -69,12 +69,13 @@ class Battle_Manager {
     this.turn = 0;
   }
 
-  get actives() {
+  static get actives() {
     return this.sides.player.slots.concat(this.sides.foe.slots);
   }
 
-  update() {
-    if (this.isBusy()) return;
+  static update() {
+    BattleEventQueue.update();
+    if (BattleEventQueue.isBusy()) return;
     switch (this.phase) {
       case Battle_Phase.Start:
         this.startInput();
@@ -91,40 +92,40 @@ class Battle_Manager {
     }
   }
 
-  startBattle() {
+  static startBattle() {
     this.changePhase(Battle_Phase.Start);
     this.switchInStartBattlers();
     this.showStartMessages();
   }
 
-  switchInStartBattlers() {
+  static switchInStartBattlers() {
     this.sides.player.switchInStartBattlers();
     this.sides.foe.switchInStartBattlers();
   }
-  showStartMessages() {}
+  static showStartMessages() {}
 
-  startInput() {
+  static startInput() {
     // IA select moves
     // the battler actions input is handle in the battle scene
     this.changePhase(Battle_Phase.Input);
   }
 
-  endActionsSelection() {
+  static endActionsSelection() {
     this.dummyActionSelection();
     this.startTurn();
   }
 
-  startTurn() {
+  static startTurn() {
     +this.turn++;
-    console.log('----------------------------------------------------------');
+    console.log("----------------------------------------------------------");
     console.log(`# Turn ${this.turn}`);
     this.makeTurnOrder();
     this.changePhase(Battle_Phase.Turn);
   }
 
-  isBusy() {}
+  static isBusy() {}
 
-  updateTurn() {
+  static updateTurn() {
     if (!this._subject) {
       this._subject = this.getNextSubject();
     }
@@ -135,7 +136,7 @@ class Battle_Manager {
     }
   }
 
-  processTurn() {
+  static processTurn() {
     let action = this._subject.getAction();
     if (action) {
       this.startAction(action);
@@ -144,31 +145,31 @@ class Battle_Manager {
     }
   }
 
-  endTurn() {
+  static endTurn() {
     this.checkFaints();
     this.checkBattleEnd();
   }
 
-  getNextSubject() {
+  static getNextSubject() {
     let battler = this._actionsQueue.shift();
     if (!battler) return null;
     if (!battler.isFainted()) return battler;
     return this.getNextSubject();
   }
 
-  makeTurnOrder() {
+  static makeTurnOrder() {
     let battlers = [];
     battlers = battlers.concat(this.actives);
     battlers.sort((a, b) => this.getPriority(a, b));
     this._actionsQueue = battlers;
   }
 
-  startAction(action) {
+  static startAction(action) {
     this._currentAction = action;
     this.changePhase(Battle_Phase.Action);
   }
 
-  updateAction() {
+  static updateAction() {
     switch (this._currentAction.type) {
       case BattleActionType.Switch:
         this.switchBattlers(this._currentAction.switchInIndex);
@@ -188,20 +189,20 @@ class Battle_Manager {
     }
   }
 
-  endAction() {
+  static endAction() {
     this._subject.clearAction();
     this._currentAction = undefined;
     this._subject = undefined;
     this.changePhase(Battle_Phase.Turn);
   }
 
-  switchBattlers(partyIndex) {
+  static switchBattlers(partyIndex) {
     // this._subject.sides.own.switchBattlers(this._subject.slotIndex, partyIndex);
     let change = this._subject.sides.own.nextUnfaited(this._subject.partyIndex);
     this._subject.sides.own.switchBattlers(this._subject.slotIndex, change.partyIndex);
   }
 
-  useMove(move: PE.Battle.Moves.Move, target) {
+  static useMove(move: PE.Battle.Moves.Move, target) {
     console.log(`> ${this._subject.species} used ${move.name} --> ${this._subject.sides.foe.slots[target].species}`);
     this.showMessage(`${this._subject.name} used  ${move.name}!`);
     let foe = this._subject.sides.foe.slots[target];
@@ -209,7 +210,7 @@ class Battle_Manager {
     foe.damage(damage);
   }
 
-  getPriority(a: Battle_Battler, b: Battle_Battler) {
+  static getPriority(a: Battle_Battler, b: Battle_Battler) {
     if (b.getAction().type - a.getAction().type) {
       return b.getAction().type - a.getAction().type;
     }
@@ -219,7 +220,7 @@ class Battle_Manager {
     return Math.random() - 0.5;
   }
 
-  checkFaints() {
+  static checkFaints() {
     for (const battler of this.sides.player.actives) {
       if (battler.isFainted() && !battler.sides.own.areAllFainted()) {
         // this.changePhase(InputPhases.PartySwitchFainted);
@@ -235,7 +236,7 @@ class Battle_Manager {
     }
   }
 
-  checkBattleEnd() {
+  static checkBattleEnd() {
     if (this.sides.foe.areAllFainted()) {
       this.processVictory();
     }
@@ -244,25 +245,26 @@ class Battle_Manager {
     }
   }
 
-  processVictory() {
-    console.log('# VICTORY');
-    console.log('==========================================================');
-    this.showMessage('Visctory');
-    this.changePhase(Battle_Phase.BatledEnd);
-  }
-  processDefead() {
-    console.log('# DEFEAT');
-    console.log('==========================================================');
-    this.showMessage('defeat');
+  static processVictory() {
+    console.log("# VICTORY");
+    console.log("==========================================================");
+    this.showMessage("Visctory");
     this.changePhase(Battle_Phase.BatledEnd);
   }
 
-  changePhase(phase: Battle_Phase | InputPhases) {
+  static processDefead() {
+    console.log("# DEFEAT");
+    console.log("==========================================================");
+    this.showMessage("defeat");
+    this.changePhase(Battle_Phase.BatledEnd);
+  }
+
+  static changePhase(phase: Battle_Phase | InputPhases) {
     // console.log("Battle Phase: " + phase);
     this.phase = phase;
   }
 
-  dummyActionSelection() {
+  static dummyActionSelection() {
     for (const battler of this.actives) {
       let action: IBattleAction = undefined;
       if (PE.Utils.chance(20) && battler.sides.own.nextUnfaited(battler.partyIndex)) {
@@ -282,7 +284,7 @@ class Battle_Manager {
     }
   }
 
-  calculateDamage(source: Battle_Battler, target: Battle_Battler, move: PE.Battle.Moves.Move) {
+  static calculateDamage(source: Battle_Battler, target: Battle_Battler, move: PE.Battle.Moves.Move) {
     // http://bulbapedia.bulbagarden.net/wiki/Damage
     let atk = 0;
     let def = 0;
@@ -305,7 +307,7 @@ class Battle_Manager {
       msg = `It doesn't affect ${target.name}`;
     }
     if (msg) {
-      console.log('~ ' + msg);
+      console.log("~ " + msg);
       this.showMessage(msg);
     }
 
@@ -314,8 +316,8 @@ class Battle_Manager {
     let random = Math.random() * 100;
     if (PE.Utils.chance(6.25)) {
       critical = 1.5;
-      console.log('~ critical hit!');
-      this.showMessage('critical hit!');
+      console.log("~ critical hit!");
+      this.showMessage("critical hit!");
       // PE_BattleControl.push('showMessage', "critical hit");
     }
     random = Math.random() * (1 - 0.81) + 0.81;
@@ -325,27 +327,33 @@ class Battle_Manager {
     return Math.floor(damage);
   }
 
-  showMessage(msg: string) {
-    msg = PE.Utils.capitalize(msg);
-    while (msg.length > CHARACTERS_PER_LINE) {
-      let line = msg.substring(0, CHARACTERS_PER_LINE);
-      let truncateIndex = Math.min(line.length, line.lastIndexOf(' '));
-      line = line.substring(0, truncateIndex);
-      $gameMessage.add(line + '\\n');
-      msg = msg.substring(truncateIndex + 1);
-    }
-    $gameMessage.add(msg + '\\|\\^');
+  static showMessage(msg: string) {
+    BattleEventQueue.push(() => {
+      msg = PE.Utils.capitalize(msg);
+      while (msg.length > CHARACTERS_PER_LINE) {
+        let line = msg.substring(0, CHARACTERS_PER_LINE);
+        let truncateIndex = Math.min(line.length, line.lastIndexOf(" "));
+        line = line.substring(0, truncateIndex);
+        $gameMessage.add(line + "\\n");
+        msg = msg.substring(truncateIndex + 1);
+      }
+      $gameMessage.add(msg + "\\|\\^");
+    });
   }
 
-  showPausedMessage(msg: string) {
-    msg = PE.Utils.capitalize(msg);
-    while (msg.length > CHARACTERS_PER_LINE) {
-      let line = msg.substring(0, CHARACTERS_PER_LINE);
-      let truncateIndex = Math.min(line.length, line.lastIndexOf(' '));
-      line = line.substring(0, truncateIndex + 1);
-      $gameMessage.add(line + '\\n');
-      msg = msg.substring(truncateIndex + 1);
-    }
-    $gameMessage.add(msg);
+  static showPausedMessage(msg: string) {
+    BattleEventQueue.push(() => {
+      msg = PE.Utils.capitalize(msg);
+      while (msg.length > CHARACTERS_PER_LINE) {
+        let line = msg.substring(0, CHARACTERS_PER_LINE);
+        let truncateIndex = Math.min(line.length, line.lastIndexOf(" "));
+        line = line.substring(0, truncateIndex + 1);
+        $gameMessage.add(line + "\\n");
+        msg = msg.substring(truncateIndex + 1);
+      }
+      $gameMessage.add(msg);
+    });
   }
 }
+
+const $BattleManager = Battle_Manager;

@@ -1,6 +1,6 @@
 class Battle_Battler {
   private _action: IBattleAction = undefined;
-  sides: {own: Battle_Side; foe: Battle_Side} = {own: undefined, foe: undefined};
+  sides: { own: Battle_Side; foe: Battle_Side } = { own: undefined, foe: undefined };
   moveset: PE.Battle.Moves.Move[];
   slotIndex: number;
   partyIndex: number;
@@ -50,9 +50,14 @@ class Battle_Battler {
     console.log(`~ damage ${damage} ${this.species} HP  ${this.pokemon.hp} --> ${this.pokemon.hp - damage} `);
     this.pokemon.hp -= damage;
     if (this.pokemon.hp <= 0) {
-      console.log(`~ ${this.species} fainted`);
-      this.pokemon.hp = 0;
+      this.faint();
     }
+  }
+
+  faint() {
+    console.log(`~ ${this.species} fainted!`);
+    $BattleManager.showMessage(`${this.name} fainted!`);
+    this.pokemon.hp = 0;
   }
 
   getFirstDamageMove() {

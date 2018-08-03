@@ -15,10 +15,11 @@ class Battle_Side {
   switchBattlers(slotIndex, partyIndex) {
     let out = this.slots[slotIndex];
     console.log(`> ${this.slots[slotIndex].species} switch to ${this.party[partyIndex].species}`);
+    $BattleManager.showMessage(`${this.slots[slotIndex].name} switch to ${this.party[partyIndex].name}`);
     this.slots[slotIndex].slotIndex = undefined;
     this.slots[slotIndex] = this.party[partyIndex];
     this.slots[slotIndex].slotIndex = slotIndex;
-    EventManager.emit('SWITCH_BATTLERS', out, this.slots[slotIndex]);
+    EventManager.emit("SWITCH_BATTLERS", out, this.slots[slotIndex]);
   }
 
   areAllFainted() {
