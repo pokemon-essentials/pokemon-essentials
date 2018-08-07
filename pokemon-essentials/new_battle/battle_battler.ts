@@ -55,8 +55,10 @@ class Battle_Battler {
   damage(damage) {
     console.log(`~ damage ${damage} ${this.species} HP  ${this.pokemon.hp} --> ${this.pokemon.hp - damage} `);
     this.pokemon.hp -= damage;
+    EventManager.emit("DAMAGE", this, damage);
     if (this.pokemon.hp <= 0) {
       this.faint();
+      EventManager.emit("FAINT", this, damage);
     }
   }
 

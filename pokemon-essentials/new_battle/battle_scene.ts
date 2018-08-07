@@ -6,6 +6,7 @@ class NewBattle_Scene extends Scene_Base {
   message: PE.Battle.UI.Window_BattleMessage;
   battleCommands: PE.Battle.UI.BattleCommands;
   partyBar: nHPBar;
+  foeHPBar: nHPBar;
 
   constructor() {
     super();
@@ -50,6 +51,10 @@ class NewBattle_Scene extends Scene_Base {
 
   createBattlers() {
     for (const battler of $BattleManager.sides.foe.actives) {
+      this.viewport.removeChild(this.foeHPBar);
+      this.foeHPBar = new nHPBar(battler, Graphics.width - 208, 48, true);
+      this.viewport.addChild(this.foeHPBar);
+
       if (this.sprites[battler.guid]) continue;
       let fx = Graphics.width - 128;
       let fy = 240;
@@ -61,12 +66,13 @@ class NewBattle_Scene extends Scene_Base {
       this.sprites[battler.guid].anchor.x = 0.5;
       this.sprites[battler.guid].anchor.y = 1;
       this.viewport.addChild(this.sprites[battler.guid]);
-
-      let h2 = new nHPBar(battler, Graphics.width - 208, 48, true);
-      this.viewport.addChild(h2);
     }
 
     for (const battler of $BattleManager.sides.player.actives) {
+      this.viewport.removeChild(this.partyBar);
+      this.partyBar = new nHPBar(battler, 16, Graphics.height - 64, false);
+      this.viewport.addChild(this.partyBar);
+
       if (this.sprites[battler.guid]) continue;
       let x = 128;
       let y = Graphics.height - 64;
@@ -80,9 +86,7 @@ class NewBattle_Scene extends Scene_Base {
       this.sprites[battler.guid].anchor.y = 1;
       this.viewport.addChild(this.sprites[battler.guid]);
 
-      this.partyBar = new nHPBar(battler, 16, Graphics.height - 64, false);
       // this.partyBar.visible = false;
-      this.viewport.addChild(this.partyBar);
       // this.movesSelection = new PE.UI._MovesSelection(battler);
       // this.viewport.addChild(this.movesSelection);
     }
@@ -107,7 +111,7 @@ class NewBattle_Scene extends Scene_Base {
     let x = Graphics.width - 168;
     let y = Graphics.height - 108;
     this.battleCommands = new PE.Battle.UI.BattleCommands(x, y);
-    // this.battleCommands.visible = false;
+    this.battleCommands.visible = false;
     this.viewport.addChild(this.battleCommands);
   }
 
@@ -139,9 +143,6 @@ class NewBattle_Scene extends Scene_Base {
     this.createBattlers();
   }
 }
-
-
-
 
 class nHPBar extends Sprite {
   animate: boolean;
@@ -226,10 +227,12 @@ class nHPBar extends Sprite {
       this.addChild(this.indicator);
     }
     this.addChild(this.text);
+    EventManager.on("DAMAGE", this.updateDamage, this);
   }
 
   update() {
     super.update();
+
     // if (this.animate && this.__damage > 0) this.updateDamage();
   }
 
@@ -243,10 +246,10 @@ class nHPBar extends Sprite {
   updateDamage() {
     if (this.indicator) {
       this.indicator.bitmap.clear();
-      this.indicator.bitmap.drawText(`${this.currentHP}/${this.battler.totalHP}`, this._x + 32, this.box.y + 8, 200, 24, "left");
+      this.indicator.bitmap.drawText(`${this.battler.hp}/${this.battler.totalHP}`, this._x + 32, this.box.y + 8, 200, 24, "left");
     }
     // 192 is original the bar width
-    let width = Math.max(0, (192 * this.currentHP) / this.battler.totalhp);
+    let width = Math.max(0, (192 * this.battler.hp) / this.battler.totalHP);
     this.bar.setFrame(0, 0, width, 24);
   }
 

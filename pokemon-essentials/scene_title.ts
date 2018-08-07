@@ -111,12 +111,12 @@ namespace PE.TitleScenes {
       DataManager.setupNewGame();
       this._commandWindow.close();
       this.fadeOutAll();
-      // SceneManager.goto(NewBattle_Scene);
-      SceneManager.goto(PE.Battle.Scene_Battle);
-      $Player.party = PE.Pokemon.getRandomParty(6);
-      // $Player.party = [new Pokemon.Pokemon(Pokedex.GROUDON, 100)];
-      $Battle.setup([Trainers.RandomTrainer()], []);
-      $Battle.start();
+      SceneManager.goto(NewBattle_Scene);
+      // SceneManager.goto(PE.Battle.Scene_Battle);
+      // $Player.party = PE.Pokemon.getRandomParty(6);
+      // // $Player.party = [new Pokemon.Pokemon(Pokedex.GROUDON, 100)];
+      // $Battle.setup([Trainers.RandomTrainer()], []);
+      // $Battle.start();
     }
 
     commandMap() {
