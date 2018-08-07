@@ -9,13 +9,14 @@ class Battle_Battler {
   types: string[];
   level: number;
 
-  guid = PE.Utils.guid();
+  guid: string;
   constructor(public pokemon: PE.Pokemon.Pokemon) {
     this.moveset = this.pokemon.moveset;
     this.species = this.pokemon.species;
     this.name = this.pokemon.name;
     this.types = this.pokemon.types;
     this.level = this.pokemon.level;
+    this.guid = pokemon.guid;
   }
 
   get hp() {

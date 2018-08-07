@@ -1,5 +1,4 @@
 namespace PE.Sprites {
-
   export class Blinker extends Sprite {
     constructor(private _speed) {
       super();
@@ -26,7 +25,6 @@ namespace PE.Sprites {
       this.setFrameRate(frameRate);
     }
 
-
     setFrameRate(frames) {
       this._animationSpeed = Math.ceil(60 / frames);
     }
@@ -50,11 +48,11 @@ namespace PE.Sprites {
         this.changeFrame(this._currFrame);
         this._currFrame++;
         if (this._currFrame === this._frames) {
-          this._currFrame = 0
+          this._currFrame = 0;
         }
       }
       this.updateAnimation();
-    };
+    }
 
     updateAnimation() {
       this._framesCount++;
@@ -62,23 +60,42 @@ namespace PE.Sprites {
     }
   }
 
-  export const enum BattlersFacing { Front, Back }
+  export const enum BattlersFacing {
+    Front,
+    Back
+  }
 
   export class Battler extends SpriteAnimated {
-
+    fainting: boolean;
     constructor(public pokemon: Pokemon.Pokemon, public facing: BattlersFacing) {
       super();
-      this.setFrameRate(15)
-      let path = 'img/battlers/';
-      if (this.facing === BattlersFacing.Front) path += 'front';
-      if (this.facing === BattlersFacing.Back) path += 'back';
-      if (this.pokemon.shiny) path += '-shiny';
-      path += '/';
+      this.setFrameRate(15);
+      let path = "img/battlers/";
+      if (this.facing === BattlersFacing.Front) path += "front";
+      if (this.facing === BattlersFacing.Back) path += "back";
+      if (this.pokemon.shiny) path += "-shiny";
+      path += "/";
       this.bitmap = ImageManager.loadBitmap(path, pokemon.species.toLowerCase(), undefined, undefined);
       this.bitmap.addLoadListener(this.grenerateFrames.bind(this));
       this.visible = false;
+      EventManager.on("FAINT", this.faint, this);
     }
 
+    update() {
+      super.update();
+      if (this.fainting) this.opacity -= 3;
+      if (this.opacity <= 0) this.completeFaint();
+    }
+    faint(battler: Battle_Battler) {
+      if (battler.guid !== this.pokemon.guid) return;
+      BattleEventQueue.push(() => {
+        this.fainting = true;
+        $BattleManager.wait(WaitModes.Animation);
+      }, this);
+    }
+    completeFaint() {
+      $BattleManager.wait(WaitModes.None);
+    }
   }
 
   export class Button extends Sprite_Button {
@@ -100,10 +117,10 @@ namespace PE.Sprites {
       super();
       this._frameCount = 0;
       this._frameRate = 30;
-      let path = 'img/icons/pokemon/';
-      path += pokemon.shiny ? 'shiny/' : 'regular/';
-      path += '/';
-      this.bitmap = ImageManager.loadBitmap('img/icons/pokemon/regular/', pokemon.species.toLowerCase(), undefined, undefined);
+      let path = "img/icons/pokemon/";
+      path += pokemon.shiny ? "shiny/" : "regular/";
+      path += "/";
+      this.bitmap = ImageManager.loadBitmap("img/icons/pokemon/regular/", pokemon.species.toLowerCase(), undefined, undefined);
       this.x = x;
       this.y = y;
       this._dy = 5;
@@ -120,22 +137,19 @@ namespace PE.Sprites {
     }
   }
 
-
-
   export class TrainerBack extends SpriteAnimated {
     moving = false;
 
     constructor() {
       super();
       let filename = SETTINGS.GENDERS[$Player.data.gender].back;
-      this.bitmap = ImageManager.loadBitmap('img/characters/', filename, undefined, undefined);
+      this.bitmap = ImageManager.loadBitmap("img/characters/", filename, undefined, undefined);
       this.bitmap.addLoadListener(this.grenerateFrames.bind(this));
       this.setFrameRate(5);
       this.scale.x = 1.5;
       this.scale.y = 1.5;
       this.animate = false;
     }
-
 
     start() {
       this.animate = true;
@@ -158,17 +172,15 @@ namespace PE.Sprites {
     }
   }
 
-
   export class TrainerFront extends SpriteAnimated {
     constructor(filename) {
       super();
-      this.bitmap = ImageManager.loadBitmap('img/characters/trainers/', filename, undefined, undefined);
+      this.bitmap = ImageManager.loadBitmap("img/characters/trainers/", filename, undefined, undefined);
       this.bitmap.addLoadListener(this.grenerateFrames.bind(this));
       this.setFrameRate(15);
       this.scale.x = 3;
       this.scale.y = 3;
     }
-
 
     update() {
       if (this._framesCount === 0) {
@@ -182,6 +194,4 @@ namespace PE.Sprites {
       this.updateAnimation();
     }
   }
-
-
 }

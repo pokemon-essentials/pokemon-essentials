@@ -3,6 +3,7 @@
  */
 class BattleEventQueue {
   private static _queue = [];
+  static waitMode: WaitModes;
   static push(method, scope: any = this) {
     this._queue.push({ method: method, scope: scope });
   }
@@ -20,6 +21,6 @@ class BattleEventQueue {
 
   static isBusy() {
     // return $gameMessage.isBusy() || this.waitMode !== WaitMode.None;
-    return $gameMessage.isBusy();
+    return $gameMessage.isBusy() || this.waitMode !== WaitModes.None;
   }
 }

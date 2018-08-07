@@ -2,17 +2,17 @@ class NewBattle_Scene extends Scene_Base {
   battle: Battle_Manager;
   viewport: Sprite;
   sprites: {};
+  hpbars: {};
   layers: { bg: Sprite } = { bg: undefined };
   message: PE.Battle.UI.Window_BattleMessage;
   battleCommands: PE.Battle.UI.BattleCommands;
-  partyBar: nHPBar;
-  foeHPBar: nHPBar;
+  partyBar: Sprite;
 
   constructor() {
     super();
     let p1 = [];
     let p2 = [];
-    for (let index = 0; index < 6; index++) {
+    for (let index = 0; index < 3; index++) {
       p1.push(PE.Pokemon.getRandomPokemon(100));
       p2.push(PE.Pokemon.getRandomPokemon(100));
     }
@@ -38,6 +38,8 @@ class NewBattle_Scene extends Scene_Base {
     this.viewport.addChild(this.layers.bg);
 
     this.sprites = {};
+    this.hpbars = {};
+    this.partyBar = new Sprite();
   }
 
   createMessageWindow() {
@@ -51,40 +53,66 @@ class NewBattle_Scene extends Scene_Base {
 
   createBattlers() {
     for (const battler of $BattleManager.sides.foe.actives) {
-      this.viewport.removeChild(this.foeHPBar);
-      this.foeHPBar = new nHPBar(battler, Graphics.width - 208, 48, true);
-      this.viewport.addChild(this.foeHPBar);
+      if (this.sprites[battler.guid]) {
+        if (!this.sprites[battler.guid].visible) {
+          this.viewport.addChild(this.sprites[battler.guid]);
+          this.sprites[battler.guid].visible = true;
+        }
+      } else {
+        let fx = Graphics.width - 128;
+        let fy = 240;
+        this.sprites[battler.guid] = new PE.Sprites.Battler(battler.pokemon, PE.Sprites.BattlersFacing.Front);
+        this.sprites[battler.guid].x = fx;
+        this.sprites[battler.guid].y = fy;
+        this.sprites[battler.guid].scale.x = 2;
+        this.sprites[battler.guid].scale.y = 2;
+        this.sprites[battler.guid].anchor.x = 0.5;
+        this.sprites[battler.guid].anchor.y = 1;
+        this.viewport.addChild(this.sprites[battler.guid]);
+      }
 
-      if (this.sprites[battler.guid]) continue;
-      let fx = Graphics.width - 128;
-      let fy = 240;
-      this.sprites[battler.guid] = new PE.Sprites.Battler(battler.pokemon, PE.Sprites.BattlersFacing.Front);
-      this.sprites[battler.guid].x = fx;
-      this.sprites[battler.guid].y = fy;
-      this.sprites[battler.guid].scale.x = 2;
-      this.sprites[battler.guid].scale.y = 2;
-      this.sprites[battler.guid].anchor.x = 0.5;
-      this.sprites[battler.guid].anchor.y = 1;
-      this.viewport.addChild(this.sprites[battler.guid]);
+      if (this.hpbars[battler.guid]) {
+        if (!this.hpbars[battler.guid].visible) {
+          this.hpbars[battler.guid].visible = true;
+          this.viewport.addChild(this.hpbars[battler.guid]);
+        }
+      } else {
+        this.hpbars[battler.guid] = new nHPBar(battler, Graphics.width - 208, 48, true);
+        this.viewport.addChild(this.hpbars[battler.guid]);
+      }
     }
 
     for (const battler of $BattleManager.sides.player.actives) {
-      this.viewport.removeChild(this.partyBar);
-      this.partyBar = new nHPBar(battler, 16, Graphics.height - 64, false);
-      this.viewport.addChild(this.partyBar);
+      if (this.sprites[battler.guid]) {
+        if (!this.sprites[battler.guid].visible) {
+          this.viewport.addChild(this.sprites[battler.guid]);
+          this.sprites[battler.guid].visible = true;
+        }
+      } else {
+        let x = 128;
+        let y = Graphics.height - 64;
+        let index = battler.name + "_" + battler.slotIndex;
+        this.sprites[battler.guid] = new PE.Sprites.Battler(battler.pokemon, PE.Sprites.BattlersFacing.Back);
+        this.sprites[battler.guid].x = x;
+        this.sprites[battler.guid].y = y;
+        this.sprites[battler.guid].scale.x = 3;
+        this.sprites[battler.guid].scale.y = 3;
+        this.sprites[battler.guid].anchor.x = 0.5;
+        this.sprites[battler.guid].anchor.y = 1;
+        this.viewport.addChild(this.sprites[battler.guid]);
+      }
 
-      if (this.sprites[battler.guid]) continue;
-      let x = 128;
-      let y = Graphics.height - 64;
-      let index = battler.name + "_" + battler.slotIndex;
-      this.sprites[battler.guid] = new PE.Sprites.Battler(battler.pokemon, PE.Sprites.BattlersFacing.Back);
-      this.sprites[battler.guid].x = x;
-      this.sprites[battler.guid].y = y;
-      this.sprites[battler.guid].scale.x = 3;
-      this.sprites[battler.guid].scale.y = 3;
-      this.sprites[battler.guid].anchor.x = 0.5;
-      this.sprites[battler.guid].anchor.y = 1;
-      this.viewport.addChild(this.sprites[battler.guid]);
+      if (this.hpbars[battler.guid]) {
+        if (!this.hpbars[battler.guid].visible) {
+          this.hpbars[battler.guid].visible = true;
+          this.partyBar.addChild(this.hpbars[battler.guid]);
+        }
+      } else {
+        this.hpbars[battler.guid] = new nHPBar(battler, 16, Graphics.height - 64, false);
+        this.partyBar.addChild(this.hpbars[battler.guid]);
+      }
+
+      this.viewport.addChild(this.partyBar);
 
       // this.partyBar.visible = false;
       // this.movesSelection = new PE.UI._MovesSelection(battler);
@@ -123,6 +151,11 @@ class NewBattle_Scene extends Scene_Base {
 
   update() {
     super.update();
+    if ($BattleManager.phase === Battle_Phase.Input || BattleEventQueue.waitMode === WaitModes.Animation) {
+      this.partyBar.visible = true;
+    } else {
+      this.partyBar.visible = false;
+    }
     if (BattleEventQueue.isBusy()) return;
     if (Input.isTriggered("ok")) {
       this.endActionsSelection();
@@ -139,7 +172,11 @@ class NewBattle_Scene extends Scene_Base {
   switchBattlers(out: Battle_Battler, enter: Battle_Battler) {
     // this.sprites.bitmap = new Bitmap(Graphics.width, Graphics.height);
     this.viewport.removeChild(this.sprites[out.guid]);
-    delete this.sprites[out.guid];
+    this.viewport.removeChild(this.hpbars[out.guid]);
+    this.partyBar.removeChild(this.hpbars[out.guid]);
+    this.sprites[out.guid].visible = false;
+    this.hpbars[out.guid].visible = false;
+    // delete this.sprites[out.guid];
     this.createBattlers();
   }
 }
@@ -227,46 +264,43 @@ class nHPBar extends Sprite {
       this.addChild(this.indicator);
     }
     this.addChild(this.text);
-    EventManager.on("DAMAGE", this.updateDamage, this);
+    EventManager.on("DAMAGE", this.damage, this);
   }
 
   update() {
     super.update();
-
-    // if (this.animate && this.__damage > 0) this.updateDamage();
+    if (this.animate && this.currentHP !== this.__damage) this.updateDamage();
   }
 
-  damage(hp) {
-    // this.__damage = hp;
-    this.currentHP -= hp;
-    if (this.currentHP <= 0) this.currentHP = 0;
-    this.updateDamage();
+  damage(battler: Battle_Battler, hp) {
+    if (battler.guid !== this.battler.guid) return;
+    BattleEventQueue.push(() => {
+      this.__damage = this.currentHP - hp;
+      if (this.__damage <= 0) this.__damage = 0;
+      this.animate = true;
+      $BattleManager.wait(WaitModes.Animation);
+    }, this);
   }
 
   updateDamage() {
+    this.currentHP--;
+
     if (this.indicator) {
       this.indicator.bitmap.clear();
-      this.indicator.bitmap.drawText(`${this.battler.hp}/${this.battler.totalHP}`, this._x + 32, this.box.y + 8, 200, 24, "left");
+      this.indicator.bitmap.drawText(`${this.currentHP}/${this.battler.totalHP}`, this._x + 32, this.box.y + 8, 200, 24, "left");
     }
     // 192 is original the bar width
-    let width = Math.max(0, (192 * this.battler.hp) / this.battler.totalHP);
+    let width = Math.max(0, (192 * this.currentHP) / this.battler.totalHP);
     this.bar.setFrame(0, 0, width, 24);
-  }
 
-  start() {
-    this.animate = true;
-  }
-  onComplete(callback) {
-    // this.completeCallbacks.push(callback);
+    if (this.currentHP === this.__damage) this.complete();
   }
 
   complete() {
-    // $Battle.waitMode = WaitMode.None;
-    // $Battle.changePhase(Phase.None);
-    // // for (const callback of this.completeCallbacks) {
-    // //   callback();
-    // // }
-    // this.animate = false;
+    $BattleManager.wait(WaitModes.None);
+    BattleEventQueue.push(() => {
+      this.animate = false;
+    }, this);
   }
 
   setWidth() {

@@ -16,6 +16,11 @@ enum InputPhases {
   PartySwitchFainted = "PartySwitchFainted"
 }
 
+enum WaitModes {
+  Animation = "Animation",
+  None = "None"
+}
+
 enum BattleActionType {
   UseMove,
   UseItem,
@@ -43,6 +48,7 @@ class Battle_Manager {
   static sides: { player: Battle_Side; foe: Battle_Side };
 
   public static phase: Battle_Phase | InputPhases = undefined;
+
   static turn: number;
   static init(p1: PE.Pokemon.Pokemon[], p2: PE.Pokemon.Pokemon[]) {
     console.log("Player Pokemons");
@@ -67,6 +73,8 @@ class Battle_Manager {
       this.sides.foe.party.push(battler);
     }
     this.turn = 0;
+
+    BattleEventQueue.waitMode = WaitModes.None;
   }
 
   static get actives() {
@@ -102,7 +110,10 @@ class Battle_Manager {
     this.sides.player.switchInStartBattlers();
     this.sides.foe.switchInStartBattlers();
   }
-  static showStartMessages() {}
+  static showStartMessages() {
+    this.showPausedMessage("This is a battle test scenario, open the devtools press the F12 key to see the battle log");
+    this.showPausedMessage("press the enter key to avance the");
+  }
 
   static startInput() {
     // IA select moves
@@ -116,14 +127,12 @@ class Battle_Manager {
   }
 
   static startTurn() {
-    +this.turn++;
+    this.turn++;
     console.log("----------------------------------------------------------");
     console.log(`# Turn ${this.turn}`);
     this.makeTurnOrder();
     this.changePhase(Battle_Phase.Turn);
   }
-
-  static isBusy() {}
 
   static updateTurn() {
     if (!this._subject) {
@@ -148,6 +157,7 @@ class Battle_Manager {
   static endTurn() {
     this.checkFaints();
     this.checkBattleEnd();
+    this.changePhase(Battle_Phase.Input);
   }
 
   static getNextSubject() {
@@ -248,20 +258,21 @@ class Battle_Manager {
   static processVictory() {
     console.log("# VICTORY");
     console.log("==========================================================");
-    this.showMessage("Visctory");
+    this.showPausedMessage("Visctory");
     this.changePhase(Battle_Phase.BatledEnd);
   }
 
   static processDefead() {
     console.log("# DEFEAT");
     console.log("==========================================================");
-    this.showMessage("defeat");
+    this.showPausedMessage("defeat");
     this.changePhase(Battle_Phase.BatledEnd);
   }
 
   static changePhase(phase: Battle_Phase | InputPhases) {
-    // console.log("Battle Phase: " + phase);
-    this.phase = phase;
+    BattleEventQueue.push(() => {
+      this.phase = phase;
+    }, this);
   }
 
   static dummyActionSelection() {
@@ -353,6 +364,10 @@ class Battle_Manager {
       }
       $gameMessage.add(msg);
     });
+  }
+
+  static wait(mode: WaitModes) {
+    BattleEventQueue.waitMode = mode;
   }
 }
 

@@ -54,6 +54,7 @@ namespace PE.Pokemon {
     pokerus = Math.randomInt(65356) < SETTINGS.POKERUS_CHANCE;
     stats = { hp: 1, atk: 1, def: 1, spa: 1, spd: 1, spe: 1 };
     shiny = Math.randomInt(65356) < SETTINGS.SHINY_CHANCE;
+    guid = PE.Utils.guid();
 
     /**
      *
