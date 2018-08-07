@@ -18,6 +18,12 @@ class Battle_Battler {
     this.level = this.pokemon.level;
   }
 
+  get hp() {
+    return this.pokemon.hp;
+  }
+  get totalHP() {
+    return this.pokemon.stats.hp;
+  }
   get attack() {
     return this.pokemon.stats.atk;
   }

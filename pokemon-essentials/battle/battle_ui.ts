@@ -185,14 +185,14 @@ namespace PE.Battle.UI {
       this.deactivate();
     }
     activate() {
-      // this.setBlendColor([0, 0, 0, 0]);
-      // this._text.setBlendColor([0, 0, 0, 0]);
+      this.setBlendColor([0, 0, 0, 0]);
+      this._text.setBlendColor([0, 0, 0, 0]);
       this.changeFrame(1, this.frame);
     }
 
     deactivate() {
-      // this.setBlendColor([0, 0, 0, 155]);
-      // this._text.setBlendColor([0, 0, 0, 155]);
+      this.setBlendColor([0, 0, 0, 100]);
+      this._text.setBlendColor([0, 0, 0, 100]);
       this.changeFrame(0, this.frame);
     }
   }
@@ -218,16 +218,19 @@ namespace PE.Battle.UI {
       this._text.bitmap.fontSize = 20;
       this._text.bitmap.drawText("PP " + move.pp + "/" + move.pp, 112, 38, 192, 32, "left");
       this.addChild(this._text);
-      this.setBlendColor([0, 0, 0, 155]);
-      this._text.setBlendColor([0, 0, 0, 155]);
+      // this.setBlendColor([0, 0, 0, 100]);
+      // this._text.setBlendColor([0, 0, 0, 100]);
+      this.deactivate();
     }
     activate() {
       this.setBlendColor([0, 0, 0, 0]);
       this._text.setBlendColor([0, 0, 0, 0]);
+      this.changeFrame(1, this.row);
     }
     deactivate() {
-      this.setBlendColor([0, 0, 0, 155]);
-      this._text.setBlendColor([0, 0, 0, 155]);
+      this.setBlendColor([0, 0, 0, 100]);
+      this._text.setBlendColor([0, 0, 0, 100]);
+      this.changeFrame(0, this.row);
     }
   }
 
