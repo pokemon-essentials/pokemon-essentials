@@ -18,11 +18,12 @@ class EventManager {
 
   static run(eventId: string, source: Battle_Battler, target?: Battle_Battler, effect?: IEventEffect, relayVar?: any) {
     let handlers = this.getEffects(eventId, source, target, effect);
+    relayVar = relayVar || null;
     for (const handler of handlers) {
-      if (relayVar) {
-        relayVar = handler.apply(this, relayVar, source, target, effect);
+      if (relayVar !== null) {
+        relayVar = handler.call(this, relayVar, source, target, effect);
       } else {
-        relayVar = handler.apply(this, source, target, effect);
+        relayVar = handler.call(this, source, target, effect);
       }
     }
   }
@@ -32,7 +33,7 @@ class EventManager {
     let sourceAbilityEffect = Abilities.getEffect(eventId, source.pokemon.ability);
     if (sourceAbilityEffect) callbacks.push(sourceAbilityEffect);
     // let sourceItemEffect = Items.getEffects()
-    if (effect.move) {
+    if (effect && effect.move) {
       // let sourceMoveEffect = Moves.getEffect();
     }
     if (target) {
@@ -45,4 +46,9 @@ class EventManager {
 
 interface IEventEffect {
   move?: Battle_Move;
+}
+
+interface IEventsEffects {
+  BasePower?(damage: number, source: Battle_Battler, target?: Battle_Battler, effect?: IEventEffect);
+  SwitchIn?(source: Battle_Battler, target?: Battle_Battler, effect?: IEventEffect);
 }

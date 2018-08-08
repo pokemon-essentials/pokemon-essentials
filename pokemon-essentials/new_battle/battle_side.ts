@@ -10,6 +10,7 @@ class Battle_Side {
   switchInStartBattlers() {
     this.slots[0] = this.party[0];
     this.slots[0].slotIndex = 0;
+    EventManager.run("SwitchIn", this.slots[0]);
   }
 
   switchBattlers(slotIndex, partyIndex) {
@@ -20,6 +21,7 @@ class Battle_Side {
     this.slots[slotIndex] = this.party[partyIndex];
     this.slots[slotIndex].slotIndex = slotIndex;
     EventManager.emit("SWITCH_BATTLERS", out, this.slots[slotIndex]);
+    EventManager.run("SwitchIn", out, this.slots[slotIndex]);
   }
 
   areAllFainted() {

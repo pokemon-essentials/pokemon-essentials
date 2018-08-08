@@ -42,6 +42,10 @@ class Battle_Battler {
     return this.pokemon.stats.spe;
   }
 
+  get ability() {
+    return this.pokemon.ability;
+  }
+
   hasType(type) {
     for (const t of this.types) {
       if (t === type) return true;

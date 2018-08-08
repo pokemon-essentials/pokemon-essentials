@@ -117,8 +117,8 @@ class Battle_Manager {
     this.sides.foe.switchInStartBattlers();
   }
   static showStartMessages() {
-    this.showPausedMessage("This is a battle test scenario, open the devtools press the F12 key to see the battle log");
-    this.showPausedMessage("press the enter key to avance turns");
+    // this.showPausedMessage("This is a battle test scenario, open the devtools press the F12 key to see the battle log");
+    // this.showPausedMessage("press the enter key to avance turns");
   }
 
   static startInput() {
