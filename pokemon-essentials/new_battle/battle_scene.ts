@@ -12,8 +12,9 @@ class NewBattle_Scene extends Scene_Base {
     super();
     let p1 = [];
     let p2 = [];
+    p1.push(new PE.Pokemon.Pokemon(PE.Pokedex.GROUDON, 100));
     for (let index = 0; index < 3; index++) {
-      p1.push(PE.Pokemon.getRandomPokemon(100));
+      // p1.push(PE.Pokemon.getRandomPokemon(100));
       p2.push(PE.Pokemon.getRandomPokemon(100));
     }
     $BattleManager.init(p1, p2);

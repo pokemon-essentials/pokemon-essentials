@@ -1,0 +1,1 @@
+class Battle_Move {}
