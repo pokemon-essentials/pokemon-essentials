@@ -56,6 +56,8 @@ class Battle_Manager {
   private static _activeMove: Battle_Move;
   private static _activeSource: Battle_Battler;
   private static _activeTarget: Battle_Battler;
+
+  public static weather: WEATHERS;
   static init(p1: PE.Pokemon.Pokemon[], p2: PE.Pokemon.Pokemon[]) {
     console.log("Player Pokemons");
     console.log("==========================================================");
@@ -219,12 +221,11 @@ class Battle_Manager {
   }
 
   static useMove(move: PE.Battle.Moves.Move, target) {
+    console.log(`> ${this._subject.species} used ${move.name} --> ${this._subject.sides.foe.slots[target].species}`);
+    this.showMessage(`${this._subject.name} used  ${move.name}!`);
     console.log(move.accuracy);
     let hit = PE.Utils.chance(move.accuracy);
-    console.log(hit);
     if (move.accuracy === true || hit) {
-      console.log(`> ${this._subject.species} used ${move.name} --> ${this._subject.sides.foe.slots[target].species}`);
-      this.showMessage(`${this._subject.name} used  ${move.name}!`);
       let foe = this._subject.sides.foe.slots[target];
       let damage = this.calculateDamage(this._subject, foe, move);
       if (damage > 0) foe.damage(damage);
@@ -310,8 +311,10 @@ class Battle_Manager {
   }
 
   static calculateDamage(source: Battle_Battler, target: Battle_Battler, move: PE.Battle.Moves.Move) {
-    EventManager.run("BasePower", source, target, { move: move });
-    // http://bulbapedia.bulbagarden.net/wiki/Damage
+    let basePower = move.basePower;
+    console.log(`\t :Base Power ${basePower}`);
+    basePower = EventManager.run("BasePower", source, target, { move: move }, basePower);
+
     let atk = 0;
     let def = 0;
     if (move.category == PE.Battle.Moves.Categories.Special) {
@@ -349,8 +352,7 @@ class Battle_Manager {
     }
     random = Math.random() * (1 - 0.81) + 0.81;
     let modifier = critical * random * stab * effectiveness;
-    let power = move.basePower;
-    let damage = ((((2 * source.level) / 5 + 2) * power * (atk / def)) / 50 + 2) * modifier;
+    let damage = ((((2 * source.level) / 5 + 2) * basePower * (atk / def)) / 50 + 2) * modifier;
     return Math.max(Math.floor(damage), 1);
   }
 
@@ -642,6 +644,10 @@ class Battle_Manager {
     //     this.runEvent('AfterMoveSecondary', target, pokemon, move);
     //   }
     //   return damage;
+  }
+
+  static setWeather(weather, duration) {
+    this.weather = weather;
   }
 }
 

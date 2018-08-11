@@ -46,7 +46,7 @@ namespace PE.Battle.Moves {
     priority: number;
     flags: any;
     target: MoveTargets;
-    type: Types;
+    type: TYPES;
     contestType: string;
     critRatio: number;
     isZ: string;

@@ -8,7 +8,7 @@ namespace PE.Utils {
     let keys = Object.keys(obj);
     let rand = Math.randomInt(keys.length);
     let index = keys[rand];
-    return typeof obj[index] !== 'function' ? obj[index] : getRandomPropertie(obj);
+    return typeof obj[index] !== "function" ? obj[index] : getRandomPropertie(obj);
   }
 
   export function getRandomFromEnum(obj) {
@@ -41,6 +41,10 @@ namespace PE.Utils {
         .toString(16)
         .substring(1);
     }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+    return s4() + s4() + "-" + s4() + "-" + s4() + "-" + s4() + "-" + s4() + s4() + s4();
+  }
+
+  export function pct(num, amount) {
+    return Math.floor((num * amount) / 100);
   }
 }

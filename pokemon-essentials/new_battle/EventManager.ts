@@ -20,12 +20,13 @@ class EventManager {
     let handlers = this.getEffects(eventId, source, target, effect);
     relayVar = relayVar || null;
     for (const handler of handlers) {
-      if (relayVar !== null) {
+      if (relayVar) {
         relayVar = handler.call(this, relayVar, source, target, effect);
       } else {
         relayVar = handler.call(this, source, target, effect);
       }
     }
+    return relayVar;
   }
 
   static getEffects(eventId: string, source: Battle_Battler, target?: Battle_Battler, effect?: IEventEffect) {
@@ -40,12 +41,15 @@ class EventManager {
       let foeAbilityEffect = Abilities.getEffect(eventId, target.pokemon.ability);
       if (foeAbilityEffect) callbacks.push(foeAbilityEffect);
     }
+    let weatherEffects = BattleWeather.getEffect(eventId, $BattleManager.weather);
+    if (weatherEffects) callbacks.push(weatherEffects);
     return callbacks;
   }
 }
 
 interface IEventEffect {
-  move?: Battle_Move;
+  // move?: Battle_Move;
+  move?: PE.Battle.Moves.Move;
 }
 
 interface IEventsEffects {

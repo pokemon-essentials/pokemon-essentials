@@ -1,4 +1,25 @@
 namespace PE {
+  export enum TYPES {
+    NORMAL = "NORMAL",
+    GRASS = "GRASS",
+    FIRE = "FIRE",
+    WATER = "WATER",
+    FIGHTING = "FIGHTING",
+    FLYING = "FLYING",
+    POISON = "POISON",
+    GROUND = "GROUND",
+    ROCK = "ROCK",
+    BUG = "BUG",
+    GHOST = "GHOST",
+    ELECTRIC = "ELECTRIC",
+    PSYCHIC = "PSYCHIC",
+    ICE = "ICE",
+    DRAGON = "DRAGON",
+    DARK = "DARK",
+    STEEL = "STEEL",
+    FAIRY = "FAIRY"
+  }
+
   export enum Types {
     NORMAL,
     GRASS,
