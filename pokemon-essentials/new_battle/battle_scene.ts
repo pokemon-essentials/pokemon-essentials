@@ -7,6 +7,7 @@ class NewBattle_Scene extends Scene_Base {
   message: PE.Battle.UI.Window_BattleMessage;
   battleCommands: PE.Battle.UI.BattleCommands;
   partyBar: Sprite;
+  _weather: SpriteWeather;
 
   constructor() {
     super();
@@ -26,6 +27,7 @@ class NewBattle_Scene extends Scene_Base {
     this.viewport = new Sprite(new Bitmap(Graphics.width, Graphics.height));
     this.addChild(this.viewport);
     this.createBackground();
+    this.createWeather();
     this.createMessageWindow();
     this.createUI();
   }
@@ -135,6 +137,12 @@ class NewBattle_Scene extends Scene_Base {
     // this.addChild(this.sprites["back"]);
 
     // $Battle.push(() => this.sprites["back"].start(), this);
+  }
+
+  createWeather() {
+    this._weather = new SpriteWeather();
+    this.addChild(this._weather);
+    this._weather.setWeather(WEATHERS.Hail);
   }
 
   createUI() {
