@@ -53,23 +53,23 @@ namespace PE.Battle.Moves {
     /**For Aerilate, Pixilate, Refrigerate */
     powerBoost: boolean;
 
-    constructor(public id: Movedex | string) {
+    constructor(public id: MOVEDEX | string) {
       if (!$PE_MOVES[id]) throw Error(`Error 404: Move name ${id} not found!`);
       Object.assign(this, $PE_MOVES[id]);
     }
     //==================================================================================================================
     // About the move
     modifyType(type: Types, attacker?: Battler, opponent?: Battler) {
-      if (attacker && attacker.hasAbility(Abilitydex.NORMALIZE)) {
+      if (attacker && attacker.hasAbility(ABILITYDEX.NORMALIZE)) {
         type = Types.NORMAL;
         this.powerBoost = true;
-      } else if (attacker && attacker.hasAbility(Abilitydex.AERILATE)) {
+      } else if (attacker && attacker.hasAbility(ABILITYDEX.AERILATE)) {
         type = Types.FLYING;
         this.powerBoost = true;
-      } else if (attacker && attacker.hasAbility(Abilitydex.REFRIGERATE)) {
+      } else if (attacker && attacker.hasAbility(ABILITYDEX.REFRIGERATE)) {
         type = Types.ICE;
         this.powerBoost = true;
-      } else if (attacker && attacker.hasAbility(Abilitydex.PIXILATE)) {
+      } else if (attacker && attacker.hasAbility(ABILITYDEX.PIXILATE)) {
         type = Types.FAIRY;
         this.powerBoost = true;
       }

@@ -37,7 +37,7 @@ namespace PE.Pokemon {
     itemInitial: string;
     statusCount: number;
     status: Statuses;
-    ability: Abilitydex;
+    ability: ABILITYDEX;
     abilityInx: number;
     evs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
     fainted = false;
@@ -71,8 +71,8 @@ namespace PE.Pokemon {
       public species: string,
       public level: number,
       public item?: string,
-      moves?: Movedex[],
-      ability?: Abilitydex,
+      moves?: MOVEDEX[],
+      ability?: ABILITYDEX,
       nature?: Natures,
       ivs?: number[],
       evs?: number[]

@@ -11,7 +11,7 @@ namespace PE.Battle.Items {
     if (pokemon.hasItem('CHOICESCARF')) {
       speed = Math.round(speed * 1.5);
     }
-    if (pokemon.hasItem('QUICKPOWDER') && pokemon.species === Pokedex.DITTO && !pokemon.effects.Transform) {
+    if (pokemon.hasItem('QUICKPOWDER') && pokemon.species === POKEDEX.DITTO && !pokemon.effects.Transform) {
       speed *= 2;
     }
     return speed;
@@ -42,7 +42,7 @@ namespace PE.Battle.Items {
       //===========================================================================
       // Rocky Helmet
       if (target.hasItem('ROCKYHELMET', true) && !user.isFainted()) {
-        if (!user.hasAbility(Abilitydex.MAGICGUARD)) {
+        if (!user.hasAbility(ABILITYDEX.MAGICGUARD)) {
           // $Battle.scene.damageAnimation(user, 0);
           // user.ReduceHP(Math.floor(user.totalhp / 6));
           console.log(`[Item triggered] #{target.pbThis}'s Rocky Helmet`);
@@ -113,7 +113,7 @@ namespace PE.Battle.Items {
       // Jaboca Berry, Rowap Berry
       else if ((target.hasItem('JABOCABERRY') && move.category === Moves.Categories.Physical)
         || (target.hasItem('ROWAPBERRY') && move.category === Moves.Categories.Special)) {
-        if (!user.hasAbility(Abilitydex.MAGICGUARD) && !user.isFainted()) {
+        if (!user.hasAbility(ABILITYDEX.MAGICGUARD) && !user.isFainted()) {
           // $Battle.scene.pbDamageAnimation(user, 0);
           // user.pbReduceHP(Math.floor(user.totalhp / 8));
           target.consumeItem();

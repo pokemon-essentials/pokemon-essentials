@@ -1,5 +1,5 @@
 namespace PE {
-  export enum Abilitydex {
+  export enum ABILITYDEX {
     ADAPTABILITY = 'ADAPTABILITY',
     AFTERMATH = 'AFTERMATH',
     AERILATE = 'AERILATE',

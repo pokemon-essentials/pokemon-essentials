@@ -47,4 +47,8 @@ namespace PE.Utils {
   export function pct(num, amount) {
     return Math.floor((num * amount) / 100);
   }
+
+  export function lerp(v0, v1, t) {
+    return v0 * (1 - t) + v1 * t;
+  }
 }

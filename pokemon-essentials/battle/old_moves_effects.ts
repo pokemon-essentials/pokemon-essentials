@@ -6,50 +6,50 @@ namespace PE.Battle.Moves {
    * @param move
    */
   export function AdditionalEffect(attacker: Battler, opponent: Battler, move: Move) {
-    let sereneGrace = attacker.hasAbility(Abilitydex.SERENEGRACE) ? 1 : 2;
+    let sereneGrace = attacker.hasAbility(ABILITYDEX.SERENEGRACE) ? 1 : 2;
     switch (move.id) {
-      case Movedex.ACID:
-      case Movedex.BUGBUZZ:
-      case Movedex.EARTHPOWER:
-      case Movedex.ENERGYBALL:
-      case Movedex.FLASHCANNON:
-      case Movedex.FOCUSBLAST:
-      case Movedex.PSYCHIC:
+      case MOVEDEX.ACID:
+      case MOVEDEX.BUGBUZZ:
+      case MOVEDEX.EARTHPOWER:
+      case MOVEDEX.ENERGYBALL:
+      case MOVEDEX.FLASHCANNON:
+      case MOVEDEX.FOCUSBLAST:
+      case MOVEDEX.PSYCHIC:
         if (Utils.chance(10 * sereneGrace) && opponent.canReduceStatStage(Stats.SpDef))
           opponent.reduceStat(Stats.SpDef, 1, attacker, true);
         break;
 
-      case Movedex.ACIDSPRAY:
+      case MOVEDEX.ACIDSPRAY:
         if (opponent.canReduceStatStage(Stats.SpDef))
           opponent.reduceStat(Stats.SpDef, 2, attacker, false);
         break;
 
-      case Movedex.AIRSLASH:
-      case Movedex.ASTONISH:
-      case Movedex.BITE:
-      case Movedex.HEADBUTT:
-      case Movedex.HEARTSTAMP:
-      case Movedex.ICICLECRASH:
-      case Movedex.IRONHEAD:
-      case Movedex.NEEDLEARM:
-      case Movedex.ROCKSLIDE:
-      case Movedex.ROLLINGKICK:
-      case Movedex.SKYATTACK:
-      case Movedex.SNORE:
-      case Movedex.STEAMROLLER:
-      case Movedex.STOMP:
-      case Movedex.ZINGZAP:
+      case MOVEDEX.AIRSLASH:
+      case MOVEDEX.ASTONISH:
+      case MOVEDEX.BITE:
+      case MOVEDEX.HEADBUTT:
+      case MOVEDEX.HEARTSTAMP:
+      case MOVEDEX.ICICLECRASH:
+      case MOVEDEX.IRONHEAD:
+      case MOVEDEX.NEEDLEARM:
+      case MOVEDEX.ROCKSLIDE:
+      case MOVEDEX.ROLLINGKICK:
+      case MOVEDEX.SKYATTACK:
+      case MOVEDEX.SNORE:
+      case MOVEDEX.STEAMROLLER:
+      case MOVEDEX.STOMP:
+      case MOVEDEX.ZINGZAP:
         // if (Utils.chance(30 * sereneGrace)) opponent.flinch();
         break;
 
-      case Movedex.ANCHORSHOT:
-      case Movedex.SPIRITSHACKLE:
+      case MOVEDEX.ANCHORSHOT:
+      case MOVEDEX.SPIRITSHACKLE:
         // if (Utils.chance(100)) opponent.traps(); //Traps the target.
         break;
 
-      case Movedex.ANCIENTPOWER:
-      case Movedex.OMINOUSWIND:
-      case Movedex.SILVERWIND:
+      case MOVEDEX.ANCIENTPOWER:
+      case MOVEDEX.OMINOUSWIND:
+      case MOVEDEX.SILVERWIND:
         if (Utils.chance(10 * sereneGrace)) {
           if (attacker.canIncreaseStatStage(Stats.Attack)) attacker.increaseStat(Stats.Attack, 1, undefined, false);
           if (attacker.canIncreaseStatStage(Stats.Defense)) attacker.increaseStat(Stats.Defense, 1, undefined, false);
@@ -59,84 +59,84 @@ namespace PE.Battle.Moves {
         }
         break;
 
-      case Movedex.AURORABEAM:
+      case MOVEDEX.AURORABEAM:
         if (opponent.canReduceStatStage(Stats.Attack))
           opponent.reduceStat(Stats.Attack, 1, attacker, true);
         break;
 
-      case Movedex.BLAZEKICK:
-      case Movedex.EMBER:
-      case Movedex.FIREBLAST:
-      case Movedex.FIREPUNCH:
-      case Movedex.HEATWAVE:
+      case MOVEDEX.BLAZEKICK:
+      case MOVEDEX.EMBER:
+      case MOVEDEX.FIREBLAST:
+      case MOVEDEX.FIREPUNCH:
+      case MOVEDEX.HEATWAVE:
         if (Utils.chance(10 * sereneGrace) && opponent.canBurn(attacker, false)) opponent.burn();
         break;
 
-      case Movedex.BLIZZARD:
-      case Movedex.FREEZEDRY:
-      case Movedex.ICEBEAM:
-      case Movedex.ICEPUNCH:
-      case Movedex.POWDERSNOW:
+      case MOVEDEX.BLIZZARD:
+      case MOVEDEX.FREEZEDRY:
+      case MOVEDEX.ICEBEAM:
+      case MOVEDEX.ICEPUNCH:
+      case MOVEDEX.POWDERSNOW:
         // if (Utils.chance(10 * sereneGrace) && opponent.canFreeze(attacker, false))
         //   opponent.freeze();
         break;
 
-      case Movedex.BLUEFLARE:
+      case MOVEDEX.BLUEFLARE:
         if (Utils.chance(20 * sereneGrace) && opponent.canBurn(attacker, false)) opponent.burn();
         break;
 
-      case Movedex.BODYSLAM:
-      case Movedex.BOUNCE:
-      case Movedex.DISCHARGE:
-      case Movedex.DRAGONBREATH:
-      case Movedex.FORCEPALM:
-      case Movedex.FREEZESHOCK:
-      case Movedex.LICK:
-      case Movedex.SPARK:
-      case Movedex.THUNDER:
+      case MOVEDEX.BODYSLAM:
+      case MOVEDEX.BOUNCE:
+      case MOVEDEX.DISCHARGE:
+      case MOVEDEX.DRAGONBREATH:
+      case MOVEDEX.FORCEPALM:
+      case MOVEDEX.FREEZESHOCK:
+      case MOVEDEX.LICK:
+      case MOVEDEX.SPARK:
+      case MOVEDEX.THUNDER:
         if (Utils.chance(30 * sereneGrace) && opponent.canParalize(attacker, false)) opponent.paralize();
         break;
 
-      case Movedex.BOLTSTRIKE:
+      case MOVEDEX.BOLTSTRIKE:
         if (Utils.chance(20 * sereneGrace) && opponent.canParalize(attacker, false)) opponent.paralize();
         break;
 
-      case Movedex.BONECLUB:
-      case Movedex.EXTRASENSORY:
-      case Movedex.HYPERFANG:
+      case MOVEDEX.BONECLUB:
+      case MOVEDEX.EXTRASENSORY:
+      case MOVEDEX.HYPERFANG:
         // if (Utils.chance(10 * sereneGrace)) opponent.flinch();
         break;
 
-      case Movedex.BUBBLE:
-      case Movedex.BUBBLEBEAM:
-      case Movedex.CONSTRICT:
+      case MOVEDEX.BUBBLE:
+      case MOVEDEX.BUBBLEBEAM:
+      case MOVEDEX.CONSTRICT:
         if (Utils.chance(10 * sereneGrace) && opponent.canReduceStatStage(Stats.Speed))
           opponent.reduceStat(Stats.Speed, 1, attacker, true);
         break;
 
-      case Movedex.BULLDOZE:
-      case Movedex.ELECTROWEB:
-      case Movedex.GLACIATE:
-      case Movedex.ICYWIND:
-      case Movedex.LOWSWEEP:
-      case Movedex.MUDSHOT:
-      case Movedex.ROCKTOMB:
+      case MOVEDEX.BULLDOZE:
+      case MOVEDEX.ELECTROWEB:
+      case MOVEDEX.GLACIATE:
+      case MOVEDEX.ICYWIND:
+      case MOVEDEX.LOWSWEEP:
+      case MOVEDEX.MUDSHOT:
+      case MOVEDEX.ROCKTOMB:
         if (opponent.canReduceStatStage(Stats.Speed)) opponent.reduceStat(Stats.Speed, 1, attacker, true);
         break;
 
-      case Movedex.CHARGEBEAM:
+      case MOVEDEX.CHARGEBEAM:
         if (Utils.chance(70 * sereneGrace) && attacker.canIncreaseStatStage(Stats.SpAtk))
           attacker.increaseStat(Stats.SpAtk, 1, undefined, false);
         break;
 
-      case Movedex.CHATTER:
-      case Movedex.DYNAMICPUNCH:
+      case MOVEDEX.CHATTER:
+      case MOVEDEX.DYNAMICPUNCH:
         // if (opponent.canConfuse())
         //   opponent.confuse()
         break;
 
-      case Movedex.CLANGOROUSSOULBLAZE:
-      case Movedex.POWERUPPUNCH:
+      case MOVEDEX.CLANGOROUSSOULBLAZE:
+      case MOVEDEX.POWERUPPUNCH:
         if (attacker.canIncreaseStatStage(Stats.Attack)) attacker.increaseStat(Stats.Attack, 1, undefined, false);
         if (attacker.canIncreaseStatStage(Stats.Defense)) attacker.increaseStat(Stats.Defense, 1, undefined, false);
         if (attacker.canIncreaseStatStage(Stats.SpAtk)) attacker.increaseStat(Stats.SpAtk, 1, undefined, false);
@@ -144,186 +144,186 @@ namespace PE.Battle.Moves {
         if (attacker.canIncreaseStatStage(Stats.Speed)) attacker.increaseStat(Stats.Speed, 1, undefined, false);
         break;
 
-      case Movedex.CONFUSION:
-      case Movedex.PSYBEAM:
-      case Movedex.SIGNALBEAM:
+      case MOVEDEX.CONFUSION:
+      case MOVEDEX.PSYBEAM:
+      case MOVEDEX.SIGNALBEAM:
         // if (Utils.chance(10*sereneGraace) && opponent.canConfuse())
         //   opponent.confuse()
         break;
 
-      case Movedex.CROSSPOISON:
-      case Movedex.POISONTAIL:
-      case Movedex.SLUDGEWAVE:
+      case MOVEDEX.CROSSPOISON:
+      case MOVEDEX.POISONTAIL:
+      case MOVEDEX.SLUDGEWAVE:
         if (Utils.chance(10 * sereneGrace) && opponent.canPoison(attacker, false)) opponent.poison();
         break;
 
-      case Movedex.CRUNCH:
-      case Movedex.LIQUIDATION:
-      case Movedex.SHADOWBONE:
+      case MOVEDEX.CRUNCH:
+      case MOVEDEX.LIQUIDATION:
+      case MOVEDEX.SHADOWBONE:
         if (Utils.chance(20 * sereneGrace) && opponent.canReduceStatStage(Stats.Defense))
           opponent.reduceStat(Stats.Defense, 1, attacker, true);
         break;
 
-      case Movedex.CRUSHCLAW:
-      case Movedex.RAZORSHELL:
-      case Movedex.ROCKSMASH:
+      case MOVEDEX.CRUSHCLAW:
+      case MOVEDEX.RAZORSHELL:
+      case MOVEDEX.ROCKSMASH:
         if (Utils.chance(50 * sereneGrace) && opponent.canReduceStatStage(Stats.Defense))
           opponent.reduceStat(Stats.Defense, 1, attacker, true);
         break;
 
-      case Movedex.DARKPULSE:
-      case Movedex.DRAGONRUSH:
-      case Movedex.TWISTER:
-      case Movedex.WATERPULSE:
-      case Movedex.ZENHEADBUTT:
+      case MOVEDEX.DARKPULSE:
+      case MOVEDEX.DRAGONRUSH:
+      case MOVEDEX.TWISTER:
+      case MOVEDEX.WATERPULSE:
+      case MOVEDEX.ZENHEADBUTT:
         // if (Utils.chance(20 * sereneGrace)) opponent.flinch();
         break;
 
-      case Movedex.DIAMONDSTORM:
+      case MOVEDEX.DIAMONDSTORM:
         if (Utils.chance(50 * sereneGrace) && attacker.canIncreaseStatStage(Stats.Defense))
           attacker.increaseStat(Stats.Defense, 1, undefined, false);
         break;
 
-      case Movedex.DIZZYPUNCH:
+      case MOVEDEX.DIZZYPUNCH:
         // if (Utils.chance(20*sereneGraace) && opponent.canConfuse())
         //   opponent.confuse()
         break;
 
-      case Movedex.FAKEOUT:
+      case MOVEDEX.FAKEOUT:
         // opponent.flinch();
         break;
 
-      case Movedex.FIERYDANCE:
+      case MOVEDEX.FIERYDANCE:
         if (Utils.chance(50 * sereneGrace) && attacker.canIncreaseStatStage(Stats.SpAtk))
           attacker.increaseStat(Stats.SpAtk, 1, undefined, false);
         break;
 
-      case Movedex.FIREFANG:
+      case MOVEDEX.FIREFANG:
         if (Utils.chance(10 * sereneGrace) && opponent.canBurn(attacker, false)) opponent.burn();
         // else if (Utils.chance(10 * sereneGrace) && opponent.canParalize(attacker, false)) opponent.paralize();
         break;
 
-      case Movedex.FIRELASH:
+      case MOVEDEX.FIRELASH:
         if (attacker.canReduceStatStage(Stats.Defense)) attacker.reduceStat(Stats.Defense, 1, undefined, false);
         break;
 
-      case Movedex.GUNKSHOT:
-      case Movedex.POISONJAB:
-      case Movedex.POISONSTING:
-      case Movedex.SLUDGE:
-      case Movedex.SLUDGEBOMB:
+      case MOVEDEX.GUNKSHOT:
+      case MOVEDEX.POISONJAB:
+      case MOVEDEX.POISONSTING:
+      case MOVEDEX.SLUDGE:
+      case MOVEDEX.SLUDGEBOMB:
         if (Utils.chance(30 * sereneGrace) && opponent.canPoison(attacker, false)) opponent.poison();
         break;
 
-      case Movedex.HURRICANE:
+      case MOVEDEX.HURRICANE:
         // if (Utils.chance(30*sereneGraace) && opponent.canConfuse())
         //   opponent.confuse()
         break;
 
-      case Movedex.ICEBURN:
-      case Movedex.LAVAPLUME:
-      case Movedex.SCALD:
-      case Movedex.SEARINGSHOT:
-      case Movedex.STEAMERUPTION:
+      case MOVEDEX.ICEBURN:
+      case MOVEDEX.LAVAPLUME:
+      case MOVEDEX.SCALD:
+      case MOVEDEX.SEARINGSHOT:
+      case MOVEDEX.STEAMERUPTION:
         if (Utils.chance(30 * sereneGrace) && opponent.canBurn(attacker, false)) opponent.burn();
         break;
 
-      case Movedex.ICEFANG:
+      case MOVEDEX.ICEFANG:
         // if (Utils.chance(10 * sereneGrace) && opponent.canBurn(attacker, false)) opponent.burn();
         // else if (Utils.chance(10 * sereneGrace) && opponent.canParalize(attacker, false)) opponent.paralize();
         break;
 
-      case Movedex.INFERNO:
+      case MOVEDEX.INFERNO:
         if (opponent.canBurn(attacker, false)) opponent.burn();
         break;
 
-      case Movedex.IRONTAIL:
+      case MOVEDEX.IRONTAIL:
         if (Utils.chance(10 * sereneGrace) && opponent.canReduceStatStage(Stats.Defense))
           opponent.reduceStat(Stats.Defense, 1, attacker, true);
         break;
 
-      case Movedex.LEAFTORNADO:
-      case Movedex.MIRRORSHOT:
-      case Movedex.MUDBOMB:
-      case Movedex.MUDDYWATER:
+      case MOVEDEX.LEAFTORNADO:
+      case MOVEDEX.MIRRORSHOT:
+      case MOVEDEX.MUDBOMB:
+      case MOVEDEX.MUDDYWATER:
         if (Utils.chance(30 * sereneGrace) && opponent.canReduceStatStage(Stats.Accuracy))
           opponent.reduceStat(Stats.Accuracy, 1, attacker, true);
         break;
 
-      case Movedex.LUNGE:
-      case Movedex.TROPKICK:
+      case MOVEDEX.LUNGE:
+      case MOVEDEX.TROPKICK:
         if (opponent.canReduceStatStage(Stats.Attack)) opponent.reduceStat(Stats.Attack, 1, attacker, true);
         break;
 
-      case Movedex.LUSTERPURGE:
+      case MOVEDEX.LUSTERPURGE:
         if (Utils.chance(50 * sereneGrace) && opponent.canReduceStatStage(Stats.SpDef))
           opponent.reduceStat(Stats.SpDef, 1, attacker, true);
         break;
 
-      case Movedex.METALCLAW:
-      case Movedex.PLAYROUGH:
+      case MOVEDEX.METALCLAW:
+      case MOVEDEX.PLAYROUGH:
         if (Utils.chance(10 * sereneGrace) && attacker.canReduceStatStage(Stats.Attack))
           attacker.reduceStat(Stats.SpDef, 1, undefined, false);
         break;
 
-      case Movedex.METEORMASH:
+      case MOVEDEX.METEORMASH:
         if (Utils.chance(20 * sereneGrace) && attacker.canReduceStatStage(Stats.Attack))
           attacker.reduceStat(Stats.SpDef, 1, undefined, false);
         break;
 
-      case Movedex.MISTBALL:
+      case MOVEDEX.MISTBALL:
         if (Utils.chance(50 * sereneGrace) && opponent.canReduceStatStage(Stats.SpAtk))
           opponent.reduceStat(Stats.SpAtk, 1, attacker, true);
         break;
 
-      case Movedex.MOONBLAST:
+      case MOVEDEX.MOONBLAST:
         if (Utils.chance(30 * sereneGrace) && opponent.canReduceStatStage(Stats.SpAtk))
           opponent.reduceStat(Stats.SpAtk, 1, attacker, true);
         break;
 
-      case Movedex.MUDSLAP:
+      case MOVEDEX.MUDSLAP:
         if (opponent.canReduceStatStage(Stats.Accuracy)) opponent.reduceStat(Stats.Accuracy, 1, attacker, true);
         break;
 
-      case Movedex.MYSTICALFIRE:
+      case MOVEDEX.MYSTICALFIRE:
         if (opponent.canReduceStatStage(Stats.SpAtk)) opponent.reduceStat(Stats.SpAtk, 1, attacker, true);
         break;
 
-      case Movedex.NIGHTDAZE:
+      case MOVEDEX.NIGHTDAZE:
         if (Utils.chance(40 * sereneGrace) && opponent.canReduceStatStage(Stats.Accuracy))
           opponent.reduceStat(Stats.Accuracy, 1, attacker, true);
         break;
 
-      case Movedex.NUZZLE:
-      case Movedex.STOKEDSPARKSURFER:
-      case Movedex.ZAPCANNON:
+      case MOVEDEX.NUZZLE:
+      case MOVEDEX.STOKEDSPARKSURFER:
+      case MOVEDEX.ZAPCANNON:
         if (opponent.canParalize(attacker, false)) opponent.paralize();
         break;
 
-      case Movedex.OCTAZOOKA:
+      case MOVEDEX.OCTAZOOKA:
         if (Utils.chance(50 * sereneGrace) && opponent.canReduceStatStage(Stats.Accuracy))
           opponent.reduceStat(Stats.Accuracy, 1, attacker, true);
         break;
 
-      case Movedex.POISONFANG:
+      case MOVEDEX.POISONFANG:
         // if (Utils.chance(50 * sereneGrace) && opponent.canPoison(attacker, false)) opponent.toxic();
         break;
 
-      case Movedex.RELICSONG:
+      case MOVEDEX.RELICSONG:
         if (Utils.chance(10 * sereneGrace) && opponent.canSleep(attacker, false)) opponent.sleep();
         break;
 
-      case Movedex.ROCKCLIMB:
-      case Movedex.WATERPULSE:
+      case MOVEDEX.ROCKCLIMB:
+      case MOVEDEX.WATERPULSE:
         // if (Utils.chance(20*sereneGraace) && opponent.canConfuse())
         //   opponent.confuse()
         break;
 
-      case Movedex.SACREDFIRE:
+      case MOVEDEX.SACREDFIRE:
         if (Utils.chance(50 * sereneGrace) && opponent.canBurn(attacker, false)) opponent.burn();
         break;
 
-      case Movedex.SECRETPOWER:
+      case MOVEDEX.SECRETPOWER:
         if (Utils.chance(30 * sereneGrace)) {
           if ($Battle.enviroment == Enviroments.Plain && opponent.canParalize()) opponent.paralize();
           else if ($Battle.enviroment == Enviroments.Building && opponent.canParalize()) opponent.paralize();
@@ -342,48 +342,48 @@ namespace PE.Battle.Moves {
         }
         break;
 
-      case Movedex.SEEDFLARE:
+      case MOVEDEX.SEEDFLARE:
         if (Utils.chance(40 * sereneGrace) && opponent.canReduceStatStage(Stats.SpDef))
           opponent.reduceStat(Stats.SpDef, 2, attacker, true);
         break;
 
-      case Movedex.SHADOWBALL:
+      case MOVEDEX.SHADOWBALL:
         if (Utils.chance(20 * sereneGrace) && opponent.canReduceStatStage(Stats.SpDef))
           opponent.reduceStat(Stats.SpDef, 1, attacker, true);
         break;
 
-      case Movedex.SMOG:
+      case MOVEDEX.SMOG:
         if (Utils.chance(40 * sereneGrace) && opponent.canPoison(attacker, false)) opponent.poison();
         break;
 
-      case Movedex.SNARL:
-      case Movedex.STRUGGLEBUG:
+      case MOVEDEX.SNARL:
+      case MOVEDEX.STRUGGLEBUG:
         if (opponent.canReduceStatStage(Stats.SpAtk))
           opponent.reduceStat(Stats.SpAtk, 1, attacker, true);
 
-      case Movedex.STEELWING:
+      case MOVEDEX.STEELWING:
         if (Utils.chance(10 * sereneGrace) && attacker.canIncreaseStatStage(Stats.Defense))
           attacker.increaseStat(Stats.Defense, 1, undefined, false);
         break;
 
-      case Movedex.THUNDERFANG:
+      case MOVEDEX.THUNDERFANG:
         if (Utils.chance(10 * sereneGrace) && opponent.canParalize(attacker, false)) opponent.paralize();
         // else if (Utils.chance(10 * sereneGrace) && opponent.canFiflnch(attacker, false)) opponent.burn();
         break;
 
-      case Movedex.THUNDERPUNCH:
-      case Movedex.THUNDERSHOCK:
-      case Movedex.THUNDERBOLT:
-      case Movedex.VOLTTACKLE:
+      case MOVEDEX.THUNDERPUNCH:
+      case MOVEDEX.THUNDERSHOCK:
+      case MOVEDEX.THUNDERBOLT:
+      case MOVEDEX.VOLTTACKLE:
         if (Utils.chance(10 * sereneGrace) && opponent.canParalize(attacker, false)) opponent.paralize();
 
-      case Movedex.TRIATTACK:
+      case MOVEDEX.TRIATTACK:
         if (Utils.chance(6.67 * sereneGrace) && opponent.canParalize(attacker, false)) opponent.paralize();
         else if (Utils.chance(6.67 * sereneGrace) && opponent.canBurn(attacker, false)) opponent.burn();
         // else if (Utils.chance(6.67 * sereneGrace) && opponent.canFreeze(attacker, false)) opponent.freeze();
         break;
 
-      case Movedex.TWINEEDLE:
+      case MOVEDEX.TWINEEDLE:
         if (Utils.chance(40 * sereneGrace) && opponent.canPoison(attacker, false)) opponent.poison();
         break;
 

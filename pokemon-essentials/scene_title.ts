@@ -111,7 +111,7 @@ namespace PE.TitleScenes {
       DataManager.setupNewGame();
       this._commandWindow.close();
       this.fadeOutAll();
-      SceneManager.goto(NewBattle_Scene);
+      SceneManager.goto(PE.Battle_Scene);
       // SceneManager.goto(PE.Battle.Scene_Battle);
       // $Player.party = PE.Pokemon.getRandomParty(6);
       // // $Player.party = [new Pokemon.Pokemon(Pokedex.GROUDON, 100)];
@@ -161,8 +161,8 @@ namespace PE.TitleScenes {
 
   export class Window_SelectPokemon extends Window_Command {
     makeCommandList() {
-      for (const pokemon in Pokedex) {
-        if (Pokedex.hasOwnProperty(pokemon)) {
+      for (const pokemon in POKEDEX) {
+        if (POKEDEX.hasOwnProperty(pokemon)) {
           this.addCommand(pokemon, "pokemon", true);
         }
       }

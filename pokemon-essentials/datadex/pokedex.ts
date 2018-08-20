@@ -1,5 +1,5 @@
 namespace PE {
-  export enum Pokedex {
+  export enum POKEDEX {
     BULBASAUR = 'BULBASAUR',
     IVYSAUR = 'IVYSAUR',
     VENUSAUR = 'VENUSAUR',

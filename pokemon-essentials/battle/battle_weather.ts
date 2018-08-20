@@ -34,30 +34,48 @@ namespace BattleWeather {
 
 BattleWeather.RegisterEffects(WEATHERS.HarshSunlight, {
   BasePower: function(damage, source, target, effect) {
-    if (effect.move.type === PE.TYPES.FIRE) damage += PE.Utils.pct(damage, 50);
-    if (effect.move.type === PE.TYPES.WATER) damage -= PE.Utils.pct(damage, 50);
+    if (effect.move.type === PE.TYPES.FIRE) {
+      damage += PE.Utils.pct(damage, 50);
+      console.log(`: [Harsh Sunlight] power up Fire type move 50% => ${damage}`);
+    }
+    if (effect.move.type === PE.TYPES.WATER) {
+      damage -= PE.Utils.pct(damage, 50);
+      console.log(`: [Harsh Sunlight] power down Water type move 50% => ${damage}`);
+    }
     return damage;
   }
 });
 
 BattleWeather.RegisterEffects(WEATHERS.ExtremelyHarshSunlight, {
   BasePower: function(damage, source, target, effect) {
-    if (effect.move.type === PE.TYPES.FIRE) damage += PE.Utils.pct(damage, 50);
+    if (effect.move.type === PE.TYPES.FIRE) {
+      damage += PE.Utils.pct(damage, 50);
+      console.log(`: [Extremely Harsh Sunlight] power up Fire type move 50% => ${damage}`);
+    }
     return damage;
   }
 });
 
 BattleWeather.RegisterEffects(WEATHERS.Rain, {
   BasePower: function(damage, source, target, effect) {
-    if (effect.move.type === PE.TYPES.WATER) damage += PE.Utils.pct(damage, 50);
-    if (effect.move.type === PE.TYPES.FIRE) damage -= PE.Utils.pct(damage, 50);
+    if (effect.move.type === PE.TYPES.WATER) {
+      damage += PE.Utils.pct(damage, 50);
+      console.log(`: [Rain] power up Water type move 50% => ${damage}`);
+    }
+    if (effect.move.type === PE.TYPES.FIRE) {
+      damage -= PE.Utils.pct(damage, 50);
+      console.log(`: [Rain] power down Fire type move 50% => ${damage}`);
+    }
     return damage;
   }
 });
 
 BattleWeather.RegisterEffects(WEATHERS.HeavyRain, {
   BasePower: function(damage, source, target, effect) {
-    if (effect.move.type === PE.TYPES.WATER) damage += PE.Utils.pct(damage, 50);
+    if (effect.move.type === PE.TYPES.WATER) {
+      damage += PE.Utils.pct(damage, 50);
+      console.log(`: [Haevy Rain] power down Fire type move 50% => ${damage}`);
+    }
     return damage;
   }
 });
