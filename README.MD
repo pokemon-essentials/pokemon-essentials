@@ -2,6 +2,8 @@
 
 Pokémon Essentials is a Pokémon game project made in RPG Maker MV. Based on the [Pokémon Essentials](http://pokemonessentials.wikia.com/wiki/Pok%C3%A9mon_Essentials_Wiki)  project for RPG Maker XP and [Pokémon Showdown](https://github.com/Zarel/Pokemon-Showdown).
 
+> ### This isn't that Pokémon essentials, this a different project, with the same goal to make a tool to create Pokémon fan games, but a totally different project, still WIP tho
+
 
 ## Getting Started
 This project __don't use the RPG Maker MV editor__, a custom editor is under construction. But right now, to lauch and test the game you will need download and install some software. 
